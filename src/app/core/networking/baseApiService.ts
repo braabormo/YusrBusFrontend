@@ -20,16 +20,16 @@ import YusrApiHelper from "./yusrApiHelper";
 
     async Add(entity: T)
     {
-        return await YusrApiHelper.Post(`${ApiConstants.baseUrl}/${this.routeName}/Add`, entity);
+        return await YusrApiHelper.Post(`${ApiConstants.baseUrl}/${this.routeName}/Add`, entity, undefined, 'تم حفظ البيانات بنجاح');
     }
 
     async Update(entity: T)
     {
-        return await YusrApiHelper.Put(`${ApiConstants.baseUrl}/${this.routeName}/Update`, entity);
+        return await YusrApiHelper.Put(`${ApiConstants.baseUrl}/${this.routeName}/Update`, entity, undefined, 'تم تحديث المعلومات بنجاح');
     }
 
     async Delete(id: number)
     {
-        return await YusrApiHelper.Delete(`${ApiConstants.baseUrl}/${this.routeName}/${id}`);
+        return await YusrApiHelper.Delete(`${ApiConstants.baseUrl}/${this.routeName}/${id}`, undefined, 'تمت إزالة السجل بنجاح');
     }
  }

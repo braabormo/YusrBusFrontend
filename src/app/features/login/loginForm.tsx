@@ -31,7 +31,6 @@ export function LoginForm({
 
   const navigate = useNavigate();
   const [formData, setFormData] = useState<Partial<LoginRequest>>({});
-  const [apiError, setApiError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const location = useLocation();
@@ -98,8 +97,6 @@ export function LoginForm({
     }
     else{
       setLoading(false);
-      console.log(result)
-      setApiError(result.errorDetails);
     }
   };
 
@@ -125,7 +122,6 @@ export function LoginForm({
                   onChange={(e) => {
                     setFormData({ ...formData, companyEmail: e.target.value });
                     clearError("email");
-                    setApiError(null);
                   }}
                   className={errorInputClass("email")}
                   required
@@ -145,7 +141,6 @@ export function LoginForm({
                   onChange={(e) => {
                     setFormData({ ...formData, username: e.target.value });
                     clearError("username");
-                    setApiError(null);
                   }}
                   className={errorInputClass("username")}
                   required
@@ -165,7 +160,6 @@ export function LoginForm({
                   onChange={(e) => {
                     setFormData({ ...formData, password: e.target.value });
                     clearError("password");
-                    setApiError(null);
                   }}
                   className={errorInputClass("password")}
                   required
@@ -174,12 +168,6 @@ export function LoginForm({
                   <span className="text-xs text-red-500">{getError("password")}</span>
                 )}
               </Field>
-
-              {apiError && (
-                <div className="text-sm font-medium text-red-600">
-                  {apiError}
-                </div>
-              )}
 
               <Field>
                 <Button type="button" disabled={loading} onClick={Login}>

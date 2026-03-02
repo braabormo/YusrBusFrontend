@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/sonner";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { Skeleton } from "../components/ui/skeleton";
 import { TooltipProvider } from "../components/ui/tooltip";
@@ -38,6 +39,12 @@ function AppBody() {
           <AuthProvider>
             <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
               <AppRoutes />
+              <Toaster 
+                richColors 
+                closeButton 
+                position="top-center" 
+                dir="rtl" 
+              />
             </ThemeProvider>
           </AuthProvider>
         </LoggedInUserProvider>

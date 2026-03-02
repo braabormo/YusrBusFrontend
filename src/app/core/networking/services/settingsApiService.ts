@@ -14,6 +14,6 @@ export default class SettingsApiService
 
     async Update(entity: Setting)
     {
-        return await YusrApiHelper.Put(`${ApiConstants.baseUrl}/${this.routeName}/Update`, entity);
+        return await YusrApiHelper.Put(`${ApiConstants.baseUrl}/${this.routeName}/Update`, entity, undefined, 'تم التعديل بنجاح');
     }
 }
