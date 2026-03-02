@@ -21,34 +21,29 @@ import RoutesPage from "./features/routes/presentation/routesPage";
 import SettingPage from "./features/setting/settingPage";
 import TripsPage from "./features/trips/presentation/tripsPage";
 import UsersPage from "./features/users/presentation/usersPage";
+import RolesPage from "./features/roles/RolesPage";
 
-function App() {  
+function App() {
   const { isLoading } = useAppInitialization();
 
-  if(isLoading)
-    return <Apploading />;
+  if (isLoading) return <Apploading />;
 
   return <AppBody />;
 }
 
 function AppBody() {
   return (
-  <TooltipProvider>   
+    <TooltipProvider>
       <SettingProvider>
         <LoggedInUserProvider>
           <AuthProvider>
             <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
               <AppRoutes />
-              <Toaster 
-                richColors 
-                closeButton 
-                position="top-center" 
-                dir="rtl" 
-              />
+              <Toaster richColors closeButton position="top-center" dir="rtl" />
             </ThemeProvider>
           </AuthProvider>
         </LoggedInUserProvider>
-      </SettingProvider>  
+      </SettingProvider>
     </TooltipProvider>
   );
 }
@@ -79,11 +74,13 @@ function AppRoutes() {
             <Route path="/branches" element={<BranchesPage />} />
             <Route path="/users" element={<UsersPage />} />
             <Route path="/settings" element={<SettingPage />} />
+            <Route path="/roles" element={<RolesPage />} />
+
             <Route path={RoutesService.Profile} element={<PrfilePage />} />
           </Route>
         </Route>
 
-        <Route path="*" element={<NotFoundPage/>} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   );

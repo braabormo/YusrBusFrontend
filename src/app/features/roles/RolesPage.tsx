@@ -13,10 +13,14 @@ import { Building } from "lucide-react";
 import ChangeBranchDialog from "../branches/presentation/changeBranchDialog";
 import TableHeaderRows from "@/app/core/components/table/tableHeaderRows";
 import TablePagination from "@/app/core/components/table/tablePagination";
+import type { Role } from "./data/role";
+import RolesApiService from "@/app/core/networking/services/rolesApiService";
+import { RouteFilterColumns } from "../routes/data/route";
+import TableBodyRow from "@/app/core/components/table/tableBodyRow";
 
 export default function RolesPage() {
   const { entities, refreash, filter, isLoading, currentPage, setCurrentPage } =
-    useEntities<Branch>(new BranchesApiService());
+    useEntities<Role>(new RolesApiService());
   const {
     selectedRow,
     isEditDialogOpen,
@@ -25,7 +29,7 @@ export default function RolesPage() {
     setIsDeleteDialogOpen,
     openEditDialog,
     openDeleteDialog,
-  } = useDialog<Branch>();
+  } = useDialog<Role>();
 
   return (
     <div className="px-5 py-3">
@@ -36,7 +40,7 @@ export default function RolesPage() {
           <ChangeBranchDialog
             entity={undefined}
             mode="create"
-            onSuccess={(newData) => refreash(newData)}
+            onSuccess={(n) => {}}
           />
         }
       />
@@ -52,7 +56,7 @@ export default function RolesPage() {
       />
 
       <SearchInput
-        columnsNames={BranchFilterColumns.columnsNames}
+        columnsNames={RouteFilterColumns.columnsNames}
         onSearch={(condition) => filter(condition)}
       />
 
@@ -74,30 +78,25 @@ export default function RolesPage() {
             />
 
             <TableBody>
-              {entities?.data?.map((branch, i) => (
-                <BranchRow
+              {entities?.data?.map((role, i) => (
+                <TableBodyRow
                   key={i}
                   tableRows={[
-                    { rowName: `#${branch.id}`, rowStyles: "" },
-                    { rowName: branch.name, rowStyles: "font-semibold" },
-                    {
-                      rowName: branch.cityName,
-                      rowStyles:
-                        "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800",
-                    },
+                    { rowName: `#${role.id}`, rowStyles: "" },
+                    { rowName: role.name, rowStyles: "font-semibold" },
                   ]}
                   dropdownMenu={
                     <TableRowActionsMenu
                       type="dropdown"
-                      onEditClicked={() => openEditDialog(branch)}
-                      onDeleteClicked={() => openDeleteDialog(branch)}
+                      onEditClicked={() => openEditDialog(role)}
+                      onDeleteClicked={() => openDeleteDialog(role)}
                     />
                   }
                   contextMenuContent={
                     <TableRowActionsMenu
                       type="context"
-                      onEditClicked={() => openEditDialog(branch)}
-                      onDeleteClicked={() => openDeleteDialog(branch)}
+                      onEditClicked={() => openEditDialog(role)}
+                      onDeleteClicked={() => openDeleteDialog(role)}
                     />
                   }
                 />
@@ -114,14 +113,14 @@ export default function RolesPage() {
 
         {isEditDialogOpen && (
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <ChangeBranchDialog
+            {/* <ChangeBranchDialog
               entity={selectedRow || undefined}
               mode={selectedRow ? "update" : "create"}
               onSuccess={(data) => {
                 refreash(data);
                 setIsEditDialogOpen(false);
               }}
-            />
+            /> */}
           </Dialog>
         )}
 
