@@ -10,13 +10,13 @@ import BranchesApiService from "@/app/core/networking/services/branchesApiServic
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Table, TableBody } from "@/components/ui/table";
 import { Building } from "lucide-react";
-import ChangeBranchDialog from "../branches/presentation/changeBranchDialog";
 import TableHeaderRows from "@/app/core/components/table/tableHeaderRows";
 import TablePagination from "@/app/core/components/table/tablePagination";
 import type { Role } from "./data/role";
 import RolesApiService from "@/app/core/networking/services/rolesApiService";
 import { RouteFilterColumns } from "../routes/data/route";
 import TableBodyRow from "@/app/core/components/table/tableBodyRow";
+import ChangeRoleDialog from "./presentation/changeRoleDialog";
 
 export default function RolesPage() {
   const { entities, refreash, filter, isLoading, currentPage, setCurrentPage } =
@@ -37,10 +37,10 @@ export default function RolesPage() {
         title="إدارة الادوار"
         buttonTitle="إضافة دور جديد"
         createComp={
-          <ChangeBranchDialog
+          <ChangeRoleDialog
             entity={undefined}
             mode="create"
-            onSuccess={(n) => {}}
+            onSuccess={(newData) => refreash(newData)}
           />
         }
       />
@@ -113,14 +113,14 @@ export default function RolesPage() {
 
         {isEditDialogOpen && (
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            {/* <ChangeBranchDialog
+            <ChangeRoleDialog
               entity={selectedRow || undefined}
               mode={selectedRow ? "update" : "create"}
               onSuccess={(data) => {
                 refreash(data);
                 setIsEditDialogOpen(false);
               }}
-            /> */}
+            />
           </Dialog>
         )}
 
