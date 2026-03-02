@@ -34,8 +34,8 @@ export default function RolesPage() {
   return (
     <div className="px-5 py-3">
       <TableHeader
-        title="إدارة الصلاحيات"
-        buttonTitle="إضافة صلاحية جديدة"
+        title="إدارة الادوار"
+        buttonTitle="إضافة دور جديد"
         createComp={
           <ChangeBranchDialog
             entity={undefined}
@@ -48,7 +48,7 @@ export default function RolesPage() {
       <TableCard
         cards={[
           {
-            title: "إجمالي الصلاحيات",
+            title: "إجمالي الادوار",
             data: (entities?.count ?? 0).toString(),
             icon: <Building className="h-4 w-4 text-muted-foreground" />,
           },
