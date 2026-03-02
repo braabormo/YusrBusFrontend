@@ -1,28 +1,30 @@
 {
-    "ar":{
-        "companyName":"حافلات يُسر",
+  "ar": {
+    "companyName": "حافلات يُسر",
 
-        "dashborad":{
-            "income":"مجموع الدخل",
-            "totalPassengers":"مجموع الركاب",
-            "totalTrips":"الرحلات",
-            "growthRate":"معدل النمو",
-            "charts":{
-                "last3months":""
-            }
-        },
-        "sections":{
-            "dashboard":"لوحة المعلومات",
-            "trips":"الرحلات",
-            "passengers":"الركاب",
-            "routes":"الخطوط",
-            "branches":"الفروع",
-            "users":"المستخدمون",
-            "settings":"الاعدادات"
-        },
-        "sideBarUserData":{
-            "account":"الحساب",
-            "logout":"تسجيل الخروج"
-        }
+    "dashborad": {
+      "income": "مجموع الدخل",
+      "totalPassengers": "مجموع الركاب",
+      "totalTrips": "الرحلات",
+      "growthRate": "معدل النمو",
+      "charts": {
+        "last3months": ""
+      }
+    },
+    "sections": {
+      "dashboard": "لوحة المعلومات",
+      "trips": "الرحلات",
+      "passengers": "الركاب",
+      "routes": "الخطوط",
+      "branches": "الفروع",
+      "users": "المستخدمون",
+      "roles": "الادوار",
+
+      "settings": "الاعدادات"
+    },
+    "sideBarUserData": {
+      "account": "الحساب",
+      "logout": "تسجيل الخروج"
     }
+  }
 }

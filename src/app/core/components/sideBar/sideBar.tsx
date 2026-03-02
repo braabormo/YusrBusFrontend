@@ -60,6 +60,11 @@ const data = {
       url: "/users",
       icon: <UserCogIcon />,
     },
+    {
+      title: appLangSections.roles,
+      url: "/roles",
+      icon: <Settings2Icon />,
+    },
   ],
   navSecondary: [
     {
