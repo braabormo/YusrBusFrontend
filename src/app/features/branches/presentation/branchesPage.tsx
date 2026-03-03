@@ -15,11 +15,12 @@ import TableHeaderRows from "../../../core/components/table/tableHeaderRows";
 import TablePagination from "../../../core/components/table/tablePagination";
 import Branch, { BranchFilterColumns } from "../data/branch";
 import ChangeBranchDialog from "./changeBranchDialog";
+import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
+import useUserPermissions from "@/app/core/hooks/useUserPermissions";
 
 export default function BranchesPage() {
-  const { entities, refreash, filter, isLoading, currentPage, setCurrentPage } = useEntities<Branch>(
-    new BranchesApiService(),
-  );
+  const { entities, refreash, filter, isLoading, currentPage, setCurrentPage } =
+    useEntities<Branch>(new BranchesApiService());
   const {
     selectedRow,
     isEditDialogOpen,
@@ -30,11 +31,14 @@ export default function BranchesPage() {
     openDeleteDialog,
   } = useDialog<Branch>();
 
+  const { addPermission, updatePermission, deletePermission } =
+    useUserPermissions(SystemPermissionsResources.Branches);
   return (
     <div className="px-5 py-3">
       <TableHeader
         title="إدارة الفروع"
         buttonTitle="إضافة فرع جديد"
+        isButtonVisible={addPermission}
         createComp={
           <ChangeBranchDialog
             entity={undefined}
@@ -59,7 +63,10 @@ export default function BranchesPage() {
         ]}
       />
 
-      <SearchInput columnsNames={BranchFilterColumns.columnsNames} onSearch={(condition) => filter(condition)}/>
+      <SearchInput
+        columnsNames={BranchFilterColumns.columnsNames}
+        onSearch={(condition) => filter(condition)}
+      />
 
       <div className="rounded-b-xl border shadow-sm overflow-hidden">
         {isLoading ? (
@@ -111,9 +118,14 @@ export default function BranchesPage() {
             </TableBody>
           </Table>
         )}
-        <TablePagination pageSize={100} totalNumber={entities?.count ?? 0} currentPage={currentPage || 1} onPageChanged={setCurrentPage} />
+        <TablePagination
+          pageSize={100}
+          totalNumber={entities?.count ?? 0}
+          currentPage={currentPage || 1}
+          onPageChanged={setCurrentPage}
+        />
 
-        {isEditDialogOpen && (
+        {isEditDialogOpen && updatePermission && (
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
             <ChangeBranchDialog
               entity={selectedRow || undefined}
@@ -126,7 +138,7 @@ export default function BranchesPage() {
           </Dialog>
         )}
 
-        {isDeleteDialogOpen && (
+        {isDeleteDialogOpen && deletePermission && (
           <Dialog
             open={isDeleteDialogOpen}
             onOpenChange={setIsDeleteDialogOpen}
