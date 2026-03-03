@@ -9,9 +9,7 @@ export default class DashboardApiService
 
     async get(): Promise<RequestResult<Dashboard>>
     {
-        const url = `${ApiConstants.baseUrl}/${this.routeName}`;
-        console.log(url);
-        
+        const url = `${ApiConstants.baseUrl}/${this.routeName}`;        
         return await YusrApiHelper.Get<Dashboard>(url);
     }
 }

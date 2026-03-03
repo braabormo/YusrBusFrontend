@@ -50,7 +50,7 @@ function AnimatedNumber({ value }: { value: number }) {
     requestAnimationFrame(animate);
   }, [value]);
 
-  return <span className="tabular-nums">{displayed.toLocaleString()}</span>;
+  return <span className="tabular-nums">{displayed?.toLocaleString()}</span>;
 }
 
 export default function TripAmountSummary({
@@ -59,11 +59,11 @@ export default function TripAmountSummary({
   className,
 }: TripAmountSummaryProps) {
   // Aggregate Calculations (Tickets + Deposits)
-  const ticketTotal = trip.tickets.reduce((s, t) => s + (t.amount ?? 0), 0);
-  const ticketPaid = trip.tickets.reduce((s, t) => s + (t.paidAmount ?? 0), 0);
+  const ticketTotal = trip?.tickets?.reduce((s, t) => s + (t.amount ?? 0), 0);
+  const ticketPaid = trip?.tickets?.reduce((s, t) => s + (t.paidAmount ?? 0), 0);
   
-  const depositTotal = trip.deposits.reduce((s, d) => s + (d.amount ?? 0), 0);
-  const depositPaid = trip.deposits.reduce((s, d) => s + (d.paidAmount ?? 0), 0);
+  const depositTotal = trip?.deposits?.reduce((s, d) => s + (d.amount ?? 0), 0);
+  const depositPaid = trip?.deposits?.reduce((s, d) => s + (d.paidAmount ?? 0), 0);
 
   const grandTotal = ticketTotal + depositTotal;
   const grandPaid = ticketPaid + depositPaid;
@@ -79,7 +79,7 @@ export default function TripAmountSummary({
     setIsPrintingTickets(true);
     try {
       const currentUserId = loggedInUser?.id; 
-      await TripTicketsReportApiService.getReport(trip.id, currentUserId ?? 0);
+      await TripTicketsReportApiService.getReport(trip?.id, currentUserId ?? 0);
     } finally {
       setIsPrintingTickets(false);
     }
@@ -89,7 +89,7 @@ export default function TripAmountSummary({
     setIsPrintingDeposits(true);
     try {
       const currentUserId = loggedInUser?.id; 
-      await TripDepositsReportApiService.getReport(trip.id, commission, currentUserId ?? 0);
+      await TripDepositsReportApiService.getReport(trip?.id, commission, currentUserId ?? 0);
       setIsDialogOpen(false);
     } finally {
       setIsPrintingDeposits(false);
@@ -109,7 +109,7 @@ export default function TripAmountSummary({
           <div className="flex flex-col min-w-fit">
             <span className="text-[10px] text-muted-foreground font-medium uppercase mb-0.5">عدد التذاكر</span>
             <div className="flex items-center gap-2">
-              <span className="text-xl font-bold tracking-tight"><AnimatedNumber value={trip.tickets.length} /></span>
+              <span className="text-xl font-bold tracking-tight"><AnimatedNumber value={trip?.tickets?.length} /></span>
               <TicketIcon className="w-4 h-4 text-muted-foreground/50" />
             </div>
           </div>
@@ -118,7 +118,7 @@ export default function TripAmountSummary({
           <div className="flex flex-col min-w-fit">
             <span className="text-[10px] text-muted-foreground font-medium uppercase mb-0.5">عدد الأمانات</span>
             <div className="flex items-center gap-2">
-              <span className="text-xl font-bold tracking-tight"><AnimatedNumber value={trip.deposits.length} /></span>
+              <span className="text-xl font-bold tracking-tight"><AnimatedNumber value={trip?.deposits?.length} /></span>
               <Archive className="w-4 h-4 text-muted-foreground/50" />
             </div>
           </div>
@@ -182,7 +182,7 @@ export default function TripAmountSummary({
             {SystemPermissions.hasAuth(loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TripTicketsReport, SystemPermissionsActions.Get) && (
               <Button 
                 disabled={isPrintingTickets} 
-                className="h-9 gap-2 text-xs min-w-[110px]" 
+                className="h-9 gap-2 text-xs min-w-27.5" 
                 onClick={handlePrintTripTickets}
               >
                 {isPrintingTickets ? (

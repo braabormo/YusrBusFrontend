@@ -106,7 +106,6 @@ export default class YusrApiHelper
             toast.error(errorData.title || "An error occurred", {
                 description: errorData.detail,
             });
-            console.error(`[Error ${response.status}]: ${errorData.title}`, errorData.detail);
             return {data: undefined, status:response.status, errorTitle: errorData.title, errorDetails: errorData.detail}
         }
 

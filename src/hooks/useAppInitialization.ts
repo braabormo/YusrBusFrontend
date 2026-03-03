@@ -8,12 +8,9 @@ export default function useAppInitialization()
 
     useEffect(()=>{
     const userLang = ApplicationLang.getUserLang();
-      console.log("language is ", userLang);
-
     if(!userLang) 
     {
       ApplicationLang.setUserLang(Languages.ar);
-      console.log("language updated");
     }
 
     setLoading(false);

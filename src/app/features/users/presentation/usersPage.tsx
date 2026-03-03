@@ -49,7 +49,6 @@ export default function UsersPage() {
             entity={undefined}
             mode="create"
             onSuccess={(newData) => {
-              console.log(23232);
               refreash(newData);
             }}
           />

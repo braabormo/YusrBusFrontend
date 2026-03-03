@@ -15,9 +15,8 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
@@ -33,8 +32,6 @@ import ChangeDepositDialog from "./changeDepositDialog";
 import ChangeTicketDialog from "./changeTicketDialog";
 import TripDeposits from "./tripDeposits";
 import TripHeader from "./tripHeader";
-import { useLoggedInUser } from "@/app/core/contexts/loggedInUserContext";
-import TicketReportApiService from "@/app/core/networking/services/reports/ticketReportApiService";
 
 export default function ChangeTripDialog({
   entity,
@@ -57,8 +54,6 @@ export default function ChangeTripDialog({
   const [selectedDeposit, setSelectedDeposit] = useState<Deposit | undefined>(
     undefined,
   );
-  const { loggedInUser } = useLoggedInUser();
-
   const [isTicketDialogOpen, setIsTicketDialogOpen] = useState(false);
   const [selectedPassenger, setSelectedPassenger] = useState<
     Passenger | undefined
@@ -67,11 +62,6 @@ export default function ChangeTripDialog({
     useState(false);
   const [isChangeDepositDialogOpen, setIsChangeDepositDialogOpen] =
     useState(false);
-
-  const handlePrintTicket = async (ticketId: number) => {
-    const currentUserId = loggedInUser?.id;
-    await TicketReportApiService.getTicketReport(ticketId, currentUserId ?? 0);
-  };
 
   // APIs
   const {
@@ -174,14 +164,22 @@ export default function ChangeTripDialog({
 
   if (initLoading) {
     return (
-      <DialogContent dir="rtl">
+      <DialogContent dir="rtl" aria-describedby={undefined}>
+        <DialogHeader className="p-4 border-b flex flex-row items-center justify-between">
+          <div>
+            <DialogTitle>
+              {mode === "create" ? "إضافة" : "تعديل"} رحلة
+            </DialogTitle>
+          </div>
+        </DialogHeader>
         <Loading entityName="الرحلة" />
       </DialogContent>
     );
   }
 
   return (
-    <DialogContent
+    <DialogContent 
+      aria-describedby={undefined}
       dir="rtl"
       className="sm:max-w-[100vw] sm:w-screen sm:h-screen flex flex-col p-0 gap-0 overflow-hidden"
     >
@@ -190,7 +188,6 @@ export default function ChangeTripDialog({
           <DialogTitle>
             {mode === "create" ? "إضافة" : "تعديل"} رحلة
           </DialogTitle>
-          <DialogDescription></DialogDescription>
         </div>
       </DialogHeader>
 
@@ -247,10 +244,6 @@ export default function ChangeTripDialog({
         </aside>
 
         <main className="flex-1 overflow-hidden flex flex-col bg-background relative">
-          <TripAmountSummary
-            tickets={formData.tickets ?? []}
-            deposits={formData.deposits ?? []}
-          />
 
           <TripAmountSummary trip={formData as Trip} />
 
@@ -262,9 +255,6 @@ export default function ChangeTripDialog({
               onSeatClick={handleSeatClick}
               onMoveTicket={(t) => setMovingTicket(t || undefined)}
               movingTicketId={movingTicket?.id || movingTicket?.chairNo}
-              onReportPrint={(ticketId) => {
-                handlePrintTicket(ticketId);
-              }}
               onDeleteTicket={(id) =>
                 setFormData((p) => ({
                   ...p,
