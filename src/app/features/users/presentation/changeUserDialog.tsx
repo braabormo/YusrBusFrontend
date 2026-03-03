@@ -47,7 +47,7 @@ export default function ChangeUserDialog({
   const [formData, setFormData] = useState<Partial<User>>({
     id: entity?.id,
     username: entity?.username || "",
-    password: entity?.password || "",
+    password: "",
     isActive: entity?.isActive ?? true,
     roleId: entity?.roleId,
     role: entity?.role,
@@ -138,7 +138,7 @@ export default function ChangeUserDialog({
         <Field>
           <Label>كلمة المرور</Label>
           <Input
-            value={""}
+            value={formData.password}
             onChange={(e) => {
               setFormData({ ...formData, password: e.target.value });
               clearError("password");
