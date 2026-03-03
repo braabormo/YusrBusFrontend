@@ -4,17 +4,26 @@ import { PlusIcon } from "lucide-react";
 import React from "react";
 import { useState, type ReactElement, type ReactNode } from "react";
 
-export default function TableHeader({ title, buttonTitle, createComp }: { title: string, buttonTitle: string, createComp: ReactNode }) 
-{
+export default function TableHeader({
+  title,
+  buttonTitle,
+  createComp,
+  isButtonVisible = true,
+}: {
+  title: string;
+  buttonTitle: string;
+  createComp: ReactNode;
+  isButtonVisible?: boolean;
+}) {
   const [isDialogOpen, setOpenDialogState] = useState(false);
 
   // we intercept the success event to close the dialog
-  const contentWithClose = React.isValidElement(createComp) 
+  const contentWithClose = React.isValidElement(createComp)
     ? React.cloneElement(createComp as ReactElement<any>, {
         onSuccess: (data: any) => {
           setOpenDialogState(false);
           (createComp.props as any).onSuccess?.(data);
-        }
+        },
       })
     : createComp;
 
@@ -24,16 +33,18 @@ export default function TableHeader({ title, buttonTitle, createComp }: { title:
         <div>
           <h1>{title}</h1>
         </div>
-        <Button variant="default" onClick={() => setOpenDialogState(true)}>
-          <PlusIcon className="h-4 w-4" />
-          {buttonTitle}
-        </Button>
+        {isButtonVisible && (
+          <Button variant="default" onClick={() => setOpenDialogState(true)}>
+            <PlusIcon className="h-4 w-4" />
+            {buttonTitle}
+          </Button>
+        )}
       </div>
-      {isDialogOpen &&
-      <Dialog open={isDialogOpen} onOpenChange={setOpenDialogState}>
-        {contentWithClose}
-      </Dialog>
-      }
+      {isDialogOpen && (
+        <Dialog open={isDialogOpen} onOpenChange={setOpenDialogState}>
+          {contentWithClose}
+        </Dialog>
+      )}
     </>
   );
 }
