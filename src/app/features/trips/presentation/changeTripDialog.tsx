@@ -30,6 +30,8 @@ import ChangeDepositDialog from "./changeDepositDialog";
 import ChangeTicketDialog from "./changeTicketDialog";
 import TripDeposits from "./tripDeposits";
 import TripHeader from "./tripHeader";
+import TicketReportApiService from "@/app/core/networking/services/reports/TicketReportApiService";
+import { useLoggedInUser } from "@/app/core/contexts/loggedInUserContext";
 
 export default function ChangeTripDialog({
   entity,
@@ -52,6 +54,7 @@ export default function ChangeTripDialog({
   const [selectedDeposit, setSelectedDeposit] = useState<Deposit | undefined>(
     undefined,
   );
+  const {loggedInUser} = useLoggedInUser();
   const [isTicketDialogOpen, setIsTicketDialogOpen] = useState(false);
   const [selectedPassenger, setSelectedPassenger] = useState<
     Passenger | undefined
@@ -60,6 +63,11 @@ export default function ChangeTripDialog({
     useState(false);
   const [isChangeDepositDialogOpen, setIsChangeDepositDialogOpen] =
     useState(false);
+
+  const handlePrintTicket = async (ticketId: number) => {
+    const currentUserId = loggedInUser?.id; 
+    await TicketReportApiService.getTicketReport(ticketId, currentUserId ?? 0);
+  };
 
   // APIs
   const {
@@ -252,6 +260,9 @@ export default function ChangeTripDialog({
               onSeatClick={handleSeatClick}
               onMoveTicket={(t) => setMovingTicket(t || undefined)}
               movingTicketId={movingTicket?.id || movingTicket?.chairNo}
+              onReportPrint={(ticketId) => {
+                handlePrintTicket(ticketId)
+              }}
               onDeleteTicket={(id) =>
                 setFormData((p) => ({
                   ...p,

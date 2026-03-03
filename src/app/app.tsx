@@ -21,7 +21,7 @@ import RoutesPage from "./features/routes/presentation/routesPage";
 import SettingPage from "./features/setting/settingPage";
 import TripsPage from "./features/trips/presentation/tripsPage";
 import UsersPage from "./features/users/presentation/usersPage";
-import RolesPage from "./features/roles/RolesPage";
+import RolesPage from "./features/roles/presentation/rolesPage";
 
 function App() {
   const { isLoading } = useAppInitialization();

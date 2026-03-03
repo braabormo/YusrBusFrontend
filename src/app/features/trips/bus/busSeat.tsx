@@ -15,6 +15,7 @@ export default function BusSeat({
   highlighted,
   isDimmed,
   isMoveTarget,
+  onReportPrint,
   onDeleteTicket,
   onMoveTicket,
   onHoverData,
@@ -171,6 +172,16 @@ export default function BusSeat({
           >
             <span>نقل المقعد</span>
             <MoveHorizontal className="h-4 w-4 text-blue-600" />
+          </ContextMenuItem>
+          <ContextMenuItem
+            className="flex justify-between items-center cursor-pointer text-red-600"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (ticket?.id && onReportPrint) onReportPrint(ticket.id);
+            }}
+          >
+            <span>طباعة التذكرة</span>
+            <Trash2 className="h-4 w-4" />
           </ContextMenuItem>
           <ContextMenuItem
             className="flex justify-between items-center cursor-pointer text-red-600"

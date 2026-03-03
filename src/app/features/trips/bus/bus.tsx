@@ -9,6 +9,7 @@ import BusLoadingSkeleton from "./busLoadingSkeleton";
 export default function BusLayout({
   seats,
   tickets,
+  onReportPrint,
   onSeatClick,
   onDeleteTicket,
   onMoveTicket,
@@ -53,6 +54,7 @@ export default function BusLayout({
         seat={seat}
         ticket={ticket}
         onClick={onSeatClick}
+        onReportPrint={onReportPrint}
         onDeleteTicket={onDeleteTicket}
         onMoveTicket={onMoveTicket}
         isMoveTarget={!!movingTicketId && !ticket}

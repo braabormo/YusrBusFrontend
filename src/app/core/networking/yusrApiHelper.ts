@@ -60,6 +60,33 @@ export default class YusrApiHelper
         return YusrApiHelper.handleResponse<T>(response, successMessage);
     }
 
+    static async PostBlob(url: string, body?: unknown, options?: RequestInit): Promise<Blob | null> 
+    {
+        const isFormData = body instanceof FormData;
+        const headers = {
+            ...(options?.headers || {}),
+            ...(!isFormData && body ? { 'Content-Type': 'application/json' } : {}),
+        };
+
+        const response = await fetch(url, {
+            method: 'POST',
+            credentials: 'include',
+            headers,
+            body: isFormData ? body : JSON.stringify(body),
+            ...options,
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            toast.error(errorData.title || "حدث خطأ أثناء تحميل التقرير", {
+                description: errorData.detail || "يرجى المحاولة مرة أخرى لاحقاً",
+            });
+            return null;
+        }
+
+        return await response.blob();
+    }
+
     private static async handleResponse<T>(response: Response, successMessage?: string): Promise<RequestResult<T>> 
     {
         if (response.status === 401) {
