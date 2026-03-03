@@ -2,14 +2,13 @@ import { useBusLogic } from "@/app/core/hooks/useBusLogic";
 import { Button } from "@/components/ui/button";
 import { Baby, Plus, ShipWheel, XCircle } from "lucide-react";
 import type { Ticket } from "../data/ticket";
+import BusLoadingSkeleton from "./busLoadingSkeleton";
 import BusSeat from "./busSeat";
 import type { BusProps, SeatType } from "./busTypes";
-import BusLoadingSkeleton from "./busLoadingSkeleton";
 
 export default function BusLayout({
   seats,
   tickets,
-  onReportPrint,
   onSeatClick,
   onDeleteTicket,
   onMoveTicket,
@@ -54,7 +53,6 @@ export default function BusLayout({
         seat={seat}
         ticket={ticket}
         onClick={onSeatClick}
-        onReportPrint={onReportPrint}
         onDeleteTicket={onDeleteTicket}
         onMoveTicket={onMoveTicket}
         isMoveTarget={!!movingTicketId && !ticket}

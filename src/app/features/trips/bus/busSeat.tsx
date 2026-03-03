@@ -1,12 +1,16 @@
-import { cn } from "@/lib/utils";
-import type { SeatProps } from "./busTypes";
 import {
   ContextMenu,
   ContextMenuContent,
+  ContextMenuGroup,
   ContextMenuItem,
+  ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { Trash2, MoveHorizontal } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { MoveHorizontal, Printer, Trash2 } from "lucide-react";
+import type { SeatProps } from "./busTypes";
+import TicketReportApiService from "@/app/core/networking/services/reports/ticketReportApiService";
+import { useLoggedInUser } from "@/app/core/contexts/loggedInUserContext";
 
 export default function BusSeat({
   seat,
@@ -15,15 +19,21 @@ export default function BusSeat({
   highlighted,
   isDimmed,
   isMoveTarget,
-  onReportPrint,
   onDeleteTicket,
   onMoveTicket,
   onHoverData,
 }: SeatProps) {
   const isOccupied = !!ticket;
 
+  const {loggedInUser} = useLoggedInUser();
+
   const handleContextMenuAction = (e: React.MouseEvent) => {
     if (!isOccupied) e.preventDefault();
+  };
+
+  const handlePrintTicket = async (ticketId: number) => {
+    const currentUserId = loggedInUser?.id; 
+    await TicketReportApiService.getTicketReport(ticketId, currentUserId ?? 0);
   };
 
   return (
@@ -165,33 +175,42 @@ export default function BusSeat({
       </ContextMenuTrigger>
 
       {isOccupied && (
-        <ContextMenuContent className="w-40">
+        <ContextMenuContent className="w-52">
+          {/* Action Group */}
+          <ContextMenuGroup>
+            <ContextMenuItem
+              onClick={() => onMoveTicket?.(ticket)}
+              className="gap-2"
+            >
+              <MoveHorizontal className="h-4 w-4 text-muted-foreground" />
+              <span className="flex-1">نقل المقعد</span>
+            </ContextMenuItem>
+
+            <ContextMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                if (ticket?.id) 
+                  handlePrintTicket(ticket.id);
+              }}
+              className="gap-2"
+            >
+              <Printer className="h-4 w-4 text-muted-foreground" />
+              <span className="flex-1">طباعة التذكرة</span>
+            </ContextMenuItem>
+          </ContextMenuGroup>
+
+          <ContextMenuSeparator />
+
+          {/* Destructive Group */}
           <ContextMenuItem
-            className="flex justify-between items-center cursor-pointer"
-            onClick={() => onMoveTicket?.(ticket)}
-          >
-            <span>نقل المقعد</span>
-            <MoveHorizontal className="h-4 w-4 text-blue-600" />
-          </ContextMenuItem>
-          <ContextMenuItem
-            className="flex justify-between items-center cursor-pointer text-red-600"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (ticket?.id && onReportPrint) onReportPrint(ticket.id);
-            }}
-          >
-            <span>طباعة التذكرة</span>
-            <Trash2 className="h-4 w-4" />
-          </ContextMenuItem>
-          <ContextMenuItem
-            className="flex justify-between items-center cursor-pointer text-red-600"
             onClick={(e) => {
               e.stopPropagation();
               if (ticket?.id && onDeleteTicket) onDeleteTicket(ticket.id);
             }}
+            className="gap-2 text-destructive focus:text-destructive"
           >
-            <span>حذف التذكرة</span>
             <Trash2 className="h-4 w-4" />
+            <span className="flex-1">حذف التذكرة</span>
           </ContextMenuItem>
         </ContextMenuContent>
       )}

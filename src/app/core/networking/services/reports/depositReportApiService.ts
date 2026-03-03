@@ -9,7 +9,7 @@ export default class DepositReportApiService
     {
         const url = `${ApiConstants.baseUrl}/Reports/Deposit`;
         const requestBody = {
-            ticketId: depositId,
+            depositId: depositId,
             userId: userId
         };
 

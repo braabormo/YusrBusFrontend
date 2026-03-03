@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Archive, ArrowLeft, Banknote, Box, Edit, PackagePlus, Trash2 } from "lucide-react";
+import { Archive, ArrowLeft, Banknote, Box, Edit, PackagePlus, Printer, Trash2 } from "lucide-react";
 import type { Deposit } from "../data/deposit";
+import DepositReportApiService from "@/app/core/networking/services/reports/depositReportApiService";
+import { useLoggedInUser } from "@/app/core/contexts/loggedInUserContext";
 
 type TripDepositsParams = {
   deposits: Deposit[];
@@ -10,6 +12,14 @@ type TripDepositsParams = {
 };
 
 export default function TripDeposits({ deposits, onDepositDeleted, onDepositDialogOpened }: TripDepositsParams) {
+
+  const {loggedInUser} = useLoggedInUser();
+
+  const handlePrintDeposit = async (depositId: number) => {
+    const currentUserId = loggedInUser?.id; 
+    await DepositReportApiService.getDepositReport(depositId, currentUserId ?? 0);
+  };
+
   return (
     <div className="flex flex-col rounded-lg border bg-card shadow-sm overflow-hidden h-full border-border/50">
       {/* Header */}
@@ -95,6 +105,14 @@ export default function TripDeposits({ deposits, onDepositDeleted, onDepositDial
 
                   {/* Hover Actions */}
                   <div className="flex items-center gap-0.5 ml-1 shrink-0">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => dep.id? handlePrintDeposit(dep.id) : undefined}
+                      className="w-7 h-7 rounded-md hover:bg-primary/10 hover:text-primary transition-colors"
+                    >
+                      <Printer className="w-3.5 h-3.5" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"
