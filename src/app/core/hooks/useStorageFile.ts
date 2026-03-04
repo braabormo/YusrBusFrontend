@@ -1,9 +1,11 @@
 import { useRef } from "react";
 import { StorageFile, StorageFileStatus } from "../data/storageFile";
-import type { Setting } from "../data/setting";
 
-export default function useStorageFile(setFormData: React.Dispatch<React.SetStateAction<Setting>>) {
-
+export default function useStorageFile<T>(
+  setFormData: React.Dispatch<React.SetStateAction<T>>,
+  fieldName: keyof T
+)
+{
     const fileInputRef = useRef<HTMLInputElement>(null);
     
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +36,7 @@ export default function useStorageFile(setFormData: React.Dispatch<React.SetStat
 
             setFormData((prev) => ({
             ...prev,
-            logo: new StorageFile({
+            [fieldName]: new StorageFile({
                 url: base64String, 
                 base64File: base64Data, 
                 extension: `.${file.name.split(".").pop()}`,
@@ -46,16 +48,51 @@ export default function useStorageFile(setFormData: React.Dispatch<React.SetStat
         reader.readAsDataURL(file);
     };
 
-    const handleRemoveLogo = () => {
-        setFormData((prev) => ({
-        ...prev,
-        logo: prev.logo
-            ? { ...prev.logo, status: StorageFileStatus.Delete, url: null }
-            : undefined,
-        }));
+    const handleRemoveFile = () => {
+        setFormData((prev) => {
+        const currentFile = prev[fieldName] as any;
+        return {
+            ...prev,
+            [fieldName]: currentFile?.status === StorageFileStatus.New 
+            ? undefined 
+            : { ...currentFile, status: StorageFileStatus.Delete },
+        };
+        });
         if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
-  return {fileInputRef, handleFileChange, handleRemoveLogo};
+    const handleDownload = async (e: React.MouseEvent, imageSrc: string, contentType : string) => {
+        e.stopPropagation();
+        if (!imageSrc) return;
+
+        try {
+        // 1. Fetch the image data
+        const response = await fetch(imageSrc);
+        const blob = await response.blob();
+        
+        // 2. Create a local URL for the blob
+        const blobUrl = window.URL.createObjectURL(blob);
+        
+        // 3. Create the temporary link
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.download = `img.${
+            contentType?.split("/")[1] || "png"
+        }`;
+        
+        document.body.appendChild(link);
+        link.click();
+        
+        // 4. Cleanup
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(blobUrl);
+        } catch (error) {
+        console.error("Download failed:", error);
+        // Fallback: If fetch fails (CORS issue), try opening in a new tab instead of the current one
+        window.open(imageSrc, "_blank");
+        }
+    };
+
+  return {fileInputRef, handleFileChange, handleRemoveFile, handleDownload};
 
 }

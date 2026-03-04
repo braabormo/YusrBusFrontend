@@ -1,5 +1,6 @@
 import { useSetting } from "@/app/core/contexts/settingContext";
 import { Setting } from "@/app/core/data/setting";
+import { StorageFileStatus } from "@/app/core/data/storageFile";
 import useCurrencies from "@/app/core/hooks/useCurrencies";
 import {
   useFormValidation,
@@ -60,8 +61,8 @@ export default function SettingPage() {
   const [initLoading, setInitLoading] = useState(true);
   const [formData, setFormData] = useState<Setting>(new Setting());
   const { currencies, fetchingCurrencies } = useCurrencies();
-  const { fileInputRef, handleFileChange, handleRemoveLogo } =
-    useStorageFile(setFormData);
+  const { fileInputRef, handleFileChange, handleRemoveFile } =
+    useStorageFile<Setting>(setFormData, 'logo');
   const { isInvalid, validate, clearError, errorInputClass, getError } =
     useFormValidation(formData, validationRules);
   const { updateSetting } = useSetting();
@@ -124,7 +125,7 @@ export default function SettingPage() {
           <div className="flex flex-col md:flex-row items-center gap-6 p-4 rounded-lg border bg-muted/30">
             <Avatar className="h-28 w-28 border-4 border-background shadow">
               <AvatarImage
-                src={formData.logo?.url || ""}
+                src={formData.logo?.status !== StorageFileStatus.Delete? formData.logo?.url || "" : ""}
                 className="object-cover"
               />
               <AvatarFallback className="bg-secondary">
@@ -153,7 +154,7 @@ export default function SettingPage() {
                     type="button"
                     variant="destructive"
                     size="sm"
-                    onClick={handleRemoveLogo}
+                    onClick={handleRemoveFile}
                   >
                     <Trash2 className="h-4 w-4 ml-2" />
                     حذف

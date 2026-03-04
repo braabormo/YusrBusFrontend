@@ -1,16 +1,20 @@
 import ChangeDataDialog from "@/app/core/components/dialogs/ChangeDataDialog";
 import SearchableSelect from "@/app/core/components/select/searchableSelect";
 import { CityFilterColumns } from "@/app/core/data/city";
-import { StorageFile, StorageFileStatus } from "@/app/core/data/storageFile";
+import { StorageFileStatus } from "@/app/core/data/storageFile";
 import useCities from "@/app/core/hooks/useCities";
 import {
   useFormValidation,
   type ValidationRule,
 } from "@/app/core/hooks/useFormValidation";
+import useStorageFile from "@/app/core/hooks/useStorageFile";
 import { Validators } from "@/app/core/utils/validators";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Download, Maximize2, Upload, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { Deposit } from "../data/deposit";
 
@@ -24,6 +28,10 @@ export default function ChangeDepositDialog({
   onSuccess,
 }: ChangeDepositDialogProps) {
   const [formData, setFormData] = useState<Partial<Deposit>>(entity || {});
+  const { fileInputRef, handleFileChange, handleRemoveFile, handleDownload } = useStorageFile(
+    setFormData,
+    "image"
+  );
   const { cities, fetchingCities, filterCities } = useCities();
 
   useEffect(() => {
@@ -83,6 +91,14 @@ export default function ChangeDepositDialog({
     if (!validate()) return;
     onSuccess?.(formData as Deposit);
   }
+
+  const currentImage = formData.image;
+  
+  const showPreview = currentImage?.url && currentImage.status !== StorageFileStatus.Delete;
+  const imageSrc = currentImage?.url || 
+    (currentImage?.base64File ? `data:${currentImage.contentType};base64,${currentImage.base64File}` : "");
+
+  
 
   return (
     <ChangeDataDialog title="بيانات الأمانة" onSaveHandler={onSaveHandler}>
@@ -269,29 +285,84 @@ export default function ChangeDepositDialog({
         </Field>
       </div>
 
-      <Field>
+      <Field className="space-y-2">
         <Label>صورة الأمانة</Label>
+        
+        {showPreview ? (
+          <div className="relative w-full max-w-50 group">
+            
+            <Dialog>
+              <DialogTrigger asChild>
+                <div 
+                  className="cursor-zoom-in overflow-hidden rounded-md border aspect-square relative hover:opacity-90 transition-opacity"
+                  title="اضغط للتكبير"
+                >
+                  <img
+                    src={imageSrc}
+                    alt="Preview"
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Maximize2 className="w-8 h-8 text-white drop-shadow-md" />
+                  </div>
+                </div>
+              </DialogTrigger>
+
+              <DialogContent className="sm:max-w-[80vw] sm:w-[80vw] sm:h-[80vh] p-0 border-none shadow-none flex items-center justify-center outline-none">
+                <div className="relative w-full h-full flex items-center justify-center">
+                    <img 
+                    src={imageSrc} 
+                    alt="Full Preview" 
+                    className="w-auto h-auto sm:max-w-[80vw] sm:w-[80vw] sm:h-[80vh] object-contain rounded-md shadow-2xl" 
+                    />
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Button
+              type="button"
+              size="icon"
+              className="absolute -top-3 right-8 h-8 w-8 rounded-full shadow-md z-20 bg-blue-600 hover:bg-blue-700 text-white border-2 border-background"
+              onClick={(e) => handleDownload(e, imageSrc, currentImage.contentType ?? '')}
+              title="تحميل الصورة"
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+
+            <Button
+              type="button"
+              size="icon"
+              className="
+                absolute -top-3 -right-3 h-8 w-8 rounded-full shadow-md z-20 
+                bg-red-600 hover:bg-red-700 text-white 
+                border-2 border-background
+              "
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemoveFile();
+              }}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        ) 
+        : 
+        (
+          <div 
+            onClick={() => fileInputRef.current?.click()}
+            className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-md cursor-pointer hover:bg-muted/50 transition-colors"
+          >
+            <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+            <span className="text-sm text-muted-foreground font-medium">رفع صورة الأمانة</span>
+          </div>
+        )}
+
         <Input
           type="file"
+          ref={fileInputRef}
+          className="hidden"
           accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = () => {
-              const base64 = (reader.result as string).split(",")[1];
-              setFormData((prev) => ({
-                ...prev,
-                image: new StorageFile({
-                  base64File: base64,
-                  extension: file.name.split(".").pop() ?? null,
-                  contentType: file.type,
-                  status: StorageFileStatus.New,
-                }),
-              }));
-            };
-            reader.readAsDataURL(file);
-          }}
+          onChange={handleFileChange}
         />
       </Field>
 

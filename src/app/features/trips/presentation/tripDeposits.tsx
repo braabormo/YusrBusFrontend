@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Archive, ArrowLeft, Banknote, Box, Edit, Loader2, PackagePlus, Printer, Trash2 } from "lucide-react";
 import { useState } from "react";
 import type { Deposit } from "../data/deposit";
+import { StorageFileStatus } from "@/app/core/data/storageFile";
 
 type TripDepositsParams = {
   deposits: Deposit[];
@@ -64,6 +65,7 @@ export default function TripDeposits({ deposits, onDepositDeleted, onDepositDial
               const remaining = amount - paid;
               const isFullyPaid = remaining <= 0;
               const isPrinting = printingId === dep.id;
+              const img = dep.image?.status !== StorageFileStatus.Delete ? dep.image?.url : undefined;
               
               return (
                 <div dir="rtl" key={i} className="group relative flex items-center gap-2 p-2 hover:bg-muted/30 transition-colors">
@@ -71,10 +73,10 @@ export default function TripDeposits({ deposits, onDepositDeleted, onDepositDial
                   {/* Column 1: Info (Flexible) */}
                   <div className="flex flex-1 items-center gap-2 min-w-0">
                     <div className="shrink-0">
-                      {dep.image?.url || dep.image?.base64File ? (
+                      {img ? (
                         <img
                           alt=""
-                          src={dep.image.url || `data:${dep.image.contentType};base64,${dep.image.base64File}`}
+                          src={img}
                           className="w-9 h-9 rounded-md object-cover border bg-white shadow-sm"
                         />
                       ) : (

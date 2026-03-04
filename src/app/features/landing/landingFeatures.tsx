@@ -1,7 +1,8 @@
 import ZoomableImage from "@/app/core/components/images/zoomableImage";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, CheckCircle2, Link, type LucideProps } from "lucide-react";
+import { ArrowLeft, CheckCircle2, type LucideProps } from "lucide-react";
+import { Link } from "react-router-dom";
 
 
 export default function LandingFeatures({openLightbox, features}: {openLightbox: (srcLight: string, srcDark: string, alt: string) => void, features: {
