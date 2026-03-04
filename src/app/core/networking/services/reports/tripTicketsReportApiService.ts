@@ -4,18 +4,24 @@ import { ReportHelper } from "./reportHelper";
 
 export default class TripTicketsReportApiService
 {
-    static async getReport(tripId: number, userId: number) 
+    static async getReport(id: number, userId: number, viewAction: "display" | "share" = "display", filename: string = '') 
     {
         const url = `${ApiConstants.baseUrl}/Reports/TripTickets`;
         const requestBody = { 
-            tripId: tripId,
+            tripId: id,
             userId: userId 
         };
 
         const blob = await YusrApiHelper.PostBlob(url, requestBody);
         
-        if (blob) {
+        if(blob == undefined)
+            return;
+
+        if (viewAction === "display") {
             ReportHelper.displayPdf(blob);
+        }
+        if (viewAction === "share") {
+            ReportHelper.handleShareTicket(blob, filename);
         }
     }  
 }

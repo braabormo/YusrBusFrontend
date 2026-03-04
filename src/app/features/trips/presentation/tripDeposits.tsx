@@ -5,7 +5,7 @@ import { useLoggedInUser } from "@/app/core/contexts/loggedInUserContext";
 import DepositReportApiService from "@/app/core/networking/services/reports/depositReportApiService";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Archive, ArrowLeft, Banknote, Box, Edit, Loader2, PackagePlus, Printer, Trash2 } from "lucide-react";
+import { Archive, ArrowLeft, Banknote, Box, Edit, Loader2, PackagePlus, Printer, Share2, Trash2 } from "lucide-react";
 import { useState } from "react";
 import type { Deposit } from "../data/deposit";
 import { StorageFileStatus } from "@/app/core/data/storageFile";
@@ -20,6 +20,7 @@ export default function TripDeposits({ deposits, onDepositDeleted, onDepositDial
 
   const {loggedInUser} = useLoggedInUser();
   const [printingId, setPrintingId] = useState<number | null>(null);
+  const [sharingId, setSharingId] = useState<number | null>(null); // Added state
 
   const handlePrintDeposit = async (depositId: number) => {
     setPrintingId(depositId);
@@ -28,6 +29,16 @@ export default function TripDeposits({ deposits, onDepositDeleted, onDepositDial
       await DepositReportApiService.getReport(depositId, currentUserId ?? 0);
     } finally {
       setPrintingId(null);
+    }
+  };
+
+  const handleShareDeposit = async (depositId: number) => {
+    setSharingId(depositId);
+    try {
+      const currentUserId = loggedInUser?.id;
+      await DepositReportApiService.getReport(depositId, currentUserId ?? 0, "share", `deposit_${depositId}`);
+    } finally {
+      setSharingId(null);
     }
   };
 
@@ -116,42 +127,64 @@ export default function TripDeposits({ deposits, onDepositDeleted, onDepositDial
                     )}
                   </div>
 
-                  {/* Hover Actions */}
-                  <div className="flex items-center gap-0.5 ml-1 shrink-0">
-                    {SystemPermissions.hasAuth(loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.DepositReport, SystemPermissionsActions.Get) && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        disabled={isPrinting}
-                        onClick={() => dep.id? handlePrintDeposit(dep.id) : undefined}
-                        className="w-7 h-7 rounded-md hover:bg-primary/10 hover:text-primary transition-colors"
-                      >
-                        {isPrinting ? (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
-                        ) : (
-                          <Printer className="w-3.5 h-3.5" />
-                        )}
-                      </Button>
-                    )}
+                  <div className="grid grid-cols-2 gap-1 ml-1 shrink-0">
                     <Button
                       variant="ghost"
                       size="icon"
-                      disabled={isPrinting}
+                      disabled={isPrinting || sharingId === dep.id}
                       onClick={() => onDepositDialogOpened(dep)}
                       className="w-7 h-7 rounded-md hover:bg-primary/10 hover:text-primary transition-colors"
                     >
                       <Edit className="w-3.5 h-3.5" />
                     </Button>
+
                     <Button
                       variant="ghost"
                       size="icon"
-                      disabled={isPrinting}
+                      disabled={isPrinting || sharingId === dep.id}
                       onClick={() => onDepositDeleted(i)}
-                      className="w-7 h-7 rounded-md hover:bg-destructive/30 hover:text-destructive transition-colors"
+                      className="w-7 h-7 rounded-md hover:bg-destructive/10 hover:text-destructive transition-colors"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </Button>
+
+                    {SystemPermissions.hasAuth(loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.DepositReport, SystemPermissionsActions.Get) ? (
+                      <>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          disabled={isPrinting || sharingId === dep.id}
+                          onClick={() => dep.id && handlePrintDeposit(dep.id)}
+                          className="w-7 h-7 rounded-md hover:bg-primary/10 hover:text-primary transition-colors"
+                        >
+                          {isPrinting ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                          ) : (
+                            <Printer className="w-3.5 h-3.5" />
+                          )}
+                        </Button>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          disabled={isPrinting || sharingId === dep.id}
+                          onClick={() => dep.id && handleShareDeposit(dep.id)}
+                          className="w-7 h-7 rounded-md hover:bg-blue-500/10 hover:text-blue-600 transition-colors"
+                        >
+                          {sharingId === dep.id ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />
+                          ) : (
+                            <Share2 className="w-3.5 h-3.5" />
+                          )}
+                        </Button>
+                      </>
+                    ) 
+                    : 
+                    (
+                      <div className="col-span-2" />
+                    )}
                   </div>
+
                 </div>
               );
             })

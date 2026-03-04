@@ -3,20 +3,26 @@ import YusrApiHelper from "../../yusrApiHelper";
 import { ReportHelper } from "./reportHelper";
 
 
-export default class DepositReportApiService 
+export default class DepositReportApiService
 {
-    static async getReport(depositId: number, userId: number) 
+    static async getReport(id: number, userId: number, viewAction: "display" | "share" = "display", filename: string = '') 
     {
         const url = `${ApiConstants.baseUrl}/Reports/Deposit`;
         const requestBody = {
-            depositId: depositId,
+            depositId: id,
             userId: userId
         };
 
         const blob = await YusrApiHelper.PostBlob(url, requestBody);
 
-        if (blob) {
+        if(blob == undefined)
+            return;
+
+        if (viewAction === "display") {
             ReportHelper.displayPdf(blob);
+        }
+        if (viewAction === "share") {
+            ReportHelper.handleShareTicket(blob, filename);
         }
     }
 }

@@ -60,7 +60,7 @@ export default class YusrApiHelper
         return YusrApiHelper.handleResponse<T>(response, successMessage);
     }
 
-    static async PostBlob(url: string, body?: unknown, options?: RequestInit): Promise<Blob | null> 
+    static async PostBlob(url: string, body?: unknown, options?: RequestInit): Promise<Blob | undefined> 
     {
         const isFormData = body instanceof FormData;
         const headers = {
@@ -81,7 +81,7 @@ export default class YusrApiHelper
             toast.error(errorData.title || "حدث خطأ أثناء تحميل التقرير", {
                 description: errorData.detail || "يرجى المحاولة مرة أخرى لاحقاً",
             });
-            return null;
+            return undefined;
         }
 
         return await response.blob();
