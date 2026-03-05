@@ -7,7 +7,6 @@ import {
   type ValidationRule,
 } from "@/app/core/hooks/useFormValidation";
 import ApiConstants from "@/app/core/networking/apiConstants";
-import SettingsApiService from "@/app/core/networking/services/settingsApiService";
 import YusrApiHelper from "@/app/core/networking/yusrApiHelper";
 import { Validators } from "@/app/core/utils/validators";
 import { Button } from "@/components/ui/button";
@@ -25,8 +24,9 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type User from "../users/data/user";
 
-import placeholderImg from "@/assets/placeholder.svg";
 import { SystemPermissions } from "@/app/core/auth/systemPermissions";
+import type { Setting } from "@/app/core/data/setting";
+import placeholderImg from "@/assets/placeholder.svg";
 
 export function LoginForm({
   className,
@@ -71,27 +71,17 @@ export function LoginForm({
 
     setLoading(true);
 
-    const result = await YusrApiHelper.Post<User>(
-      `${ApiConstants.baseUrl}/Login`,
-      request,
-    );
+    const result = await YusrApiHelper.Post<{user: User, setting: Setting}>(`${ApiConstants.baseUrl}/Login`, request);
 
-    if (result.status === 200) {
-      login(result.data);
-
-      const settingPromise = new SettingsApiService().Get();
-      settingPromise.then((setting) => {
-        if (setting.data) updateSetting(setting.data);
-      });
-
-      if (result.data) {
-        updateLoggedInUser(result.data);
-      }
+    if (result.status === 200 && result.data) {
+      login(result.data.user);
+      updateLoggedInUser(result.data.user);
+      updateSetting(result.data.setting);
 
       const origin =
         location.state?.from?.pathname ||
         SystemPermissions.getFirstPermissionPath(
-          result.data?.role.permissions || [],
+          result.data.user.role.permissions || [],
         );
 
       setLoading(false);
@@ -99,7 +89,8 @@ export function LoginForm({
       setTimeout(() => {
         navigate(origin, { replace: true });
       }, 10);
-    } else {
+    } 
+    else {
       setLoading(false);
     }
   };
