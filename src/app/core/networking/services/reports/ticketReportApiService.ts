@@ -4,18 +4,18 @@ import { ReportHelper } from "./reportHelper";
 
 export default class TicketReportApiService
 {
-    static async getReport(id: number, userId: number, viewAction: "display" | "share" = "display", filename: string = '') 
+    static async getReport(id: number, checkIn: boolean, viewAction: "display" | "share" = "display", filename: string = '') : Promise<boolean>
     {
         const url = `${ApiConstants.baseUrl}/Reports/Ticket`;
         const requestBody = { 
             ticketId: id,
-            userId: userId 
+            checkIn : checkIn 
         };
 
         const blob = await YusrApiHelper.PostBlob(url, requestBody);
 
-        if(blob == undefined)
-            return;
+        if (blob == undefined) 
+            return false;
         
         if (viewAction === "display") {
             ReportHelper.displayPdf(blob);
@@ -23,5 +23,7 @@ export default class TicketReportApiService
         if (viewAction === "share") {
             ReportHelper.handleShareTicket(blob, filename);
         }
+
+        return true;
     }  
 }

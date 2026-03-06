@@ -17,8 +17,9 @@ export class Ticket extends BaseEntity
     public fromCityName? : string;
     public toCityName? : string;
     public issueCityName? : string;
-    public createdById? : number;
+    public createdById! : number;
     public printedById? : number;
+    public checkedIn! : boolean;
 
     public passenger? : Passenger;
     public createdBy? : User;

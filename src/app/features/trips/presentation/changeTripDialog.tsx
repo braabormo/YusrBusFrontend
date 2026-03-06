@@ -147,6 +147,15 @@ export default function ChangeTripDialog({
     setIsTicketDialogOpen(false);
   };
 
+  const handleTicketCheckInUpdate = (ticketId: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      tickets: prev.tickets?.map((t) =>
+        t.id === ticketId ? { ...t, checkedIn: true } : t
+      ),
+    }));
+  };
+
   const handleDepositOpen = (deposit: Deposit | undefined) => {
     if (deposit == undefined) {
       deposit = new Deposit({
@@ -261,6 +270,7 @@ export default function ChangeTripDialog({
               seats={Array.from({ length: 44 }, (_, i) => ({ id: i + 1 }))}
               tickets={formData.tickets ?? []}
               onSeatClick={handleSeatClick}
+              onCheckInUpdate={handleTicketCheckInUpdate}
               onMoveTicket={(t) => setMovingTicket(t || undefined)}
               movingTicketId={movingTicket?.id || movingTicket?.chairNo}
               onDeleteTicket={(id) =>

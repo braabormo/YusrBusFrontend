@@ -10,6 +10,7 @@ export default function BusLayout({
   seats,
   tickets,
   onSeatClick,
+  onCheckInUpdate,
   onDeleteTicket,
   onMoveTicket,
   movingTicketId,
@@ -53,6 +54,7 @@ export default function BusLayout({
         seat={seat}
         ticket={ticket}
         onClick={onSeatClick}
+        onCheckInUpdate={onCheckInUpdate}
         onDeleteTicket={onDeleteTicket}
         onMoveTicket={onMoveTicket}
         isMoveTarget={!!movingTicketId && !ticket}

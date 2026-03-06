@@ -12,6 +12,7 @@ export interface SeatProps {
   highlighted?: boolean;
   isDimmed?: boolean;
   isMoveTarget?: boolean;
+  onCheckInUpdate?: (ticketId: number) => void;
   onDeleteTicket?: (ticketId: number) => void;
   onMoveTicket?: (ticket: Ticket) => void;
   onHoverData?: (type: 'nationality' | 'from' | 'to' | 'amount' | null, value?: string) => void;
@@ -21,6 +22,7 @@ export interface BusProps {
   seats: SeatType[];
   tickets: Ticket[];
   onSeatClick: (seat: SeatType) => void;
+  onCheckInUpdate?: (ticketId: number) => void;
   onDeleteTicket?: (ticketId: number) => void;
   onMoveTicket?: (ticket: Ticket) => void;
   movingTicketId?: number | string;

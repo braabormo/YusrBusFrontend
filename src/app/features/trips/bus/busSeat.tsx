@@ -12,7 +12,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { cn } from "@/lib/utils";
-import { MoveHorizontal, Printer, Share2, Trash2 } from "lucide-react";
+import { CheckCircle2, MoveHorizontal, Printer, Share2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { SeatProps } from "./busTypes";
 
@@ -23,36 +23,49 @@ export default function BusSeat({
   highlighted,
   isDimmed,
   isMoveTarget,
+  onCheckInUpdate,
   onDeleteTicket,
   onMoveTicket,
   onHoverData,
 }: SeatProps) {
   const isOccupied = !!ticket;
-
-  const {loggedInUser} = useLoggedInUser();
+  const isCheckedIn = ticket?.checkedIn;
+  const { loggedInUser } = useLoggedInUser();
 
   const handleContextMenuAction = (e: React.MouseEvent) => {
     if (!isOccupied) e.preventDefault();
   };
 
-  const handlePrintTicket = async (ticketId?: number) => {
-    if(ticketId == undefined){
+  const handlePrintTicket = async (checkIn: boolean) => {
+    if (ticket?.id == undefined) {
       toast.error("لم يتم حفظ التغييرات بعد");
       return;
     }
 
-    const currentUserId = loggedInUser?.id; 
-    await TicketReportApiService.getReport(ticketId, currentUserId ?? 0);
+    const result = await TicketReportApiService.getReport(ticket.id, checkIn);
+
+    if (result && checkIn) {
+      onCheckInUpdate?.(ticket?.id);
+      toast.success("تم التحضير والطباعة بنجاح");
+    }
   };
 
-  const handleShareTicket = async (ticketId?: number) => {
-    if(ticketId == undefined){
+  const handleShareTicket = async (checkIn: boolean) => {
+    if (ticket?.id == undefined) {
       toast.error("لم يتم حفظ التغييرات بعد");
       return;
     }
 
-    const currentUserId = loggedInUser?.id;
-    await TicketReportApiService.getReport(ticketId, currentUserId ?? 0, "share", `ticket_${ticketId}`);
+    await TicketReportApiService.getReport(
+      ticket.id,
+      checkIn,
+      "share",
+      `ticket_${ticket.id}`
+    );
+    
+    if (checkIn) {
+        onCheckInUpdate?.(ticket?.id);
+    }
   };
 
   return (
@@ -71,43 +84,56 @@ export default function BusSeat({
             highlighted &&
               "scale-110 z-50 ring-2 ring-yellow-400 ring-offset-2 rounded-lg",
             isMoveTarget &&
-              "animate-pulse ring-2 ring-dashed ring-emerald-500 rounded-lg scale-105 bg-emerald-50/50",
+              "animate-pulse ring-2 ring-dashed ring-emerald-500 rounded-lg scale-105 bg-emerald-50/50"
           )}
         >
-          {/* مسند الرأس */}
+          {/* Checked-in Badge Icon */}
+          {isCheckedIn && (
+            <div className="absolute -top-2 -right-2 z-20 bg-white rounded-full shadow-sm">
+              <CheckCircle2 className="w-5 h-5 text-blue-600 fill-blue-100" />
+            </div>
+          )}
+
+          {/* Headrest */}
           <div
             className={cn(
               "z-10 h-1.5 w-8 rounded-t-md transition-colors duration-300",
               highlighted
                 ? "bg-yellow-500"
+                : isCheckedIn
+                ? "bg-blue-600"
                 : isOccupied
-                  ? "bg-red-700"
-                  : "bg-emerald-700",
+                ? "bg-red-700"
+                : "bg-emerald-700"
             )}
           />
 
-          {/* جسم الكرسي */}
+          {/* Seat Body */}
           <div
             className={cn(
               "flex w-full flex-1 flex-col overflow-hidden rounded-lg border shadow-sm transition-colors duration-300",
               isMoveTarget
                 ? "border-emerald-500 bg-emerald-100/40"
                 : highlighted
-                  ? "border-yellow-500 bg-yellow-100/50"
-                  : isOccupied
-                    ? "border-red-500 bg-red-300/30"
-                    : "border-emerald-500 bg-background/30",
+                ? "border-yellow-500 bg-yellow-100/50"
+                : isCheckedIn
+                ? "border-blue-500 bg-blue-100/50"
+                : isOccupied
+                ? "border-red-500 bg-red-300/30"
+                : "border-emerald-500 bg-background/30"
             )}
           >
-            {/* العنوان */}
+            {/* Header (Seat No & Price) */}
             <div
               className={cn(
                 "flex justify-between px-1 py-px text-[9px] font-bold text-white transition-colors duration-300",
                 highlighted
                   ? "bg-yellow-600"
+                  : isCheckedIn
+                  ? "bg-blue-600"
                   : isOccupied
-                    ? "bg-red-600"
-                    : "bg-emerald-600",
+                  ? "bg-red-600"
+                  : "bg-emerald-600"
               )}
             >
               <span>
@@ -123,7 +149,7 @@ export default function BusSeat({
               </span>
             </div>
 
-            {/* المحتوى */}
+            {/* Content */}
             {isOccupied ? (
               <div className="flex flex-col gap-px px-1 py-0.5 text-[8px] text-right leading-tight">
                 <p className="truncate font-bold">{ticket.passenger?.name}</p>
@@ -132,14 +158,19 @@ export default function BusSeat({
                   onMouseEnter={() =>
                     onHoverData?.(
                       "nationality",
-                      ticket.passenger?.nationality?.name,
+                      ticket.passenger?.nationality?.name
                     )
                   }
                   onMouseLeave={() => onHoverData?.(null)}
                 >
                   {ticket.passenger?.nationality?.name}
                 </p>
-                <div className="mt-px border-t border-red-200 pt-px text-[8px] font-semibold">
+                <div 
+                    className={cn(
+                        "mt-px border-t pt-px text-[8px] font-semibold",
+                        isCheckedIn ? "border-blue-200" : "border-red-200"
+                    )}
+                >
                   <span
                     className="block truncate"
                     onMouseEnter={() =>
@@ -168,7 +199,7 @@ export default function BusSeat({
                     "text-[8px] font-bold",
                     isMoveTarget
                       ? "text-emerald-700 animate-bounce"
-                      : "text-emerald-500",
+                      : "text-emerald-500"
                   )}
                 >
                   {isMoveTarget ? "هنا؟" : "متاح"}
@@ -177,40 +208,50 @@ export default function BusSeat({
             )}
           </div>
 
-          {/* مساند اليد */}
+          {/* Armrests */}
           <div
             className={cn(
               "absolute top-6 -left-0.5 h-5 w-1 rounded-full",
-              isOccupied ? "bg-red-300" : "bg-slate-300",
+              isCheckedIn 
+                ? "bg-blue-300" 
+                : isOccupied 
+                    ? "bg-red-300" 
+                    : "bg-slate-300"
             )}
           />
           <div
             className={cn(
               "absolute top-6 -right-0.5 h-5 w-1 rounded-full",
-              isOccupied ? "bg-red-300" : "bg-slate-300",
+              isCheckedIn 
+                ? "bg-blue-300" 
+                : isOccupied 
+                    ? "bg-red-300" 
+                    : "bg-slate-300"
             )}
           />
         </button>
       </ContextMenuTrigger>
 
+      {/* Context Menu (Unchanged logic, just keeping structure) */}
       {isOccupied && (
         <ContextMenuContent className="w-52">
-          {/* Action Group */}
-          <ContextMenuGroup>
-            <ContextMenuItem
-              onClick={() => onMoveTicket?.(ticket)}
-              className="gap-2"
-            >
-              <MoveHorizontal className="h-4 w-4 text-muted-foreground" />
-              <span className="flex-1">نقل المقعد</span>
-            </ContextMenuItem>
+          <ContextMenuItem
+            onClick={() => onMoveTicket?.(ticket)}
+            className="gap-2"
+          >
+            <MoveHorizontal className="h-4 w-4 text-muted-foreground" />
+            <span className="flex-1">نقل المقعد</span>
+          </ContextMenuItem>
 
+          <ContextMenuSeparator />
+          
+          <ContextMenuGroup>
             {SystemPermissions.hasAuth(loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TicketReport, SystemPermissionsActions.Get) && (
               <>
                 <ContextMenuItem
                   onClick={(e) => {
                     e.stopPropagation();
-                    handlePrintTicket(ticket.id);
+                    handlePrintTicket(false);
                   }}
                   className="gap-2"
                 >
@@ -221,7 +262,7 @@ export default function BusSeat({
                 <ContextMenuItem
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleShareTicket(ticket.id);
+                    handleShareTicket(false);
                   }}
                   className="gap-2"
                 >
@@ -234,13 +275,42 @@ export default function BusSeat({
 
           <ContextMenuSeparator />
 
-          {/* Destructive Group */}
+          <ContextMenuGroup>
+            {SystemPermissions.hasAuth(loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TicketReport, SystemPermissionsActions.Get) && (
+              <>
+                <ContextMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePrintTicket(true);
+                  }}
+                  className="gap-2"
+                >
+                  <Printer className="h-4 w-4" />
+                  <span className="flex-1 font-semibold">تحضير وطباعة التذكرة</span>
+                </ContextMenuItem>
+
+                <ContextMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleShareTicket(true);
+                  }}
+                  className="gap-2"
+                >
+                  <Share2 className="h-4 w-4" />
+                  <span className="flex-1 font-semibold">تحضير ومشاركة التذكرة</span>
+                </ContextMenuItem>
+              </>
+            )}
+          </ContextMenuGroup>
+
+          <ContextMenuSeparator />
+
           <ContextMenuItem
             onClick={(e) => {
               e.stopPropagation();
               if (ticket?.id && onDeleteTicket) onDeleteTicket(ticket.id);
             }}
-            className="gap-2 text-destructive focus:text-destructive"
+            className="gap-2 text-destructive"
           >
             <Trash2 className="h-4 w-4" />
             <span className="flex-1">حذف التذكرة</span>
