@@ -2,13 +2,13 @@ import { SystemPermissions } from "@/app/core/auth/systemPermissions";
 import { SystemPermissionsActions } from "@/app/core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
 import { useLoggedInUser } from "@/app/core/contexts/loggedInUserContext";
+import { StorageFileStatus } from "@/app/core/data/storageFile";
 import DepositReportApiService from "@/app/core/networking/services/reports/depositReportApiService";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Archive, ArrowLeft, Banknote, Box, Edit, Loader2, PackagePlus, Printer, Share2, Trash2 } from "lucide-react";
 import { useState } from "react";
 import type { Deposit } from "../data/deposit";
-import { StorageFileStatus } from "@/app/core/data/storageFile";
 
 type TripDepositsParams = {
   deposits: Deposit[];
@@ -98,7 +98,7 @@ export default function TripDeposits({ deposits, onDepositDeleted, onDepositDial
                     </div>
                     
                     <div className="flex flex-col min-w-0">
-                      <p className="text-sm font-bold truncate text-foreground/90 leading-tight">
+                      <p className="text-sm max-w-50 font-bold truncate text-foreground/90 leading-tight">
                         {dep.description}
                       </p>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5 truncate">
