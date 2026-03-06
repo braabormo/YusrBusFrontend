@@ -7,21 +7,11 @@ import { useLoggedInUser } from "@/app/core/contexts/loggedInUserContext";
 import TripDepositsReportApiService from "@/app/core/networking/services/reports/tripDepositsReportApiService";
 import TripTicketsReportApiService from "@/app/core/networking/services/reports/tripTicketsReportApiService";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Archive, Calculator, Coins, Loader2, Printer, Receipt, Share2, Ticket as TicketIcon, Wallet } from "lucide-react";
+import { Archive, Calculator, Coins, Ticket as TicketIcon, Wallet } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { Trip } from "../data/trip";
+import TripReportDialog from "./tripReportDialog";
 
 interface TripAmountSummaryProps {
   trip: Trip;
@@ -70,50 +60,54 @@ export default function TripAmountSummary({
   const grandRemaining = grandTotal - grandPaid;
 
   const [commission, setCommission] = useState<number>(0);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showAmount, setShowAmount] = useState(true);
+  const [isTTDialogOpen, setIsTTDialogOpen] = useState(false);
+  const [isTDDialogOpen, setIsTDDialogOpen] = useState(false);
   const [isPrintingTickets, setIsPrintingTickets] = useState(false);
   const [isPrintingDeposits, setIsPrintingDeposits] = useState(false);
   const [isSharingTickets, setIsSharingTickets] = useState(false);
   const [isSharingDeposits, setIsSharingDeposits] = useState(false);
   const {loggedInUser} = useLoggedInUser();
 
-  const handlePrintTripTickets = async () => {
+  const handlePrintTripTickets = async (commission: number, showAmount: boolean) => {
     setIsPrintingTickets(true);
     try {
       const currentUserId = loggedInUser?.id; 
-      await TripTicketsReportApiService.getReport(trip?.id, currentUserId ?? 0);
+      await TripTicketsReportApiService.getReport(trip?.id, commission, showAmount, currentUserId ?? 0);
+      setIsTTDialogOpen(false);
     } finally {
       setIsPrintingTickets(false);
     }
   };
 
-  const handlePrintTripDeposits = async (commission: number) => {
+  const handlePrintTripDeposits = async (commission: number, showAmount: boolean) => {
     setIsPrintingDeposits(true);
     try {
       const currentUserId = loggedInUser?.id; 
-      await TripDepositsReportApiService.getReport(trip?.id, commission, currentUserId ?? 0);
-      setIsDialogOpen(false);
+      await TripDepositsReportApiService.getReport(trip?.id, commission, showAmount, currentUserId ?? 0);
+      setIsTDDialogOpen(false);
     } finally {
       setIsPrintingDeposits(false);
     }
   };
 
-  const handleShareTripTickets = async () => {
+  const handleShareTripTickets = async (commission: number, showAmount: boolean) => {
     setIsSharingTickets(true);
     try {
       const currentUserId = loggedInUser?.id;
-      await TripTicketsReportApiService.getReport(trip?.id, currentUserId ?? 0, "share", `tickets_trip_${trip?.id}`);
+      await TripTicketsReportApiService.getReport(trip?.id, commission, showAmount, currentUserId ?? 0, "share", `tickets_trip_${trip?.id}`);
+      setIsTTDialogOpen(false);
     } finally {
       setIsSharingTickets(false);
     }
   };
 
-  const handleShareTripDeposits = async (commission: number) => {
+  const handleShareTripDeposits = async (commission: number, showAmount: boolean) => {
     setIsSharingDeposits(true);
     try {
       const currentUserId = loggedInUser?.id;
-      await TripDepositsReportApiService.getReport(trip?.id, commission, currentUserId ?? 0, "share", `deposits_trip_${trip?.id}`);
-      setIsDialogOpen(false);
+      await TripDepositsReportApiService.getReport(trip?.id, commission, showAmount, currentUserId ?? 0, "share", `deposits_trip_${trip?.id}`);
+      setIsTDDialogOpen(false);
     } finally {
       setIsSharingDeposits(false);
     }
@@ -202,107 +196,38 @@ export default function TripAmountSummary({
         </div>
 
         <div className="flex gap-3">
-          {/* Part 1: Trip Tickets Button Group */}
           {SystemPermissions.hasAuth(loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TripTicketsReport, SystemPermissionsActions.Get) && (
-            <div className="flex items-center overflow-hidden rounded-md border bg-primary text-primary-foreground shadow-sm">
-              {/* Label Section */}
-              <div className="flex items-center gap-2 px-2 py-2 text-xs font-bold border-l border-primary-foreground/20">
-                <TicketIcon className="w-3.5 h-3.5" />
-                <span>تذاكر الرحلة</span>
-              </div>
-              
-              {/* Print Action */}
-              <Button
-                disabled={isPrintingTickets || isSharingTickets}
-                onClick={handlePrintTripTickets}
-                className="flex items-center justify-center w-9 h-9"
-                title="طباعة"
-              >
-                {isPrintingTickets ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Printer className="w-3.5 h-3.5" />}
-              </Button>
-
-              {/* Share Action */}
-              <Button
-                disabled={isPrintingTickets || isSharingTickets}
-                onClick={handleShareTripTickets}
-                className="flex items-center justify-center w-9 h-9"
-                title="مشاركة"
-              >
-                {isSharingTickets ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Share2 className="w-3.5 h-3.5" />}
-              </Button>
-            </div>
+            <TripReportDialog
+              label="كشف الركاب"
+              title="خيارات تقرير كشف الركاب"
+              isOpen={isTTDialogOpen}
+              setIsOpen={setIsTTDialogOpen}
+              onPrint={handlePrintTripTickets}
+              onShare={handleShareTripTickets}
+              isPrinting={isPrintingTickets}
+              isSharing={isSharingTickets}
+              commission={commission}
+              setCommission={setCommission}
+              showAmount={showAmount}
+              setShowAmount={setShowAmount}
+            />
           )}
 
-          {/* Part 2: Trip Deposits Button Group */}
           {SystemPermissions.hasAuth(loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TripDepositsReport, SystemPermissionsActions.Get) && (
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <div className="flex items-center overflow-hidden rounded-md border bg-primary text-primary-foreground shadow-sm">
-                {/* Label Section */}
-                <div className="flex items-center gap-2 px-3 py-2 text-xs font-bold border-l border-primary-foreground/20">
-                  <Receipt className="w-3.5 h-3.5" />
-                  <span>أمانات الرحلة</span>
-                </div>
-
-                {/* Print Action (Triggers Dialog) */}
-                <DialogTrigger asChild>
-                  <Button
-                    disabled={isPrintingDeposits || isSharingDeposits}
-                    className="flex items-center justify-center w-9 h-9"
-                    title="طباعة"
-                  >
-                    <Printer className="w-3.5 h-3.5" />
-                  </Button>
-                </DialogTrigger>
-
-                {/* Share Action (Triggers Dialog) */}
-                <DialogTrigger asChild>
-                  <Button
-                    disabled={isPrintingDeposits || isSharingDeposits}
-                    className="flex items-center justify-center w-9 h-9"
-                    title="مشاركة"
-                  >
-                    <Share2 className="w-3.5 h-3.5" />
-                  </Button>
-                </DialogTrigger>
-              </div>
-
-              <DialogContent dir="rtl" className="sm:max-w-81.25">
-                <DialogHeader>
-                  <DialogTitle className="text-right">خيارات تقرير الأمانات</DialogTitle>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2 text-right">
-                    <Label htmlFor="commission" className="text-xs">نسبة العمولة (%)</Label>
-                    <Input
-                      id="commission"
-                      type="number"
-                      className="text-right"
-                      value={commission}
-                      onChange={(e) => setCommission(Number(e.target.value))}
-                    />
-                  </div>
-                </div>
-                <DialogFooter className="flex flex-row gap-2">
-                  <Button 
-                    className="flex-1 gap-2" 
-                    onClick={() => handlePrintTripDeposits(commission)}
-                    disabled={isPrintingDeposits}
-                  >
-                    {isPrintingDeposits ? <Loader2 className="w-4 h-4 animate-spin" /> : <Printer className="w-4 h-4" />}
-                    طباعة
-                  </Button>
-                  <Button 
-                    variant="secondary"
-                    className="flex-1 gap-2" 
-                    onClick={() => handleShareTripDeposits(commission)}
-                    disabled={isSharingDeposits}
-                  >
-                    {isSharingDeposits ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
-                    مشاركة
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <TripReportDialog
+              label="كشف الأمانات"
+              title="خيارات تقرير كشف الأمانات"
+              isOpen={isTDDialogOpen}
+              setIsOpen={setIsTDDialogOpen}
+              onPrint={handlePrintTripDeposits}
+              onShare={handleShareTripDeposits}
+              isPrinting={isPrintingDeposits}
+              isSharing={isSharingDeposits}
+              commission={commission}
+              setCommission={setCommission}
+              showAmount={showAmount}
+              setShowAmount={setShowAmount}
+            />
           )}
         </div>
 

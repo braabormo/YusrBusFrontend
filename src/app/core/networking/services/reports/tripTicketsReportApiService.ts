@@ -4,11 +4,13 @@ import { ReportHelper } from "./reportHelper";
 
 export default class TripTicketsReportApiService
 {
-    static async getReport(id: number, userId: number, viewAction: "display" | "share" = "display", filename: string = '') 
+    static async getReport(id: number, commission: number, showAmount: boolean, userId: number, viewAction: "display" | "share" = "display", filename: string = '') 
     {
         const url = `${ApiConstants.baseUrl}/Reports/TripTickets`;
         const requestBody = { 
             tripId: id,
+            commission: commission,
+            showAmount: showAmount,
             userId: userId 
         };
 
