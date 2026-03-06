@@ -233,8 +233,13 @@ export default function ChangeTripDialog({
               dialogMode={mode}
               service={new TripsApiService()}
               onSuccess={(trip) => {
-                setFormData(trip);
-                onSuccess?.(trip, mode);
+                const updatedTrip = {
+                  ...trip,
+                  startDate: trip.startDate ? new Date(trip.startDate) : undefined,
+                };
+
+                setFormData(updatedTrip);
+                onSuccess?.(updatedTrip as Trip, mode);
               }}
               validation={validate}
             />
