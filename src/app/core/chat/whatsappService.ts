@@ -1,4 +1,5 @@
-export default class WhatsappService {
+export default class WhatsappService 
+{
     static CreateUrl(header: string, body: string, footer: string, toPhone: string): string {
         let cleanPhone = toPhone.replace(/\D/g, "");
         

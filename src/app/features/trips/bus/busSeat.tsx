@@ -71,7 +71,7 @@ export default function BusSeat({
     }
   };
 
-  const handleSendTicket = async () => {
+  const handleSendByWhatsappTicket = async () => {
 
     if (!ticket?.id || !ticket?.accessKey) {
       toast.error("لم يتم حفظ التغييرات بعد أو بيانات التذكرة غير مكتملة");
@@ -106,6 +106,43 @@ export default function BusSeat({
     } 
     catch (error) {
       toast.error("حدث خطأ أثناء الاتصال بالسيرفر");
+    }
+  };
+
+  const handleSendByEmailTicket = async () => {
+
+    if (!ticket?.id || !ticket?.accessKey) {
+      toast.error("لم يتم حفظ التغييرات بعد أو بيانات التذكرة غير مكتملة");
+      return;
+    }
+    if (ticket?.passenger?.phoneNumber == undefined) {
+      toast.error("المسافر ليس لديه رقم جوال مسجل");
+      return;
+    }
+    if (ticket?.passenger?.email == undefined) {
+      toast.error("المسافر ليس لديه بريد إلكتروني مسجل");
+      return;
+    }
+
+    const loadingToast = toast.loading("جاري إرسال التذكرة إلى البريد الإلكتروني...");
+
+    try {
+      const last4 = ticket.passenger.phoneNumber.slice(-4);
+      const response = await TicketReportApiService.sendByEmail(ticket.accessKey, last4);
+
+      if (response.status === 200) {
+        toast.success(response.data?.title || "تم إرسال التذكرة بنجاح!", { 
+            id: loadingToast,
+            description: `تم إرسال ملف PDF إلى ${ticket.passenger.email}` 
+        });
+      } 
+      else {
+        toast.dismiss(loadingToast);
+      }
+    } 
+    catch (error) {
+      console.error("Email Error:", error);
+      toast.error("حدث خطأ غير متوقع أثناء محاولة الإرسال", { id: loadingToast });
     }
   };
 
@@ -352,7 +389,7 @@ export default function BusSeat({
                 <ContextMenuItem
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleSendTicket();
+                    handleSendByWhatsappTicket();
                   }}
                   className="gap-2"
                 >
@@ -363,7 +400,7 @@ export default function BusSeat({
                 <ContextMenuItem
                   onClick={(e) => {
                     e.stopPropagation();
-                    handlePrintTicket(true);
+                    handleSendByEmailTicket();
                   }}
                   className="gap-2"
                 >

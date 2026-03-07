@@ -29,12 +29,17 @@ export default class TicketReportApiService
     }  
 
     static async addToStorage(accessKey: string, last4Digits: string): Promise<RequestResult<{ url: string }>> {
-        const url = `${ApiConstants.baseUrl}/Reports/AddToStorage/${accessKey}/${last4Digits}`;
+        const url = `${ApiConstants.baseUrl}/Reports/Ticket/AddToStorage/${accessKey}/${last4Digits}`;
         return await YusrApiHelper.Post<{ url: string }>(url, {});
     }
 
     static async getReportUrl(accessKey: string, last4Digits: string): Promise<RequestResult<{ url: string }>> {
         const url = `${ApiConstants.baseUrl}/Reports/TicketUrl/${accessKey}/${last4Digits}`;
         return await YusrApiHelper.Get<{ url: string }>(url);
+    }  
+
+    static async sendByEmail(accessKey: string, last4Digits: string): Promise<RequestResult<any>> {
+        const url = `${ApiConstants.baseUrl}/Reports/Ticket/SendByEmail/${accessKey}/${last4Digits}`;
+        return await YusrApiHelper.Post<any>(url, {});
     }  
 }
