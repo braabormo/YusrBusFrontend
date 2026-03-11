@@ -1,7 +1,10 @@
+import { branchSlice } from '@/app/features/branches/logic/branchSlice'
 import { configureStore } from '@reduxjs/toolkit'
 
 export const store = configureStore({
-  reducer: {},
+  reducer: {
+    branch: branchSlice.reducer,
+  },
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
