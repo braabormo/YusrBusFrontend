@@ -22,7 +22,7 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SaveButton from "../../../core/components/buttons/saveButton";
 import type Branch from "../data/branch";
 
@@ -59,6 +59,10 @@ export default function ChangeBranchDialog({
   ];
 
   const { getError, isInvalid, validate, clearError, errorInputClass } = useFormValidation(formData, validationRules);
+
+  useEffect(() => {
+    dispatch(filterCities(undefined));
+  }, [dispatch]);
 
   return (
     <DialogContent dir="rtl" className="sm:max-w-sm">
