@@ -2,7 +2,6 @@ import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsRes
 import DeleteDialog from "@/app/core/components/dialogs/deleteDialog";
 import EmptyTablePreview from "@/app/core/components/table/emptyTablePreview";
 import TableRowActionsMenu from "@/app/core/components/table/tableRowActionsMenu";
-import useDialog from "@/app/core/hooks/useDialog";
 import useUserPermissions from "@/app/core/hooks/useUserPermissions";
 import BranchesApiService from "@/app/core/networking/services/branchesApiService";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
@@ -16,30 +15,26 @@ import TableCard from "../../../core/components/table/tableCard";
 import TableHeader from "../../../core/components/table/tableHeader";
 import TableHeaderRows from "../../../core/components/table/tableHeaderRows";
 import TablePagination from "../../../core/components/table/tablePagination";
-import Branch, { BranchFilterColumns } from "../data/branch";
+import { BranchFilterColumns } from "../data/branch";
+import { openBranchDeleteDialog, openBranchEditDialog, setIsBranchDeleteDialogOpen, setIsBranchEditDialogOpen } from "../logic/branchDialogSlice";
 import { filter, refresh, setCurrentPage } from "../logic/branchSlice";
 import ChangeBranchDialog from "./changeBranchDialog";
 
 export default function BranchesPage() {
   const dispatch = useAppDispatch(); 
   const branchState = useAppSelector((state) => state.branch);
+  const { 
+    selectedRow, 
+    isEditDialogOpen, 
+    isDeleteDialogOpen 
+  } = useAppSelector((state) => state.branchDialog);
 
   useEffect(() => {
     dispatch(filter(undefined));
   }, [dispatch]);
 
-  const {
-    selectedRow,
-    isEditDialogOpen,
-    isDeleteDialogOpen,
-    setIsEditDialogOpen,
-    setIsDeleteDialogOpen,
-    openEditDialog,
-    openDeleteDialog,
-  } = useDialog<Branch>();
-
   const { addPermission, updatePermission, deletePermission } = useUserPermissions(SystemPermissionsResources.Branches);
-  
+
   return (
     <div className="px-5 py-3">
       <TableHeader
@@ -110,16 +105,16 @@ export default function BranchesPage() {
                     <TableRowActionsMenu
                       permissionsResource={SystemPermissionsResources.Branches}
                       type="dropdown"
-                      onEditClicked={() => openEditDialog(branch)}
-                      onDeleteClicked={() => openDeleteDialog(branch)}
+                      onEditClicked={() => dispatch(openBranchEditDialog(branch))}
+                      onDeleteClicked={() => dispatch(openBranchDeleteDialog(branch))}
                     />
                   }
                   contextMenuContent={
                     <TableRowActionsMenu
                       permissionsResource={SystemPermissionsResources.Branches}
                       type="context"
-                      onEditClicked={() => openEditDialog(branch)}
-                      onDeleteClicked={() => openDeleteDialog(branch)}
+                      onEditClicked={() => dispatch(openBranchEditDialog(branch))}
+                      onDeleteClicked={() => dispatch(openBranchDeleteDialog(branch))}
                     />
                   }
                 />
@@ -135,13 +130,14 @@ export default function BranchesPage() {
         />
 
         {isEditDialogOpen && updatePermission && (
-          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <Dialog open={isEditDialogOpen} onOpenChange={(open) => dispatch(setIsBranchEditDialogOpen(open))}>
             <ChangeBranchDialog
               entity={selectedRow || undefined}
               mode={selectedRow ? "update" : "create"}
               onSuccess={(data, mode) => {
                 dispatch(refresh({ newData: data }));
-                if (mode === "create") setIsEditDialogOpen(false);
+                if (mode === "create") 
+                  dispatch(setIsBranchEditDialogOpen(false));
               }}
             />
           </Dialog>
@@ -150,7 +146,7 @@ export default function BranchesPage() {
         {isDeleteDialogOpen && deletePermission && (
           <Dialog
             open={isDeleteDialogOpen}
-            onOpenChange={setIsDeleteDialogOpen}
+            onOpenChange={(open) => dispatch(setIsBranchDeleteDialogOpen(open))}
           >
             <DialogContent dir="rtl" className="sm:max-w-sm">
               <DeleteDialog
@@ -159,7 +155,7 @@ export default function BranchesPage() {
                 service={new BranchesApiService()}
                 onSuccess={() => {
                   dispatch(refresh({ deletedId: selectedRow?.id }));
-                  setIsDeleteDialogOpen(false);
+                  dispatch(setIsBranchDeleteDialogOpen(false));
                 }}
               />
             </DialogContent>

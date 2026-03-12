@@ -1,9 +1,12 @@
-import { branchSlice } from '@/app/features/branches/logic/branchSlice'
 import { configureStore } from '@reduxjs/toolkit'
+import branchDialogReducer from '@/app/features/branches/logic/branchDialogSlice';
+import branchSlice from '@/app/features/branches/logic/branchSlice';
+
 
 export const store = configureStore({
   reducer: {
-    branch: branchSlice.reducer,
+    branch: branchSlice,
+    branchDialog: branchDialogReducer,
   },
 })
 

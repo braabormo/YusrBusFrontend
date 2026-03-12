@@ -1,4 +1,4 @@
-import type { FilterResult } from "../data/filterResult";
+import type { FilterResult } from "../../data/filterResult";
 
 export default interface IEntityState<T> {
   entities: FilterResult<T>;
