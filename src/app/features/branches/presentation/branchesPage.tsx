@@ -5,9 +5,11 @@ import TableRowActionsMenu from "@/app/core/components/table/tableRowActionsMenu
 import useDialog from "@/app/core/hooks/useDialog";
 import useUserPermissions from "@/app/core/hooks/useUserPermissions";
 import BranchesApiService from "@/app/core/networking/services/branchesApiService";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Table, TableBody } from "@/components/ui/table";
 import { Building, MapPin } from "lucide-react";
+import { useEffect } from "react";
 import SearchInput from "../../../core/components/input/searchInput";
 import BranchRow from "../../../core/components/table/tableBodyRow";
 import TableCard from "../../../core/components/table/tableCard";
@@ -15,14 +17,16 @@ import TableHeader from "../../../core/components/table/tableHeader";
 import TableHeaderRows from "../../../core/components/table/tableHeaderRows";
 import TablePagination from "../../../core/components/table/tablePagination";
 import Branch, { BranchFilterColumns } from "../data/branch";
+import { filter, refresh, setCurrentPage } from "../logic/branchSlice";
 import ChangeBranchDialog from "./changeBranchDialog";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "@/app/core/state/store";
-import { refresh, setCurrentPage } from "../logic/branchSlice";
 
 export default function BranchesPage() {
-  const dispatch = useDispatch();
-  const branchState = useSelector((state: RootState) => state.branch);
+  const dispatch = useAppDispatch(); 
+  const branchState = useAppSelector((state) => state.branch);
+
+  useEffect(() => {
+    dispatch(filter(undefined));
+  }, [dispatch]);
 
   const {
     selectedRow,
@@ -34,8 +38,8 @@ export default function BranchesPage() {
     openDeleteDialog,
   } = useDialog<Branch>();
 
-  const { addPermission, updatePermission, deletePermission } =
-    useUserPermissions(SystemPermissionsResources.Branches);
+  const { addPermission, updatePermission, deletePermission } = useUserPermissions(SystemPermissionsResources.Branches);
+  
   return (
     <div className="px-5 py-3">
       <TableHeader
@@ -68,7 +72,7 @@ export default function BranchesPage() {
 
       <SearchInput
         columnsNames={BranchFilterColumns.columnsNames}
-        onSearch={(condition) => filter(condition)}
+        onSearch={(condition) => dispatch(filter(condition))}
       />
 
       <div className="rounded-b-xl border shadow-sm overflow-hidden">
