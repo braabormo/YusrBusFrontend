@@ -1,5 +1,7 @@
 import branchDialogReducer from '@/app/features/branches/logic/branchDialogSlice';
 import branchReducer from '@/app/features/branches/logic/branchSlice';
+import userReducer from '@/app/features/users/logic/userSlice';
+import userDialogReducer from '@/app/features/users/logic/userDialogSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import { setupAuthListeners } from '../auth/authListener';
 import authReducer from '../auth/authSlice';
@@ -12,6 +14,8 @@ export const store = configureStore({
   reducer: {
     branch: branchReducer,
     branchDialog: branchDialogReducer,
+    user: userReducer,
+    userDialog: userDialogReducer,
     city: cityReducer,
     country: countryReducer,
     currency: currencyReducer,

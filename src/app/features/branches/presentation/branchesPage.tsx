@@ -22,9 +22,8 @@ import {
   setIsBranchDeleteDialogOpen,
   setIsBranchEditDialogOpen,
 } from "../logic/branchDialogSlice";
-import { filter, refresh, setCurrentPage } from "../logic/branchSlice";
+import { filterBranches, refreshBranches, setCurrentBranchesPage } from "../logic/branchSlice";
 import ChangeBranchDialog from "./changeBranchDialog";
-import { ss } from "../logic/branchSlice";
 
 export default function BranchesPage() {
   const dispatch = useAppDispatch();
@@ -37,8 +36,7 @@ export default function BranchesPage() {
   );
 
   useEffect(() => {
-    dispatch(filter(undefined));
-    dispatch(ss());
+    dispatch(filterBranches(undefined));
   }, [dispatch]);
 
   return (
@@ -51,7 +49,7 @@ export default function BranchesPage() {
           <ChangeBranchDialog
             entity={undefined}
             mode="create"
-            onSuccess={(newData) => dispatch(refresh({ newData: newData }))}
+            onSuccess={(newData) => dispatch(refreshBranches({ newData: newData }))}
           />
         }
       />
@@ -73,7 +71,7 @@ export default function BranchesPage() {
 
       <SearchInput
         columnsNames={BranchFilterColumns.columnsNames}
-        onSearch={(condition) => dispatch(filter(condition))}
+        onSearch={(condition) => dispatch(filterBranches(condition))}
       />
 
       <div className="rounded-b-xl border shadow-sm overflow-hidden">
@@ -140,7 +138,7 @@ export default function BranchesPage() {
           pageSize={100}
           totalNumber={branchState.entities?.count ?? 0}
           currentPage={branchState.currentPage || 1}
-          onPageChanged={(newPage) => dispatch(setCurrentPage(newPage))}
+          onPageChanged={(newPage) => dispatch(setCurrentBranchesPage(newPage))}
         />
 
         {isEditDialogOpen && perm.updatePermission && (
@@ -152,7 +150,7 @@ export default function BranchesPage() {
               entity={selectedRow || undefined}
               mode={selectedRow ? "update" : "create"}
               onSuccess={(data, mode) => {
-                dispatch(refresh({ newData: data }));
+                dispatch(refreshBranches({ newData: data }));
                 if (mode === "create")
                   dispatch(setIsBranchEditDialogOpen(false));
               }}
@@ -171,7 +169,7 @@ export default function BranchesPage() {
                 id={selectedRow?.id ?? 0}
                 service={new BranchesApiService()}
                 onSuccess={() => {
-                  dispatch(refresh({ deletedId: selectedRow?.id }));
+                  dispatch(refreshBranches({ deletedId: selectedRow?.id }));
                   dispatch(setIsBranchDeleteDialogOpen(false));
                 }}
               />

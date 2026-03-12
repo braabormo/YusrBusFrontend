@@ -10,12 +10,12 @@ export function PasswordField(props: InputFieldProps) {
       <InputField 
         {...props} 
         type={show ? "text" : "password"} 
-        className="pr-10"
+        className="pl-10"
       />
       <button
         type="button"
         onClick={() => setShow(!show)}
-        className="absolute left-3 top-9 text-gray-500 hover:text-gray-700"
+        className="absolute left-3 top-8.5 text-gray-500 hover:text-gray-700"
       >
         {show ? <EyeOff size={16} /> : <Eye size={16} />}
       </button>

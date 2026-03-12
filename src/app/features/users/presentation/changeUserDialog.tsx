@@ -1,10 +1,14 @@
 import SaveButton from "@/app/core/components/buttons/saveButton";
 import type { CommonChangeDialogProps } from "@/app/core/components/dialogs/commonChangeDialogProps";
+import { FormField } from "@/app/core/components/fields/formField";
+import { PasswordField } from "@/app/core/components/fields/passwordField";
+import { SelectField } from "@/app/core/components/fields/selectField";
+import { TextField } from "@/app/core/components/fields/textField";
 import SearchableSelect from "@/app/core/components/select/searchableSelect";
 import useEntities from "@/app/core/hooks/useEntities";
+import { useEntityForm } from "@/app/core/hooks/useEntityForm";
 import {
-    useFormValidation,
-    type ValidationRule,
+  type ValidationRule
 } from "@/app/core/hooks/useFormValidation";
 import BranchesApiService from "@/app/core/networking/services/branchesApiService";
 import RolesApiService from "@/app/core/networking/services/rolesApiService";
@@ -12,25 +16,16 @@ import UsersApiService from "@/app/core/networking/services/usersApiService";
 import { Validators } from "@/app/core/utils/validators";
 import { Button } from "@/components/ui/button";
 import {
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import { Field, FieldGroup } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import { FieldGroup } from "@/components/ui/field";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import { useMemo } from "react";
 import { RoleFilterColumns } from "../../roles/data/role";
 import type User from "../data/user";
 
@@ -38,43 +33,16 @@ export default function ChangeUserDialog({
   entity,
   mode,
   onSuccess,
-}: CommonChangeDialogProps<User>) {
-  const [formData, setFormData] = useState<Partial<User>>({
-    id: entity?.id,
-    username: entity?.username || "",
-    password: "",
-    isActive: entity?.isActive ?? true,
-    roleId: entity?.roleId,
-    branchId: entity?.branchId,
-    role: entity?.role,
-    branch: entity?.branch,
-  });
-
-  const validationRules: ValidationRule<Partial<User>>[] = [
-    {
-      field: "username",
-      selector: (d) => d.username,
-      validators: [Validators.required("يرجى اختيار اسم المستخدم")],
-    },
-    {
-      field: "password",
-      selector: (d) => d.password,
-      validators: [Validators.required("يرجى اختيار كلمة مرور")],
-    },
-    {
-      field: "roleId",
-      selector: (d) => d.roleId,
-      validators: [Validators.required("يرجى اختيار دور")],
-    },
-    {
-      field: "branchId",
-      selector: (d) => d.branchId,
-      validators: [Validators.required("يرجى اختيار فرع للموظف")],
-    },
-  ];
-  const { getError, isInvalid, validate, clearError, errorInputClass } =
-    useFormValidation(formData, validationRules);
-
+}: CommonChangeDialogProps<User>) 
+{
+  const userService = useMemo(() => new UsersApiService(), []);
+  const validationRules: ValidationRule<Partial<User>>[] = useMemo(() => [
+    { field: "username", selector: (d) => d.username, validators: [Validators.required("يرجى إدخال اسم المستخدم")] },
+    { field: "password", selector: (d) => d.password, validators: [Validators.required("يرجى إدخال كلمة مرور")] },
+    { field: "roleId", selector: (d) => d.roleId, validators: [Validators.required("يرجى اختيار دور")] },
+    { field: "branchId", selector: (d) => d.branchId, validators: [Validators.required("يرجى اختيار فرع")] },
+  ], []);
+  const { formData, handleChange, getError, isInvalid, validate, errorInputClass } = useEntityForm<User>({ ...entity, password: "" }, validationRules);
   const {
     entities: branches,
     filter: filterBranches,
@@ -88,6 +56,7 @@ export default function ChangeUserDialog({
 
   return (
     <DialogContent dir="rtl" className="sm:max-w-xl">
+      
       <DialogHeader>
         <DialogTitle>
           {mode === "create" ? "إضافة" : "تعديل"} مستخدم
@@ -98,124 +67,79 @@ export default function ChangeUserDialog({
       <Separator />
 
       <FieldGroup>
-        <Field>
-          <Label>رقم المستخدم</Label>
-          <Input disabled value={formData.id?.toString() || ""} />
-        </Field>
 
-        <Field>
-          <Label>اسم المستخدم</Label>
-          <Input
+        <div className="grid grid-cols-2 gap-4">
+          <TextField
+            label="اسم المستخدم"
+            required
             value={formData.username || ""}
-            onChange={(e) => {
-              setFormData({ ...formData, username: e.target.value });
-              clearError("username");
-            }}
-            className={errorInputClass("username")}
+            onChange={(e) => handleChange("username", e.target.value)}
+            isInvalid={isInvalid("username")}
+            error={getError("username")}
           />
-          {isInvalid("username") && (
-            <span className="text-xs text-red-500">{getError("username")}</span>
-          )}
-        </Field>
 
-        <Field>
-          <Label>كلمة المرور</Label>
-          <Input
-            value={formData.password}
-            onChange={(e) => {
-              setFormData({ ...formData, password: e.target.value });
-              clearError("password");
-            }}
-            className={errorInputClass("password")}
+          <PasswordField
+            label="كلمة المرور"
+            required
+            value={formData.password || ""}
+            onChange={(e) => handleChange("password", e.target.value)}
+            isInvalid={isInvalid("password")}
+            error={getError("password")}
           />
-          {isInvalid("password") && (
-            <span className="text-xs text-red-500">{getError("password")}</span>
-          )}
-        </Field>
+        </div>
 
-        <Field>
-          <Label>الدور</Label>
+        <FormField label="الدور" required isInvalid={isInvalid("roleId")} error={getError("roleId")}>
           <SearchableSelect
             items={roles?.data ?? []}
             itemLabelKey="name"
             itemValueKey="id"
             placeholder="اختر الدور"
             value={formData.roleId?.toString() || ""}
-            onValueChange={(val) => {
-              const selectedRole = roles?.data?.find(
-                (c) => c.id.toString() === val,
-              );
-              if (selectedRole) {
-                setFormData((prev) => ({
-                  ...prev,
-                  roleId: selectedRole.id,
-                  role: selectedRole,
-                }));
-                clearError("roleId");
-              }
-            }}
             columnsNames={RoleFilterColumns.columnsNames}
             onSearch={(condition) => filterRoles(condition)}
             errorInputClass={errorInputClass("roleId")}
             disabled={fetchingRoles}
+            onValueChange={(val) => {
+              const selected = roles?.data?.find(r => r.id.toString() === val);
+              if (selected) {
+                handleChange("roleId", selected.id);
+                handleChange("role", selected);
+              }
+            }}
           />
-          {isInvalid("roleId") && (
-            <span className="text-xs text-red-500">{getError("roleId")}</span>
-          )}
-        </Field>
+        </FormField>
 
-        <Field>
-          <Label>الفرع</Label>
+        <FormField label="الفرع" required isInvalid={isInvalid("branchId")} error={getError("branchId")}>
           <SearchableSelect
             items={branches?.data ?? []}
             itemLabelKey="name"
             itemValueKey="id"
             placeholder="اختر الفرع"
             value={formData.branchId?.toString() || ""}
-            onValueChange={(val) => {
-              const selectedBranch = branches?.data?.find(
-                (c) => c.id.toString() === val,
-              );
-              if (selectedBranch) {
-                setFormData((prev) => ({
-                  ...prev,
-                  branchId: selectedBranch.id,
-                  branch: selectedBranch,
-                }));
-                clearError("branchId");
-              }
-            }}
             columnsNames={RoleFilterColumns.columnsNames}
             onSearch={(condition) => filterBranches(condition)}
             errorInputClass={errorInputClass("branchId")}
             disabled={fetchingBranches}
+            onValueChange={(val) => {
+               const selected = branches?.data?.find(b => b.id.toString() === val);
+               if (selected) {
+                handleChange("branchId", selected.id);
+                handleChange("branch", selected);
+               }
+            }}
           />
-          {isInvalid("branchId") && (
-            <span className="text-xs text-red-500">{getError("branchId")}</span>
-          )}
-        </Field>
+        </FormField>
 
-        <Field>
-          <Label>حالة المستخدم</Label>
-          <Select
-            dir="rtl"
-            value={formData.isActive ? "نشط" : "غير نشط"}
-            onValueChange={(val) =>
-              setFormData({
-                ...formData,
-                isActive: val == "نشط" ? true : false,
-              })
-            }
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="نشط">نشط</SelectItem>
-              <SelectItem value="غير نشط">غير نشط</SelectItem>
-            </SelectContent>
-          </Select>
-        </Field>
+        <SelectField
+          label="حالة المستخدم"
+          value={formData.isActive ? "active" : "inactive"}
+          onValueChange={(val) => handleChange("isActive", val === "active")}
+          required={true}
+          options={[
+            { label: "نشط", value: "active" },
+            { label: "غير نشط", value: "inactive" },
+          ]}
+        />
 
       </FieldGroup>
 
@@ -227,11 +151,12 @@ export default function ChangeUserDialog({
         <SaveButton
           formData={formData as User}
           dialogMode={mode}
-          service={new UsersApiService()}
+          service={userService}
           onSuccess={(data) => onSuccess?.(data, mode)}
           validation={validate}
         />
       </DialogFooter>
+
     </DialogContent>
   );
 }

@@ -10,33 +10,22 @@ import TableHeader from "@/app/core/components/table/tableHeader";
 import TableHeaderRows from "@/app/core/components/table/tableHeaderRows";
 import TablePagination from "@/app/core/components/table/tablePagination";
 import TableRowActionsMenu from "@/app/core/components/table/tableRowActionsMenu";
-import useDialog from "@/app/core/hooks/useDialog";
-import useEntities from "@/app/core/hooks/useEntities";
 import UsersApiService from "@/app/core/networking/services/usersApiService";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Table, TableBody } from "@/components/ui/table";
 import { User2Icon } from "lucide-react";
-import User, { UserFilterColumns } from "../data/user";
+import { UserFilterColumns } from "../data/user";
+import { openUserDeleteDialog, openUserEditDialog, setIsUserDeleteDialogOpen, setIsUserEditDialogOpen } from "../logic/userDialogSlice";
+import { filterUsers, refreshUsers, setCurrentUsersPage } from "../logic/userSlice";
 import ChangeUserDialog from "./changeUserDialog";
 
-export default function UsersPage() {
-  const { entities, refreash, filter, isLoading, currentPage, setCurrentPage } =
-    useEntities<User>(new UsersApiService());
-
-  const authState = useAppSelector((state) => state.auth);
+export default function UsersPage() 
+{
   const dispatch = useAppDispatch();
-
-  const {
-    selectedRow,
-    isEditDialogOpen,
-    isDeleteDialogOpen,
-    setIsEditDialogOpen,
-    setIsDeleteDialogOpen,
-    openEditDialog,
-    openDeleteDialog,
-  } = useDialog<User>();
-
+  const authState = useAppSelector((state) => state.auth);
+  const userState = useAppSelector((state) => state.user);
+  const { selectedRow, isEditDialogOpen, isDeleteDialogOpen } = useAppSelector((state) => state.userDialog);
   const perm = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Users));
 
   return (
@@ -49,7 +38,7 @@ export default function UsersPage() {
             entity={undefined}
             mode="create"
             onSuccess={(newData) => {
-              refreash(newData);
+              dispatch(refreshUsers({newData: newData}));
             }}
           />
         }
@@ -60,22 +49,22 @@ export default function UsersPage() {
         cards={[
           {
             title: "إجمالي المستخدمين",
-            data: (entities?.count ?? 0).toString(),
+            data: (userState.entities?.count ?? 0).toString(),
             icon: <User2Icon className="h-4 w-4 text-muted-foreground" />,
           },
         ]}
       />
       <SearchInput
         columnsNames={UserFilterColumns.columnsNames}
-        onSearch={(condition) => filter(condition)}
+        onSearch={(condition) => dispatch(filterUsers(condition))}
       />
 
       <div className="rounded-b-xl border shadow-sm overflow-hidden">
-        {isLoading ? (
+        {userState.isLoading ? (
           <EmptyTablePreview mode="loading" />
-        ) : entities?.count == 0 ? (
+        ) : userState.entities?.count == 0 ? (
           <EmptyTablePreview mode="empty" />
-        ) : entities == undefined ? (
+        ) : userState.entities == undefined ? (
           <EmptyTablePreview mode="error" />
         ) : (
           <Table>
@@ -88,7 +77,7 @@ export default function UsersPage() {
               ]}
             />
             <TableBody>
-              {entities?.data?.map((user, i) => (
+              {userState.entities?.data?.map((user, i) => (
                 <TableBodyRow
                   key={i}
                   tableRows={[
@@ -103,16 +92,16 @@ export default function UsersPage() {
                     <TableRowActionsMenu
                       permissionsResource={SystemPermissionsResources.Users}
                       type="dropdown"
-                      onEditClicked={() => openEditDialog(user)}
-                      onDeleteClicked={() => openDeleteDialog(user)}
+                      onEditClicked={() => dispatch(openUserEditDialog(user))}
+                      onDeleteClicked={() => dispatch(openUserDeleteDialog(user))}
                     />
                   }
                   contextMenuContent={
                     <TableRowActionsMenu
                       permissionsResource={SystemPermissionsResources.Users}
                       type="context"
-                      onEditClicked={() => openEditDialog(user)}
-                      onDeleteClicked={() => openDeleteDialog(user)}
+                      onEditClicked={() => dispatch(openUserEditDialog(user))}
+                      onDeleteClicked={() => dispatch(openUserDeleteDialog(user))}
                     />
                   }
                 />
@@ -122,20 +111,20 @@ export default function UsersPage() {
         )}
         <TablePagination
           pageSize={10}
-          totalNumber={entities?.count ?? 0}
-          currentPage={currentPage || 1}
-          onPageChanged={setCurrentPage}
+          totalNumber={userState.entities?.count ?? 0}
+          currentPage={userState.currentPage || 1}
+          onPageChanged={(newPage) => dispatch(setCurrentUsersPage(newPage))}
         />
 
         {isEditDialogOpen && perm.updatePermission && (
-          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <Dialog open={isEditDialogOpen} onOpenChange={(open) => dispatch(setIsUserEditDialogOpen(open))}>
             <ChangeUserDialog
               entity={selectedRow || undefined}
               mode={selectedRow ? "update" : "create"}
               onSuccess={(data, mode) => {
-                refreash(data);
+                dispatch(refreshUsers({newData: data}));
                 if(mode === 'create')
-                  setIsEditDialogOpen(false);
+                  dispatch(refreshUsers({ newData: data }));
                 if (data.id === authState.loggedInUser?.id) {
                   dispatch(updateLoggedInUser(data));
                 }
@@ -147,7 +136,7 @@ export default function UsersPage() {
         {isDeleteDialogOpen && perm.deletePermission && (
           <Dialog
             open={isDeleteDialogOpen}
-            onOpenChange={setIsDeleteDialogOpen}
+            onOpenChange={(open) => dispatch(setIsUserDeleteDialogOpen(open))}
           >
             <DialogContent dir="rtl" className="sm:max-w-sm">
               <DeleteDialog
@@ -155,8 +144,8 @@ export default function UsersPage() {
                 id={selectedRow?.id ?? 0}
                 service={new UsersApiService()}
                 onSuccess={() => {
-                  refreash(undefined, selectedRow?.id);
-                  setIsDeleteDialogOpen(false);
+                  dispatch(refreshUsers({deletedId: selectedRow?.id}));
+                  dispatch(setIsUserDeleteDialogOpen(false));
                 }}
               />
             </DialogContent>
