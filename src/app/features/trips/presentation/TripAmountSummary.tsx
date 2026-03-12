@@ -3,9 +3,9 @@
 import { SystemPermissions } from "@/app/core/auth/systemPermissions";
 import { SystemPermissionsActions } from "@/app/core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import { useLoggedInUser } from "@/app/core/contexts/loggedInUserContext";
 import TripDepositsReportApiService from "@/app/core/networking/services/reports/tripDepositsReportApiService";
 import TripTicketsReportApiService from "@/app/core/networking/services/reports/tripTicketsReportApiService";
+import { useAppSelector } from "@/app/core/state/hooks";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Archive, Calculator, Coins, Ticket as TicketIcon, Wallet } from "lucide-react";
@@ -67,12 +67,12 @@ export default function TripAmountSummary({
   const [isPrintingDeposits, setIsPrintingDeposits] = useState(false);
   const [isSharingTickets, setIsSharingTickets] = useState(false);
   const [isSharingDeposits, setIsSharingDeposits] = useState(false);
-  const {loggedInUser} = useLoggedInUser();
+  const authState = useAppSelector((state) => state.auth);
 
   const handlePrintTripTickets = async (commission: number, showAmount: boolean) => {
     setIsPrintingTickets(true);
     try {
-      const currentUserId = loggedInUser?.id; 
+      const currentUserId = authState.loggedInUser?.id; 
       await TripTicketsReportApiService.getReport(trip?.id, commission, showAmount, currentUserId ?? 0);
       setIsTTDialogOpen(false);
     } finally {
@@ -83,7 +83,7 @@ export default function TripAmountSummary({
   const handlePrintTripDeposits = async (commission: number, showAmount: boolean) => {
     setIsPrintingDeposits(true);
     try {
-      const currentUserId = loggedInUser?.id; 
+      const currentUserId = authState.loggedInUser?.id; 
       await TripDepositsReportApiService.getReport(trip?.id, commission, showAmount, currentUserId ?? 0);
       setIsTDDialogOpen(false);
     } finally {
@@ -94,7 +94,7 @@ export default function TripAmountSummary({
   const handleShareTripTickets = async (commission: number, showAmount: boolean) => {
     setIsSharingTickets(true);
     try {
-      const currentUserId = loggedInUser?.id;
+      const currentUserId = authState.loggedInUser?.id;
       await TripTicketsReportApiService.getReport(trip?.id, commission, showAmount, currentUserId ?? 0, "share", `tickets_trip_${trip?.id}`);
       setIsTTDialogOpen(false);
     } finally {
@@ -105,7 +105,7 @@ export default function TripAmountSummary({
   const handleShareTripDeposits = async (commission: number, showAmount: boolean) => {
     setIsSharingDeposits(true);
     try {
-      const currentUserId = loggedInUser?.id;
+      const currentUserId = authState.loggedInUser?.id;
       await TripDepositsReportApiService.getReport(trip?.id, commission, showAmount, currentUserId ?? 0, "share", `deposits_trip_${trip?.id}`);
       setIsTDDialogOpen(false);
     } finally {
@@ -196,7 +196,7 @@ export default function TripAmountSummary({
         </div>
 
         <div className="flex gap-3">
-          {SystemPermissions.hasAuth(loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TripTicketsReport, SystemPermissionsActions.Get) && (
+          {SystemPermissions.hasAuth(authState.loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TripTicketsReport, SystemPermissionsActions.Get) && (
             <TripReportDialog
               label="كشف الركاب"
               title="خيارات تقرير كشف الركاب"
@@ -213,7 +213,7 @@ export default function TripAmountSummary({
             />
           )}
 
-          {SystemPermissions.hasAuth(loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TripDepositsReport, SystemPermissionsActions.Get) && (
+          {SystemPermissions.hasAuth(authState.loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TripDepositsReport, SystemPermissionsActions.Get) && (
             <TripReportDialog
               label="كشف الأمانات"
               title="خيارات تقرير كشف الأمانات"

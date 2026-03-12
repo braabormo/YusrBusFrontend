@@ -2,9 +2,8 @@ import { SystemPermissions } from "@/app/core/auth/systemPermissions";
 import { SystemPermissionsActions } from "@/app/core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
 import WhatsappService from "@/app/core/chat/whatsappService";
-import { useLoggedInUser } from "@/app/core/contexts/loggedInUserContext";
-import { useSetting } from "@/app/core/contexts/settingContext";
 import TicketReportApiService from "@/app/core/networking/services/reports/ticketReportApiService";
+import { useAppSelector } from "@/app/core/state/hooks";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -32,8 +31,7 @@ export default function BusSeat({
 }: SeatProps) {
   const isOccupied = !!ticket;
   const isCheckedIn = ticket?.checkedIn;
-  const { loggedInUser } = useLoggedInUser();
-  const { setting } = useSetting();
+  const authState = useAppSelector((state) => state.auth);
 
   const handleContextMenuAction = (e: React.MouseEvent) => {
     if (!isOccupied) e.preventDefault();
@@ -91,12 +89,12 @@ export default function BusSeat({
       if (response.status === 200) {
         toast.success("تم تجهيز الرابط بنجاح، جاري فتح واتساب...", { id: loadingToast });
         const shortUrl = `${window.location.origin}/t/${ticket.accessKey}`;
-        const header = `تأكيد حجز - ${setting?.companyName}`;
+        const header = `تأكيد حجز - ${authState.setting?.companyName}`;
         const body = 
             `عزيزي المسافر، تم تأكيد حجزك بنجاح.\n` +
             `رقم التذكرة: ${ticket.id}\n` +
             `يمكنك تحميل التذكرة من الرابط التالي:\n\n${shortUrl}`;
-        const footer = `شكراً لاختياركم ${setting?.companyName}، رحلة سعيدة!`;
+        const footer = `شكراً لاختياركم ${authState.setting?.companyName}، رحلة سعيدة!`;
 
         WhatsappService.SendMessage(header, body, footer, ticket.passenger.phoneNumber);
 
@@ -327,7 +325,7 @@ export default function BusSeat({
           <ContextMenuSeparator />
           
           <ContextMenuGroup>
-            {SystemPermissions.hasAuth(loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TicketReport, SystemPermissionsActions.Get) && (
+            {SystemPermissions.hasAuth(authState.loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TicketReport, SystemPermissionsActions.Get) && (
               <>
                 <ContextMenuItem
                   onClick={(e) => {
@@ -357,7 +355,7 @@ export default function BusSeat({
           <ContextMenuSeparator />
 
           <ContextMenuGroup>
-            {SystemPermissions.hasAuth(loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TicketReport, SystemPermissionsActions.Get) && (
+            {SystemPermissions.hasAuth(authState.loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TicketReport, SystemPermissionsActions.Get) && (
               <>
                 <ContextMenuItem
                   onClick={(e) => {
@@ -387,7 +385,7 @@ export default function BusSeat({
           <ContextMenuSeparator />
 
           <ContextMenuGroup>
-            {SystemPermissions.hasAuth(loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TicketReport, SystemPermissionsActions.Get) && (
+            {SystemPermissions.hasAuth(authState.loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.TicketReport, SystemPermissionsActions.Get) && (
               <>
                 <ContextMenuItem
                   onClick={(e) => {

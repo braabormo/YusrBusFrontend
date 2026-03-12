@@ -6,6 +6,8 @@ import {
   type ValidationRule,
 } from "@/app/core/hooks/useFormValidation";
 import BranchesApiService from "@/app/core/networking/services/branchesApiService";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
+import { filterCities } from "@/app/core/state/shared/citySlice";
 import { Validators } from "@/app/core/utils/validators";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,14 +24,14 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import SaveButton from "../../../core/components/buttons/saveButton";
-import useCities from "../../../core/hooks/useCities";
 import type Branch from "../data/branch";
 
 export default function ChangeBranchDialog({
   entity,
   mode,
   onSuccess,
-}: CummonChangeDialogProps<Branch>) {
+}: CummonChangeDialogProps<Branch>) 
+{
   const [formData, setFormData] = useState<Partial<Branch>>({
     id: entity?.id,
     name: entity?.name,
@@ -40,7 +42,8 @@ export default function ChangeBranchDialog({
     postalCode: entity?.postalCode,
   });
 
-  const { cities, fetchingCities, filterCities } = useCities();
+  const cityState = useAppSelector((state) => state.city);
+  const dispatch = useAppDispatch();
 
   const validationRules: ValidationRule<Partial<Branch>>[] = [
     {
@@ -55,8 +58,7 @@ export default function ChangeBranchDialog({
     },
   ];
 
-  const { getError, isInvalid, validate, clearError, errorInputClass } =
-    useFormValidation(formData, validationRules);
+  const { getError, isInvalid, validate, clearError, errorInputClass } = useFormValidation(formData, validationRules);
 
   return (
     <DialogContent dir="rtl" className="sm:max-w-sm">
@@ -88,7 +90,7 @@ export default function ChangeBranchDialog({
         <Field>
           <Label htmlFor="branchCity">المدينة</Label>
           <SearchableSelect 
-            items={cities} 
+            items={cityState.entities.data ?? []} 
             itemLabelKey="name" 
             itemValueKey="id" 
             placeholder="اختر المدينة"
@@ -98,9 +100,9 @@ export default function ChangeBranchDialog({
               clearError("cityId");
             }}
             columnsNames={CityFilterColumns.columnsNames}
-            onSearch={(condition) => filterCities(condition)} 
+            onSearch={(condition) => dispatch(filterCities(condition))} 
             errorInputClass={isInvalid("fromCityId") ? "border-red-500 ring-red-500" : ""}
-            disabled={fetchingCities}
+            disabled={cityState.isLoading}
           />
           {isInvalid("cityId") && (
             <span className="text-xs text-red-500">{getError("cityId")}</span>
@@ -166,7 +168,7 @@ export default function ChangeBranchDialog({
           formData={formData as Branch}
           dialogMode={mode}
           service={new BranchesApiService()}
-          disable={() => fetchingCities}
+          disable={() => cityState.isLoading}
           onSuccess={(data) => onSuccess?.(data, mode)}
           validation={validate}
         />

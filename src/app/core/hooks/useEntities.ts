@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import type { BaseEntity } from "../data/baseEntity";
-import type { FilterResult } from "../data/filterResult";
-import BaseApiService from "../networking/baseApiService";
 import type { FilterCondition } from "../data/filterCondition";
+import type { FilterResult } from "../data/filterResult";
 import type { RequestResult } from "../data/requestResult";
+import type BaseFilterableApiService from "../networking/baseFilterableApiService";
 
 export default function useEntities<T extends BaseEntity>(
-  service: BaseApiService<T>, 
+  service: BaseFilterableApiService<T>, 
   filterMethod?: (pageNumber: number, rowsPerPage: number, condition?: FilterCondition | undefined) => Promise<RequestResult<FilterResult<T>>> | undefined,
   deps: any[] = []
 )

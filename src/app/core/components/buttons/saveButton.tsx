@@ -3,8 +3,9 @@ import type BaseApiService from "@/app/core/networking/baseApiService";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import type { BaseEntity } from "../../data/baseEntity";
 
-interface Props<T> {
+interface Props<T extends BaseEntity> {
   formData: T;
   dialogMode: DialogMode;
   service: BaseApiService<T>;
@@ -13,7 +14,7 @@ interface Props<T> {
   validation?: () => boolean;
 }
 
-export default function SaveButton<T>({
+export default function SaveButton<T extends BaseEntity>({
   formData,
   dialogMode,
   service,

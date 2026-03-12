@@ -1,11 +1,13 @@
 import SearchableSelect from "@/app/core/components/select/searchableSelect";
 import { CityFilterColumns } from "@/app/core/data/city";
-import useCities from "@/app/core/hooks/useCities";
+import type { FilterCondition } from "@/app/core/data/filterCondition";
 import {
   useFormValidation,
   type ValidationRule,
 } from "@/app/core/hooks/useFormValidation";
-import { Validators } from "@/app/core/utils/validators"; // تم تصغير v في validators
+import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
+import { filterCities } from "@/app/core/state/shared/citySlice";
+import { Validators } from "@/app/core/utils/validators";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -32,7 +34,6 @@ import { useEffect, useState } from "react";
 import { arSA as arSADayPicker } from "react-day-picker/locale";
 import { PassengerFilterColumns, type Passenger } from "../../passengers/data/passenger";
 import type { Ticket } from "../data/ticket";
-import type { FilterCondition } from "@/app/core/data/filterCondition";
 
 type ChangeTicketDialogProps = {
   entity?: Ticket;
@@ -52,7 +53,8 @@ export default function ChangeTicketDialog({
   onSuccess,
 }: ChangeTicketDialogProps) {
   const [formData, setFormData] = useState<Partial<Ticket>>(entity || {});
-  const { cities, fetchingCities, filterCities } = useCities();
+  const cityState = useAppSelector((state) => state.city);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (entity) {
@@ -192,13 +194,13 @@ export default function ChangeTicketDialog({
           <Field>
             <Label>من المدينة</Label>
             <SearchableSelect 
-              items={cities} 
+              items={cityState.entities.data ?? []} 
               itemLabelKey="name" 
               itemValueKey="id" 
               placeholder="اختر المدينة"
               value={formData.fromCityId?.toString() || ""}
               onValueChange={(val) => {
-                const selectedCity = cities.find(
+                const selectedCity = cityState.entities.data?.find(
                   (c) => c.id.toString() === val,
                 );
                 setFormData({
@@ -209,9 +211,9 @@ export default function ChangeTicketDialog({
                 clearError("fromCityId");
               }}
               columnsNames={CityFilterColumns.columnsNames}
-              onSearch={(condition) => filterCities(condition)} 
+              onSearch={(condition) => dispatch(filterCities(condition))} 
               errorInputClass={errorInputClass("fromCityId")}
-              disabled={fetchingCities}
+              disabled={cityState.isLoading}
             />
             {isInvalid("fromCityId") && (
               <span className="text-xs text-red-500">
@@ -223,13 +225,13 @@ export default function ChangeTicketDialog({
           <Field>
             <Label>إلى المدينة</Label>
             <SearchableSelect 
-              items={cities} 
+              items={cityState.entities.data ?? []} 
               itemLabelKey="name" 
               itemValueKey="id" 
               placeholder="اختر المدينة"
               value={formData.toCityId?.toString() || ""}
               onValueChange={(val) => {
-                const selectedCity = cities.find(
+                const selectedCity = cityState.entities.data?.find(
                   (c) => c.id.toString() === val,
                 );
                 setFormData({
@@ -240,9 +242,9 @@ export default function ChangeTicketDialog({
                 clearError("toCityId");
               }}
               columnsNames={CityFilterColumns.columnsNames}
-              onSearch={(condition) => filterCities(condition)} 
+              onSearch={(condition) => dispatch(filterCities(condition))} 
               errorInputClass={errorInputClass("toCityId")}
-              disabled={fetchingCities}
+              disabled={cityState.isLoading}
             />
           </Field>
         </div>
@@ -326,7 +328,7 @@ export default function ChangeTicketDialog({
           <Field>
             <Label>مكان الإصدار</Label>
             <SearchableSelect 
-              items={cities} 
+              items={cityState.entities.data ?? []} 
               itemLabelKey="name" 
               itemValueKey="id" 
               placeholder="اختر المدينة"
@@ -336,9 +338,9 @@ export default function ChangeTicketDialog({
                 clearError("issueCityId");
               }}
               columnsNames={CityFilterColumns.columnsNames}
-              onSearch={(condition) => filterCities(condition)} 
+              onSearch={(condition) => dispatch(filterCities(condition))} 
               errorInputClass={errorInputClass("issueCityId")}
-              disabled={fetchingCities}
+              disabled={cityState.isLoading}
             />
             {isInvalid("issueCityId") && (
             <span className="text-xs text-red-500">

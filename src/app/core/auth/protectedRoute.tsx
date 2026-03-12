@@ -1,15 +1,11 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "./authContext"; 
-import { AuthConstants } from "./authConstants";
+import { useAppSelector } from "../state/hooks";
 
 const ProtectedRoute = () => {
   const location = useLocation();
-  const { isAuthenticated } = useAuth(); 
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
-  const isActuallyAuthenticated = isAuthenticated || 
-    localStorage.getItem(AuthConstants.AuthCheckStorageItemName) === "true";
-
-  if (!isActuallyAuthenticated) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

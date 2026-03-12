@@ -2,12 +2,13 @@ import ChangeDataDialog from "@/app/core/components/dialogs/ChangeDataDialog";
 import SearchableSelect from "@/app/core/components/select/searchableSelect";
 import { CityFilterColumns } from "@/app/core/data/city";
 import { StorageFileStatus } from "@/app/core/data/storageFile";
-import useCities from "@/app/core/hooks/useCities";
 import {
   useFormValidation,
   type ValidationRule,
 } from "@/app/core/hooks/useFormValidation";
 import useStorageFile from "@/app/core/hooks/useStorageFile";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
+import { filterCities } from "@/app/core/state/shared/citySlice";
 import { Validators } from "@/app/core/utils/validators";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -28,11 +29,12 @@ export default function ChangeDepositDialog({
   onSuccess,
 }: ChangeDepositDialogProps) {
   const [formData, setFormData] = useState<Partial<Deposit>>(entity || {});
+  const cityState = useAppSelector((state) => state.city);
+  const dispatch = useAppDispatch();
   const { fileInputRef, handleFileChange, handleRemoveFile, handleDownload } = useStorageFile(
     setFormData,
     "image"
   );
-  const { cities, fetchingCities, filterCities } = useCities();
 
   useEffect(() => {
     if (entity) {
@@ -106,13 +108,13 @@ export default function ChangeDepositDialog({
         <Field>
           <Label>من المدينة</Label>
           <SearchableSelect
-            items={cities}
+            items={cityState.entities.data ?? []}
             itemLabelKey="name"
             itemValueKey="id"
             placeholder="اختر المدينة"
             value={formData.fromCityId?.toString() || ""}
             onValueChange={(val) => {
-              const selectedCity = cities.find((c) => c.id.toString() === val);
+              const selectedCity = cityState.entities.data?.find((c) => c.id.toString() === val);
               setFormData((prev) => ({
                 ...prev,
                 fromCityId: selectedCity?.id,
@@ -121,9 +123,9 @@ export default function ChangeDepositDialog({
               clearError("fromCityId");
             }}
             columnsNames={CityFilterColumns.columnsNames}
-            onSearch={(condition) => filterCities(condition)}
+            onSearch={(condition) => dispatch(filterCities(condition))}
             errorInputClass={errorInputClass("fromCityId")}
-            disabled={fetchingCities}
+            disabled={cityState.isLoading}
           />
           {isInvalid("fromCityId") && (
             <span className="text-xs text-red-500">
@@ -135,13 +137,13 @@ export default function ChangeDepositDialog({
         <Field>
           <Label>إلى المدينة</Label>
           <SearchableSelect
-            items={cities}
+            items={cityState.entities.data ?? []}
             itemLabelKey="name"
             itemValueKey="id"
             placeholder="اختر المدينة"
             value={formData.toCityId?.toString() || ""}
             onValueChange={(val) => {
-              const selectedCity = cities.find((c) => c.id.toString() === val);
+              const selectedCity = cityState.entities.data?.find((c) => c.id.toString() === val);
               setFormData((prev) => ({
                 ...prev,
                 toCityId: selectedCity?.id,
@@ -150,9 +152,9 @@ export default function ChangeDepositDialog({
               clearError("toCityId");
             }}
             columnsNames={CityFilterColumns.columnsNames}
-            onSearch={(condition) => filterCities(condition)}
+            onSearch={(condition) => dispatch(filterCities(condition))}
             errorInputClass={errorInputClass("toCityId")}
-            disabled={fetchingCities}
+            disabled={cityState.isLoading}
           />
           {isInvalid("toCityId") && (
             <span className="text-xs text-red-500">{getError("toCityId")}</span>

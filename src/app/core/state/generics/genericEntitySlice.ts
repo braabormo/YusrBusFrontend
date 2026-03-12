@@ -1,14 +1,14 @@
 import {
-  createAsyncThunk,
-  createSlice,
-  type PayloadAction
+    createAsyncThunk,
+    createSlice,
+    type PayloadAction
 } from "@reduxjs/toolkit";
 import { castDraft } from "immer";
 import type { BaseEntity } from "../../data/baseEntity";
 import type { FilterCondition } from "../../data/filterCondition";
 import type { FilterResult } from "../../data/filterResult";
 import type { RequestResult } from "../../data/requestResult";
-import type BaseApiService from "../../networking/baseApiService";
+import type BaseFilterableApiService from "../../networking/baseFilterableApiService";
 import type IEntityState from "../interfaces/iEntityState";
 
 type FilterMethodType<T> = (
@@ -17,7 +17,7 @@ type FilterMethodType<T> = (
   condition?: FilterCondition | undefined,
 ) => Promise<RequestResult<FilterResult<T>>> | undefined;
 
-export function createGenericEntitySlice<T extends BaseEntity>(sliceName: string, service: BaseApiService<T>, filterMethod?: FilterMethodType<T>) 
+export function createGenericEntitySlice<T extends BaseEntity>(sliceName: string, service: BaseFilterableApiService<T>, filterMethod?: FilterMethodType<T>) 
 {
     const initialState: IEntityState<T> = {
         entities: { data: [], count: 0 },

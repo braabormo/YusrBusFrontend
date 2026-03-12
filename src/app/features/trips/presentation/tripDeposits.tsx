@@ -1,9 +1,9 @@
 import { SystemPermissions } from "@/app/core/auth/systemPermissions";
 import { SystemPermissionsActions } from "@/app/core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import { useLoggedInUser } from "@/app/core/contexts/loggedInUserContext";
 import { StorageFileStatus } from "@/app/core/data/storageFile";
 import DepositReportApiService from "@/app/core/networking/services/reports/depositReportApiService";
+import { useAppSelector } from "@/app/core/state/hooks";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Archive, ArrowLeft, Banknote, Box, Edit, Loader2, PackagePlus, Printer, Share2, Trash2 } from "lucide-react";
@@ -19,7 +19,7 @@ type TripDepositsParams = {
 
 export default function TripDeposits({ deposits, onDepositDeleted, onDepositDialogOpened }: TripDepositsParams) {
 
-  const {loggedInUser} = useLoggedInUser();
+  const authState = useAppSelector((state) => state.auth);
   const [printingId, setPrintingId] = useState<number | null>(null);
   const [sharingId, setSharingId] = useState<number | null>(null); // Added state
 
@@ -31,7 +31,7 @@ export default function TripDeposits({ deposits, onDepositDeleted, onDepositDial
 
     setPrintingId(depositId);
     try {
-      const currentUserId = loggedInUser?.id; 
+      const currentUserId = authState.loggedInUser?.id; 
       await DepositReportApiService.getReport(depositId, currentUserId ?? 0);
     } finally {
       setPrintingId(null);
@@ -46,7 +46,7 @@ export default function TripDeposits({ deposits, onDepositDeleted, onDepositDial
 
     setSharingId(depositId);
     try {
-      const currentUserId = loggedInUser?.id;
+      const currentUserId = authState.loggedInUser?.id;
       await DepositReportApiService.getReport(depositId, currentUserId ?? 0, "share", `deposit_${depositId}`);
     } finally {
       setSharingId(null);
@@ -159,7 +159,7 @@ export default function TripDeposits({ deposits, onDepositDeleted, onDepositDial
                       <Trash2 className="w-3.5 h-3.5" />
                     </Button>
 
-                    {SystemPermissions.hasAuth(loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.DepositReport, SystemPermissionsActions.Get) ? (
+                    {SystemPermissions.hasAuth(authState.loggedInUser?.role?.permissions ?? [], SystemPermissionsResources.DepositReport, SystemPermissionsActions.Get) ? (
                       <>
                         <Button
                           variant="ghost"

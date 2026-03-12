@@ -3,9 +3,10 @@ import type { FilterCondition } from "../../data/filterCondition";
 import type { FilterResult } from "../../data/filterResult";
 import type { RequestResult } from "../../data/requestResult";
 import ApiConstants from "../apiConstants";
+import BaseFilterableApiService from "../baseFilterableApiService";
 import YusrApiHelper from "../yusrApiHelper";
 
-export default class CitiesApiService
+export default class CitiesApiService extends BaseFilterableApiService<City>
 {
     routeName: string = "Cities";
     

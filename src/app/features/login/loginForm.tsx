@@ -1,6 +1,3 @@
-import { useAuth } from "@/app/core/auth/authContext";
-import { useLoggedInUser } from "@/app/core/contexts/loggedInUserContext";
-import { useSetting } from "@/app/core/contexts/settingContext";
 import { LoginRequest } from "@/app/core/data/loginRequest";
 import {
   useFormValidation,
@@ -24,8 +21,10 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type User from "../users/data/user";
 
+import { login, updateLoggedInUser } from "@/app/core/auth/authSlice";
 import { SystemPermissions } from "@/app/core/auth/systemPermissions";
 import type { Setting } from "@/app/core/data/setting";
+import { useAppDispatch } from "@/app/core/state/hooks";
 import placeholderImg from "@/assets/placeholder.svg";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -37,10 +36,8 @@ export function LoginForm({
   const [formData, setFormData] = useState<Partial<LoginRequest>>({});
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const { login } = useAuth();
   const location = useLocation();
-  const { updateSetting } = useSetting();
-  const { updateLoggedInUser } = useLoggedInUser();
+  const dispatch = useAppDispatch();
 
   const validationRules: ValidationRule<Partial<LoginRequest>>[] = [
     {
@@ -100,9 +97,8 @@ export function LoginForm({
     const result = await YusrApiHelper.Post<{user: User, setting: Setting}>(`${ApiConstants.baseUrl}/Login`, request);
 
     if (result.status === 200 && result.data) {
-      login(result.data.user);
-      updateLoggedInUser(result.data.user);
-      updateSetting(result.data.setting);
+      dispatch(login(result.data));
+      dispatch(updateLoggedInUser(result.data.user));
 
       const origin =
         location.state?.from?.pathname ||

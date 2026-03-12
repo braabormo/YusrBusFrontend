@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/sidebar"
 import { LogOutIcon } from "lucide-react"
 import { Link } from "react-router-dom"
-import { useAuth } from "../../auth/authContext"
+import { logout } from "../../auth/authSlice"
 import ApiConstants from "../../networking/apiConstants"
 import YusrApiHelper from "../../networking/yusrApiHelper"
 import ApplicationLang from "../../services/langService/applicationLang"
+import { useAppDispatch } from "../../state/hooks"
 import { ThemeToggle } from "../theme/themeToggle"
 
 export function SideBarSecondaryMenu({
@@ -29,13 +30,13 @@ export function SideBarSecondaryMenu({
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
 
   const sideBarUserDataLang = ApplicationLang.getAppLangText().sideBarUserData;
-  const { logout } = useAuth();
+  const dispatch = useAppDispatch();
   
   const LogoutHandler = async () => {
     const result = await YusrApiHelper.Post(`${ApiConstants.baseUrl}/Logout`);
 
     if (result.status === 200 || result.status === 204) {
-      logout();
+      dispatch(logout());
     }
   };
 

@@ -17,14 +17,13 @@ import {
   UsersIcon
 } from "lucide-react";
 import * as React from "react";
-import { useLoggedInUser } from "../../contexts/loggedInUserContext";
-import { useSetting } from "../../contexts/settingContext";
 import ApplicationLang from "../../services/langService/applicationLang";
 import SidebarLogo from "./sidebarLogo";
 
 import { SystemPermissions } from "../../auth/systemPermissions";
 import { SystemPermissionsActions } from "../../auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "../../auth/systemPermissionsResources";
+import { useAppSelector } from "../../state/hooks";
 import { SideBarCompanyData } from "./sideBarCompanyData";
 import { SideBarMainMenu } from "./sideBarMainMenu";
 import { SideBarSecondaryMenu } from "./sideBarSecondaryMenu";
@@ -34,9 +33,8 @@ const appLang = ApplicationLang.getAppLangText();
 const appLangSections = appLang.sections;
 
 export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { setting } = useSetting();
-  const { loggedInUser } = useLoggedInUser();
-  const permissions: string[] = loggedInUser?.role?.permissions || [];
+  const authState = useAppSelector((state) => state.auth);
+  const permissions: string[] = authState.loggedInUser?.role?.permissions || [];
 
   const data = {
     navMain: [
@@ -121,8 +119,8 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   const displayCompany = {
-    name: setting?.companyName || "Default Name",
-    logo: setting?.logo?.url || "/default-avatar.jpg",
+    name: authState.setting?.companyName || "Default Name",
+    logo: authState.setting?.logo?.url || "/default-avatar.jpg",
   };
 
   return (
@@ -144,7 +142,7 @@ export function SideBar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         />
       </SidebarContent>
       <SidebarFooter>
-        <SideBarUserData user={loggedInUser} />
+        <SideBarUserData user={authState.loggedInUser} />
       </SidebarFooter>
     </Sidebar>
   );

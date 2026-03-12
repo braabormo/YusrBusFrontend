@@ -3,16 +3,17 @@ import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle
 import { Separator } from "@/components/ui/separator";
 import { Loader2, OctagonAlert } from "lucide-react";
 import { useState } from "react";
+import type { BaseEntity } from "../../data/baseEntity";
 import type BaseApiService from "../../networking/baseApiService";
 
-interface Props<T> {
+interface Props<T extends BaseEntity> {
     entityName: string;
     id: number;
     service: BaseApiService<T>,
     onSuccess?: () => void;
 }
 
-export default function DeleteDialog<T>({entityName, id, service, onSuccess}: Props<T>) 
+export default function DeleteDialog<T extends BaseEntity>({entityName, id, service, onSuccess}: Props<T>) 
 {
     const [loading, setLoading] = useState(false);
 

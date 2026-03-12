@@ -1,13 +1,13 @@
-import { useSetting } from "@/app/core/contexts/settingContext";
+import { updateSetting } from "@/app/core/auth/authSlice";
 import { Setting } from "@/app/core/data/setting";
 import { StorageFileStatus } from "@/app/core/data/storageFile";
-import useCurrencies from "@/app/core/hooks/useCurrencies";
 import {
   useFormValidation,
   type ValidationRule,
 } from "@/app/core/hooks/useFormValidation";
 import useStorageFile from "@/app/core/hooks/useStorageFile";
 import SettingsApiService from "@/app/core/networking/services/settingsApiService";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
 import { Validators } from "@/app/core/utils/validators";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -60,12 +60,12 @@ export default function SettingPage() {
   const [loading, setLoading] = useState(false);
   const [initLoading, setInitLoading] = useState(true);
   const [formData, setFormData] = useState<Setting>(new Setting());
-  const { currencies, fetchingCurrencies } = useCurrencies();
+  const currencyState = useAppSelector((state) => state.currency);
   const { fileInputRef, handleFileChange, handleRemoveFile } =
     useStorageFile<Setting>(setFormData, "logo");
   const { isInvalid, validate, clearError, errorInputClass, getError } =
     useFormValidation(formData, validationRules);
-  const { updateSetting } = useSetting();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -75,7 +75,7 @@ export default function SettingPage() {
       if (response.data) {
         setFormData(response.data);
         setInitLoading(false);
-        updateSetting(response.data);
+        dispatch(updateSetting(response.data));
       }
     };
 
@@ -92,7 +92,7 @@ export default function SettingPage() {
 
     if (result.status === 200) {
       setFormData(result.data as Setting);
-      updateSetting(result.data as Setting);
+      dispatch(updateSetting(result.data as Setting));
     }
   }
 
@@ -260,7 +260,7 @@ export default function SettingPage() {
                 dir="rtl"
                 value={formData.currencyId?.toString() || ""}
                 onValueChange={(val) => {
-                  const selected = currencies.find(
+                  const selected = currencyState.entities.data?.find(
                     (c) => c.id.toString() === val,
                   );
                   if (selected) {
@@ -272,13 +272,13 @@ export default function SettingPage() {
                     clearError("currencyId");
                   }
                 }}
-                disabled={fetchingCurrencies}
+                disabled={currencyState.isLoading}
               >
                 <SelectTrigger className={errorInputClass("currencyId")}>
                   <SelectValue placeholder="اختر العملة" />
                 </SelectTrigger>
                 <SelectContent>
-                  {currencies.map((currency) => (
+                  {currencyState.entities.data?.map((currency) => (
                     <SelectItem
                       key={currency.id}
                       value={currency.id.toString()}

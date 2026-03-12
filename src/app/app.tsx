@@ -3,11 +3,8 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { Skeleton } from "../components/ui/skeleton";
 import { TooltipProvider } from "../components/ui/tooltip";
 import useAppInitialization from "../hooks/useAppInitialization";
-import { AuthProvider } from "./core/auth/authContext";
 import ProtectedRoute from "./core/auth/protectedRoute";
 import { ThemeProvider } from "./core/components/theme/themeProvider";
-import { LoggedInUserProvider } from "./core/contexts/loggedInUserContext";
-import { SettingProvider } from "./core/contexts/settingContext";
 import RoutesService from "./core/services/constants/routesService";
 import BranchesPage from "./features/branches/presentation/branchesPage";
 import DashboardPage from "./features/dashboard/dashboardPage";
@@ -35,16 +32,10 @@ function App() {
 function AppBody() {
   return (
     <TooltipProvider>
-      <SettingProvider>
-        <LoggedInUserProvider>
-          <AuthProvider>
-            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-              <AppRoutes />
-              <Toaster richColors closeButton position="top-center" dir="rtl" />
-            </ThemeProvider>
-          </AuthProvider>
-        </LoggedInUserProvider>
-      </SettingProvider>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <AppRoutes />
+        <Toaster richColors closeButton position="top-center" dir="rtl" />
+      </ThemeProvider>
     </TooltipProvider>
   );
 }

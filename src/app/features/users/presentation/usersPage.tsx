@@ -1,3 +1,5 @@
+import { selectPermissionsByResource } from "@/app/core/auth/authSelectors";
+import { updateLoggedInUser } from "@/app/core/auth/authSlice";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
 import DeleteDialog from "@/app/core/components/dialogs/deleteDialog";
 import SearchInput from "@/app/core/components/input/searchInput";
@@ -8,11 +10,10 @@ import TableHeader from "@/app/core/components/table/tableHeader";
 import TableHeaderRows from "@/app/core/components/table/tableHeaderRows";
 import TablePagination from "@/app/core/components/table/tablePagination";
 import TableRowActionsMenu from "@/app/core/components/table/tableRowActionsMenu";
-import { useLoggedInUser } from "@/app/core/contexts/loggedInUserContext";
 import useDialog from "@/app/core/hooks/useDialog";
 import useEntities from "@/app/core/hooks/useEntities";
-import useUserPermissions from "@/app/core/hooks/useUserPermissions";
 import UsersApiService from "@/app/core/networking/services/usersApiService";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Table, TableBody } from "@/components/ui/table";
 import { User2Icon } from "lucide-react";
@@ -23,8 +24,8 @@ export default function UsersPage() {
   const { entities, refreash, filter, isLoading, currentPage, setCurrentPage } =
     useEntities<User>(new UsersApiService());
 
-  const { loggedInUser, updateLoggedInUser } =
-    useLoggedInUser();
+  const authState = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
 
   const {
     selectedRow,
@@ -36,8 +37,7 @@ export default function UsersPage() {
     openDeleteDialog,
   } = useDialog<User>();
 
-  const { addPermission, updatePermission, deletePermission } =
-    useUserPermissions(SystemPermissionsResources.Users);
+  const perm = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Users));
 
   return (
     <div className="px-5 py-3">
@@ -53,7 +53,7 @@ export default function UsersPage() {
             }}
           />
         }
-        isButtonVisible={addPermission}
+        isButtonVisible={perm.addPermission}
       />
 
       <TableCard
@@ -127,7 +127,7 @@ export default function UsersPage() {
           onPageChanged={setCurrentPage}
         />
 
-        {isEditDialogOpen && updatePermission && (
+        {isEditDialogOpen && perm.updatePermission && (
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
             <ChangeUserDialog
               entity={selectedRow || undefined}
@@ -136,15 +136,15 @@ export default function UsersPage() {
                 refreash(data);
                 if(mode === 'create')
                   setIsEditDialogOpen(false);
-                if (data.id === loggedInUser?.id) {
-                  updateLoggedInUser(data);
+                if (data.id === authState.loggedInUser?.id) {
+                  dispatch(updateLoggedInUser(data));
                 }
               }}
             />
           </Dialog>
         )}
 
-        {isDeleteDialogOpen && deletePermission && (
+        {isDeleteDialogOpen && perm.deletePermission && (
           <Dialog
             open={isDeleteDialogOpen}
             onOpenChange={setIsDeleteDialogOpen}

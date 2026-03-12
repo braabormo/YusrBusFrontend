@@ -1,11 +1,14 @@
 import SaveButton from "@/app/core/components/buttons/saveButton";
 import type { CummonChangeDialogProps } from "@/app/core/components/dialogs/cummonChangeDialogProps";
-import useCountries from "@/app/core/hooks/useCountries";
+import SearchableSelect from "@/app/core/components/select/searchableSelect";
+import { CountryFilterColumns } from "@/app/core/data/country";
 import {
   useFormValidation,
   type ValidationRule,
 } from "@/app/core/hooks/useFormValidation";
 import PassengersApiService from "@/app/core/networking/services/passengersApiService";
+import { useAppSelector } from "@/app/core/state/hooks";
+import { filterCountries } from "@/app/core/state/shared/countrySlice";
 import { Validators } from "@/app/core/utils/validators";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -39,8 +42,6 @@ import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import { arSA as arSADayPicker } from "react-day-picker/locale";
 import type { Gender, Passenger } from "../data/passenger";
-import SearchableSelect from "@/app/core/components/select/searchableSelect";
-import { CountryFilterColumns } from "@/app/core/data/country";
 
 export default function ChangePassengerDialog({
   entity,
@@ -48,7 +49,7 @@ export default function ChangePassengerDialog({
   onSuccess,
 }: CummonChangeDialogProps<Passenger>) {
   const [formData, setFormData] = useState<Partial<Passenger>>(entity || {});
-  const { countries, fetchingCountries, filterCountries } = useCountries();
+  const countryState = useAppSelector((state) => state.country);
 
   const validationRules: ValidationRule<Partial<Passenger>>[] = [
     {
@@ -136,13 +137,13 @@ export default function ChangePassengerDialog({
           <Field>
             <Label>الجنسية</Label>
             <SearchableSelect 
-              items={countries} 
+              items={countryState.entities.data ?? []} 
               itemLabelKey="name" 
               itemValueKey="id" 
               placeholder="اختر المدينة"
               value={formData.nationalityId?.toString() || ""}
               onValueChange={(val) => {
-                const selectedCountry = countries.find(
+                const selectedCountry = countryState.entities.data?.find(
                   (c) => c.id.toString() === val,
                 );
                 if (selectedCountry) {
@@ -157,7 +158,7 @@ export default function ChangePassengerDialog({
               columnsNames={CountryFilterColumns.columnsNames}
               onSearch={(condition) => filterCountries(condition)} 
               errorInputClass={errorInputClass("nationalityId")}
-              disabled={fetchingCountries}
+              disabled={countryState.isLoading}
             />
             {isInvalid("nationalityId") && (
               <span className="text-xs text-red-500">
@@ -303,7 +304,7 @@ export default function ChangePassengerDialog({
           formData={formData as Passenger}
           dialogMode={mode}
           service={new PassengersApiService()}
-          disable={() => fetchingCountries}
+          disable={() => countryState.isLoading}
           onSuccess={(data) => onSuccess?.(data, mode)}
           validation={validate}
         />

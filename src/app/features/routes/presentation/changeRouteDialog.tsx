@@ -4,13 +4,14 @@ import type { CummonChangeDialogProps } from "@/app/core/components/dialogs/cumm
 import Loading from "@/app/core/components/loading/loading";
 import SearchableSelect from "@/app/core/components/select/searchableSelect";
 import { CityFilterColumns } from "@/app/core/data/city";
-import useCities from "@/app/core/hooks/useCities";
 import { useDynamicList } from "@/app/core/hooks/useDynamicList";
 import {
   useFormValidation,
   type ValidationRule,
 } from "@/app/core/hooks/useFormValidation";
 import RoutesApiService from "@/app/core/networking/services/routesApiService";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
+import { filterCities } from "@/app/core/state/shared/citySlice";
 import { Validators } from "@/app/core/utils/validators";
 import { Button } from "@/components/ui/button";
 import {
@@ -69,7 +70,8 @@ export default function ChangeRouteDialog({
     }
   }, [entity?.id, mode]);
 
-  const { cities, fetchingCities, filterCities } = useCities();
+  const cityState = useAppSelector((state) => state.city);
+  const dispatch = useAppDispatch();
 
   const validationRules: ValidationRule<Partial<Route>>[] = [
     {
@@ -153,13 +155,13 @@ export default function ChangeRouteDialog({
           <Field>
             <Label>من المدينة</Label>
             <SearchableSelect 
-              items={cities} 
+              items={cityState.entities.data ?? []} 
               itemLabelKey="name" 
               itemValueKey="id" 
               placeholder="اختر المدينة"
               value={formData.fromCityId?.toString() || ""} 
               onValueChange={(val) => {
-                const selectedCity = cities.find((c) => c.id.toString() === val);
+                const selectedCity = cityState.entities.data?.find((c) => c.id.toString() === val);
                 if (selectedCity) {
                   setFormData((prev) => ({
                     ...prev,
@@ -170,9 +172,9 @@ export default function ChangeRouteDialog({
                 }
               }}
               columnsNames={CityFilterColumns.columnsNames}
-              onSearch={(condition) => filterCities(condition)} 
+              onSearch={(condition) => dispatch(filterCities(condition))} 
               errorInputClass={errorInputClass("fromCityId")}
-              disabled={fetchingCities}
+              disabled={cityState.isLoading}
             />
             {isInvalid("fromCityId") && (
               <span className="text-xs text-red-500">
@@ -184,13 +186,13 @@ export default function ChangeRouteDialog({
           <Field>
             <Label>إلى المدينة</Label>
             <SearchableSelect 
-              items={cities} 
+              items={cityState.entities.data ?? []} 
               itemLabelKey="name" 
               itemValueKey="id" 
               placeholder="اختر المدينة"
               value={formData.toCityId?.toString() || ""} 
               onValueChange={(val) => {
-                const selectedCity = cities.find((c) => c.id.toString() === val);
+                const selectedCity = cityState.entities.data?.find((c) => c.id.toString() === val);
                 if (selectedCity) {
                   setFormData((prev) => ({
                     ...prev,
@@ -201,9 +203,9 @@ export default function ChangeRouteDialog({
                 }
               }}
               columnsNames={CityFilterColumns.columnsNames}
-              onSearch={(condition) => filterCities(condition)} 
+              onSearch={(condition) => dispatch(filterCities(condition))} 
               errorInputClass={errorInputClass("toCityId")}
-              disabled={fetchingCities}
+              disabled={cityState.isLoading}
             />
             {isInvalid("toCityId") && <span className="text-xs text-red-500">{getError("toCityId")}</span>}
           </Field>
@@ -231,7 +233,7 @@ export default function ChangeRouteDialog({
                 <div className="flex-1 cursor-pointer">
                   
                   <SearchableSelect 
-                    items={cities} 
+                    items={cityState.entities.data ?? []} 
                     itemLabelKey="name" 
                     itemValueKey="id" 
                     placeholder="اختر المدينة"
@@ -239,17 +241,17 @@ export default function ChangeRouteDialog({
                     onValueChange={(val) => {
                       updateRow(index, "cityId", Number(val));
                       
-                      const city = cities.find((c) => c.id.toString() === val);
+                      const city = cityState.entities.data?.find((c) => c.id.toString() === val);
                       if (city) {
                         updateRow(index, "cityName", city.name);
                       }
                     }}
                     columnsNames={CityFilterColumns.columnsNames}
-                    onSearch={(condition) => filterCities(condition)} 
+                    onSearch={(condition) => dispatch(filterCities(condition))} 
                     errorInputClass={hasGlobalError && isCityMissing
                       ? "border-red-500 ring-red-500 text-red-900"
                       : ""}
-                    disabled={fetchingCities}
+                    disabled={cityState.isLoading}
                   />
                 </div>
 
@@ -292,7 +294,7 @@ export default function ChangeRouteDialog({
           formData={formData as Route}
           dialogMode={mode}
           service={new RoutesApiService()}
-          disable={() => fetchingCities}
+          disable={() => cityState.isLoading}
           onSuccess={(data) => onSuccess?.(data, mode)}
           validation={validate}
         />

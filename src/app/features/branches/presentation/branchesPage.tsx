@@ -1,8 +1,8 @@
+import { selectPermissionsByResource } from "@/app/core/auth/authSelectors";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
 import DeleteDialog from "@/app/core/components/dialogs/deleteDialog";
 import EmptyTablePreview from "@/app/core/components/table/emptyTablePreview";
 import TableRowActionsMenu from "@/app/core/components/table/tableRowActionsMenu";
-import useUserPermissions from "@/app/core/hooks/useUserPermissions";
 import BranchesApiService from "@/app/core/networking/services/branchesApiService";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -28,19 +28,19 @@ export default function BranchesPage() {
     isEditDialogOpen, 
     isDeleteDialogOpen 
   } = useAppSelector((state) => state.branchDialog);
+  const perm = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Branches));
 
   useEffect(() => {
     dispatch(filter(undefined));
   }, [dispatch]);
 
-  const { addPermission, updatePermission, deletePermission } = useUserPermissions(SystemPermissionsResources.Branches);
 
   return (
     <div className="px-5 py-3">
       <TableHeader
         title="إدارة الفروع"
         buttonTitle="إضافة فرع جديد"
-        isButtonVisible={addPermission}
+        isButtonVisible={perm.addPermission}
         createComp={
           <ChangeBranchDialog
             entity={undefined}
@@ -129,7 +129,7 @@ export default function BranchesPage() {
           onPageChanged={(newPage) => dispatch(setCurrentPage(newPage))}
         />
 
-        {isEditDialogOpen && updatePermission && (
+        {isEditDialogOpen && perm.updatePermission && (
           <Dialog open={isEditDialogOpen} onOpenChange={(open) => dispatch(setIsBranchEditDialogOpen(open))}>
             <ChangeBranchDialog
               entity={selectedRow || undefined}
@@ -143,7 +143,7 @@ export default function BranchesPage() {
           </Dialog>
         )}
 
-        {isDeleteDialogOpen && deletePermission && (
+        {isDeleteDialogOpen && perm.deletePermission && (
           <Dialog
             open={isDeleteDialogOpen}
             onOpenChange={(open) => dispatch(setIsBranchDeleteDialogOpen(open))}

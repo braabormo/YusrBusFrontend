@@ -15,7 +15,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import useUserPermissions from "../../hooks/useUserPermissions";
+import { selectPermissionsByResource } from "../../auth/authSelectors";
+import { useAppSelector } from "../../state/hooks";
 
 type ListType = "dropdown" | "context";
 
@@ -32,9 +33,8 @@ export default function TableRowActionsMenu({
   type,
   permissionsResource
 }: Props) {
-  const { updatePermission, deletePermission } = useUserPermissions(
-    permissionsResource,
-  );
+  const perm = useAppSelector((state) => selectPermissionsByResource(state, permissionsResource));
+
   return (
     <>
       {type === "dropdown" && (
@@ -47,12 +47,12 @@ export default function TableRowActionsMenu({
           <DropdownMenuContent align="start">
             <DropdownMenuLabel>الإجراءات</DropdownMenuLabel>
             <DropdownMenuSeparator></DropdownMenuSeparator>
-            {updatePermission && (
+            {perm.updatePermission && (
               <DropdownMenuItem onSelect={onEditClicked}>
                 تعديل
               </DropdownMenuItem>
             )}
-            {deletePermission && (
+            {perm.deletePermission && (
               <DropdownMenuItem
                 className="text-destructive"
                 onSelect={onDeleteClicked}
@@ -69,10 +69,10 @@ export default function TableRowActionsMenu({
           <ContextMenuGroup>
             <ContextMenuLabel>الإجراءات</ContextMenuLabel>
             <ContextMenuSeparator></ContextMenuSeparator>
-            {updatePermission && (
+            {perm.updatePermission && (
               <ContextMenuItem onSelect={onEditClicked}>تعديل</ContextMenuItem>
             )}
-            {deletePermission && (
+            {perm.deletePermission && (
               <ContextMenuItem
                 className="text-destructive"
                 onSelect={onDeleteClicked}

@@ -1,11 +1,12 @@
+import { selectPermissionsByResource } from "@/app/core/auth/authSelectors";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
 import DeleteDialog from "@/app/core/components/dialogs/deleteDialog";
 import EmptyTablePreview from "@/app/core/components/table/emptyTablePreview";
 import TableRowActionsMenu from "@/app/core/components/table/tableRowActionsMenu";
 import useDialog from "@/app/core/hooks/useDialog";
 import useEntities from "@/app/core/hooks/useEntities";
-import useUserPermissions from "@/app/core/hooks/useUserPermissions";
 import TripsApiService from "@/app/core/networking/services/tripsApiService";
+import { useAppSelector } from "@/app/core/state/hooks";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Table, TableBody } from "@/components/ui/table";
 import { Building } from "lucide-react";
@@ -37,19 +38,9 @@ export default function TripsPage() {
     openEditDialog,
     openDeleteDialog,
   } = useDialog<Trip>();
-  const { addPermission, updatePermission, deletePermission } =
-    useUserPermissions(SystemPermissionsResources.Trips);
 
-  // function allowToProcess(trip: Trip): boolean {
-  //   const now = new Date().getTime();
-  //   const start = new Date(trip.startDate).getTime();
-  //   const oneDay = 24 * 60 * 60 * 1000;
-  //   const allow = start > now - oneDay;
-  //   if (!allow) {
-  //     toast.error("لا يمكن تعديل او حذف اي رحلة بعد مرور اكثر من 24 ساعة");
-  //   }
-  //   return start > now - oneDay;
-  // }
+  const perm = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Trips));
+
   return (
     <div className="px-5 py-3">
       <TableHeader
@@ -62,7 +53,7 @@ export default function TripsPage() {
             onSuccess={(newData) => refreash(newData)}
           />
         }
-        isButtonVisible={addPermission}
+        isButtonVisible={perm.addPermission}
       />
 
       <TableCard
@@ -163,7 +154,7 @@ export default function TripsPage() {
           onPageChanged={setCurrentPage}
         />
 
-        {isEditDialogOpen && updatePermission && (
+        {isEditDialogOpen && perm.updatePermission && (
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
             <ChangeTripDialog
               entity={selectedRow || undefined}
@@ -176,7 +167,7 @@ export default function TripsPage() {
           </Dialog>
         )}
 
-        {isDeleteDialogOpen && deletePermission && (
+        {isDeleteDialogOpen && perm.deletePermission && (
           <Dialog
             open={isDeleteDialogOpen}
             onOpenChange={setIsDeleteDialogOpen}

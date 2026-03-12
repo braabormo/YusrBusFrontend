@@ -1,18 +1,11 @@
-import type { FilterCondition } from "../data/filterCondition";
-import type { FilterResult } from "../data/filterResult";
+import type { BaseEntity } from "../data/baseEntity";
 import type { RequestResult } from "../data/requestResult";
 import ApiConstants from "./apiConstants";
+import BaseFilterableApiService from "./baseFilterableApiService";
 import YusrApiHelper from "./yusrApiHelper";
 
- export default abstract class BaseApiService<T>
- {
-    abstract routeName : string; 
-
-    async Filter(pageNumber: number, rowsPerPage: number, condition?: FilterCondition): Promise<RequestResult<FilterResult<T>>> 
-    {        
-        return await YusrApiHelper.Post(`${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`, condition);
-    }
-
+export default abstract class BaseApiService<T extends BaseEntity> extends BaseFilterableApiService<T>
+{
     async Get(id: number): Promise<RequestResult<T>>
     {
         return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/${id}`);
@@ -32,4 +25,4 @@ import YusrApiHelper from "./yusrApiHelper";
     {
         return await YusrApiHelper.Delete(`${ApiConstants.baseUrl}/${this.routeName}/${id}`, undefined, 'تمت إزالة السجل بنجاح');
     }
- }
+}
