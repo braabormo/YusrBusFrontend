@@ -1,20 +1,22 @@
-import branchDialogReducer from '@/app/features/branches/logic/branchDialogSlice';
-import branchReducer from '@/app/features/branches/logic/branchSlice';
+import branchDialogReducer from "@/app/features/branches/logic/branchDialogSlice";
+import branchReducer from "@/app/features/branches/logic/branchSlice";
 import passengerDialogReducer from "@/app/features/passengers/logic/passengerDialogSlice";
 import passengerReducer from "@/app/features/passengers/logic/passengerSlice";
-import roleDialogReducer from '@/app/features/roles/logic/roleDialogSlice';
-import roleReducer from '@/app/features/roles/logic/roleSlice';
-import routeDialogReducer from '@/app/features/routes/logic/routeDialogSlice';
-import routeReducer from '@/app/features/routes/logic/routeSlice';
-import userDialogReducer from '@/app/features/users/logic/userDialogSlice';
-import userReducer from '@/app/features/users/logic/userSlice';
-import { configureStore } from '@reduxjs/toolkit';
-import { setupAuthListeners } from '../auth/authListener';
-import authReducer from '../auth/authSlice';
-import cityReducer from './shared/citySlice';
-import countryReducer from './shared/countrySlice';
-import currencyReducer from './shared/currencySlice';
+import roleDialogReducer from "@/app/features/roles/logic/roleDialogSlice";
+import roleReducer from "@/app/features/roles/logic/roleSlice";
+import routeDialogReducer from "@/app/features/routes/logic/routeDialogSlice";
+import routeReducer from "@/app/features/routes/logic/routeSlice";
+import userDialogReducer from "@/app/features/users/logic/userDialogSlice";
+import userReducer from "@/app/features/users/logic/userSlice";
+import { configureStore } from "@reduxjs/toolkit";
+import { setupAuthListeners } from "../auth/authListener";
+import authReducer from "../auth/authSlice";
+import cityReducer from "./shared/citySlice";
+import countryReducer from "./shared/countrySlice";
+import currencyReducer from "./shared/currencySlice";
 import systemReducer from "./shared/systemSlice";
+import tripReducer from "@/app/features/trips/logic/tripSlice";
+import tripDialogReducer from "@/app/features/trips/logic/tripDialogSlice";
 
 export const store = configureStore({
   reducer: {
@@ -28,6 +30,8 @@ export const store = configureStore({
     userDialog: userDialogReducer,
     passenger: passengerReducer,
     passengerDialog: passengerDialogReducer,
+    trip: tripReducer,
+    tripDialog: tripDialogReducer,
     city: cityReducer,
     country: countryReducer,
     currency: currencyReducer,
