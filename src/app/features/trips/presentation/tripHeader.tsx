@@ -1,20 +1,11 @@
+import { DateTimeField } from "@/app/core/components/fields/dateTimeField";
+import { FormField } from "@/app/core/components/fields/formField";
+import { NumberField } from "@/app/core/components/fields/numberField";
+import { TextField } from "@/app/core/components/fields/textField";
 import SearchableSelect from "@/app/core/components/select/searchableSelect";
 import useEntities from "@/app/core/hooks/useEntities";
 import RoutesApiService from "@/app/core/networking/services/routesApiService";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Field, FieldGroup } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { ChevronDownIcon } from "lucide-react";
-import { arSA as arSADayPicker } from "react-day-picker/locale";
+import { FieldGroup } from "@/components/ui/field";
 import { RouteFilterColumns, type Route } from "../../routes/data/route";
 import type { Trip } from "../data/trip";
 import TripStationsList from "./tripStationsList";
@@ -46,162 +37,69 @@ export default function TripHeader({
 
   return (
       <FieldGroup>
-        {/* <Field>
-          <Label className="text-xs">رقم الرحلة</Label>
-          <Input disabled value={entityId || ""} className="h-8 text-xs" />
-        </Field> */}
 
-        <Field>
-          <Label className="text-xs">اسم قائد الحافلة</Label>
-          <Input
-            className={`h-8 text-xs ${errorInputClass("mainCaptainName")}`}
-            value={formData.mainCaptainName || ""}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                mainCaptainName: e.target.value,
-              }));
-              clearError("mainCaptainName");
-            }}
-          />
-          {isInvalid("mainCaptainName") && (
-            <span className="text-xs text-red-500">
-              {getError("mainCaptainName")}
-            </span>
-          )}
-        </Field>
+        <TextField
+          label="اسم قائد الحافلة"
+          className="h-8 text-xs"
+          value={formData.mainCaptainName || ""}
+          isInvalid={isInvalid("mainCaptainName")}
+          error={getError("mainCaptainName")}
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, mainCaptainName: e.target.value }));
+            clearError("mainCaptainName");
+          }}
+        />
 
-        <Field>
-          <Label className="text-xs">مساعد القائد</Label>
-          <Input
-            className="h-8 text-xs"
-            value={formData.secondaryCaptainName || ""}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                secondaryCaptainName: e.target.value,
-              }))
-            }
-          />
-        </Field>
+        <TextField
+          label="مساعد القائد"
+          className="h-8 text-xs"
+          value={formData.secondaryCaptainName || ""}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, secondaryCaptainName: e.target.value }))
+          }
+        />
 
-        <Field>
-          <Label className="text-xs">الحافلة</Label>
-          <Input
-            className={"h-8 text-xs"}
-            value={formData.busName || ""}
-            onChange={(e) => {
-              setFormData((prev) => ({ ...prev, busName: e.target.value }));
-            }}
-          />
-        </Field>
+        <TextField
+          label="الحافلة"
+          className="h-8 text-xs"
+          value={formData.busName || ""}
+          onChange={(e) => setFormData((prev) => ({ ...prev, busName: e.target.value }))}
+        />
 
-        <div className={"flex gap-2"}>
-          <Field className="flex-1">
-            <Label className="text-xs">تاريخ التحرك</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "h-8 w-full justify-between text-left text-xs font-normal border",
-                    !formData.startDate && "text-muted-foreground",
-                    isInvalid("startDate") &&
-                      "border-red-500! ring-red-500! text-red-900!",
-                  )}
-                >
-                  {formData.startDate instanceof Date ? (
-                    format(formData.startDate, "yyyy-MM-dd")
-                  ) : (
-                    <span>إختر تاريخا</span>
-                  )}
-                  <ChevronDownIcon className="h-3 w-3 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  captionLayout="dropdown"
-                  selected={
-                    formData.startDate instanceof Date
-                      ? formData.startDate
-                      : undefined
-                  }
-                  onSelect={(newDate) => {
-                    if (!newDate) return;
-                    setFormData((prev) => {
-                      const dateWithTime = new Date(newDate);
-                      if (prev.startDate instanceof Date) {
-                        dateWithTime.setHours(
-                          prev.startDate.getHours(),
-                          prev.startDate.getMinutes(),
-                        );
-                        clearError("startDate");
-                      }
-                      return { ...prev, startDate: dateWithTime };
-                    });
-                  }}
-                  locale={arSADayPicker}
-                />
-              </PopoverContent>
-            </Popover>
-            {isInvalid("startDate") && (
-              <span className="text-xs text-red-500">
-                {getError("startDate")}
-              </span>
-            )}
-          </Field>
+        <DateTimeField
+          label="تاريخ ووقت التحرك"
+          // className="h-8 text-xs"
+          value={formData.startDate}
+          isInvalid={isInvalid("startDate")}
+          error={getError("startDate")}
+          onChange={(newDate) => {
+            setFormData((prev) => ({ ...prev, startDate: newDate }));
+            clearError("startDate");
+          }}
+        />
 
-          <Field className="w-24">
-            <Label className="text-xs">الوقت</Label>
-            <Input
-              type="time"
-              className={`h-8 text-xs bg-background appearance-none ${errorInputClass("startDate")}`}
-              value={
-                formData.startDate instanceof Date
-                  ? format(formData.startDate, "HH:mm")
-                  : ""
-              }
-              onChange={(e) => {
-                const timeVal = e.target.value;
-                if (!timeVal) return;
-                const [hours, minutes] = timeVal.split(":").map(Number);
-                setFormData((prev) => {
-                  const newDate =
-                    prev.startDate instanceof Date
-                      ? new Date(prev.startDate)
-                      : new Date();
-                  newDate.setHours(hours, minutes, 0, 0);
-                  return { ...prev, startDate: newDate };
-                });
-              }}
-            />
-          </Field>
-        </div>
+        <NumberField
+          label="مبلغ التذكرة الافتراضي"
+          className="h-8 text-xs"
+          min={0}
+          value={formData.ticketPrice}
+          isInvalid={isInvalid("ticketPrice")}
+          error={getError("ticketPrice")}
+          onChange={(e) => {
+            const val = e.target.value === "" ? undefined : Number(e.target.value);
+            setFormData((prev) => ({ 
+              ...prev, 
+              ticketPrice: val 
+            }));
+            clearError("ticketPrice");
+          }}
+        />
 
-        <Field>
-          <Label className="text-xs">مبلغ التذكرة الافتراضي</Label>
-          <Input
-            type="number"
-            className={`h-8 text-xs ${errorInputClass("ticketPrice")}`}
-            value={formData.ticketPrice ?? ""}
-            onChange={(e) => {
-              setFormData((prev) => ({
-                ...prev,
-                ticketPrice: Number(e.target.value),
-              }));
-              clearError("ticketPrice");
-            }}
-          />
-          {isInvalid("ticketPrice") && (
-            <span className="text-xs text-red-500">
-              {getError("ticketPrice")}
-            </span>
-          )}
-        </Field>
-
-        <Field>
-          <Label className="text-xs">الخط</Label>
+        <FormField 
+          label="الخط" 
+          isInvalid={isInvalid("routeId")} 
+          error={getError("routeId")}
+        >
           <SearchableSelect
             items={routes?.data ?? []}
             itemLabelKey="name"
@@ -209,16 +107,13 @@ export default function TripHeader({
             placeholder="اختر الخط"
             value={formData.routeId?.toString() || ""}
             onValueChange={(val) => {
-              const selected = routes?.data?.find(
-                (c) => c.id.toString() === val,
-              );
+              const selected = routes?.data?.find((c) => c.id.toString() === val);
               if (selected) {
                 setFormData((prev) => ({
                   ...prev,
                   routeId: selected.id,
                   route: selected,
                 }));
-
                 clearError("routeId");
               }
             }}
@@ -227,16 +122,13 @@ export default function TripHeader({
             errorInputClass={errorInputClass("routeId")}
             disabled={fetchingRoutes}
           />
-          {isInvalid("routeId") && (
-            <span className="text-xs text-red-500">{getError("routeId")}</span>
-          )}
-        </Field>
+        </FormField>
 
-        {/* The Station Schedule List */}
         <TripStationsList
           stations={formData.route?.routeStations}
           startDate={formData.startDate}
         />
+
       </FieldGroup>
    );
 }

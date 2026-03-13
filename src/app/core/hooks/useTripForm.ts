@@ -1,15 +1,46 @@
 import TripsApiService from "@/app/core/networking/services/tripsApiService";
-import type { Ticket } from "@/app/features/trips/data/ticket";
+import type { SeatType } from "@/app/features/trips/bus/busTypes";
+import { Deposit } from "@/app/features/trips/data/deposit";
+import { Ticket } from "@/app/features/trips/data/ticket";
 import type { Trip } from "@/app/features/trips/data/trip";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "../state/hooks";
+import { Validators } from "../utils/validators";
+import { useEntityForm } from "./useEntityForm";
+import type { ValidationRule } from "./useFormValidation";
 
-export function useTripForm(entity: Trip | undefined, mode: string) {
-  const [formData, setFormData] = useState<Partial<Trip>>(entity || {});
-  const [movingTicket, setMovingTicket] = useState<Ticket | undefined>(
-    undefined,
-  );
-  const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
+export function useTripForm(entity: Trip | undefined, mode: string) 
+{
+  const validationRules: ValidationRule<Partial<Trip>>[] = [
+  {
+    field: "mainCaptainName",
+    selector: (d) => d.mainCaptainName,
+    validators: [Validators.required("يرجى إدخال اسم قائد الحافلة")],
+  },
+
+  {
+    field: "startDate",
+    selector: (d) => d.startDate,
+    validators: [Validators.required("يرجى إدخال تاريخ ووقت التحرك")],
+  },
+  {
+    field: "ticketPrice",
+    selector: (d) => d.ticketPrice,
+    validators: [Validators.required("يرجى إدخال سعر التذكرة")],
+  },
+
+  {
+    field: "routeId",
+    selector: (d) => d.routeId,
+    validators: [Validators.required("يرجى تحديد خط السفر")],
+  },
+];
+  const { formData, setFormData, errorInputClass, getError, isInvalid, clearError, validate } = useEntityForm<Trip>(entity, validationRules);
+  const [movingTicket, setMovingTicket] = useState<Ticket | undefined>(undefined);
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | undefined>(undefined);
+  const [isTicketDialogOpen, setIsTicketDialogOpen] = useState(false);
+  const [selectedDeposit, setSelectedDeposit] = useState<Deposit | undefined>(undefined);
+  const [isDepositDialogOpen, setIsDepositDialogOpen] = useState(false);
   const [initLoading, setInitLoading] = useState(false);
   const authState = useAppSelector((state) => state.auth);
 
@@ -33,23 +64,7 @@ export function useTripForm(entity: Trip | undefined, mode: string) {
     }
   }, [entity?.id, mode]);
 
-  const validate = () => {
-    const errors: Record<string, boolean> = {};
-    if (!formData.mainCaptainName?.trim()) errors.mainCaptainName = true;
-    if (!formData.busName?.trim()) errors.busName = true;
-    if (!formData.routeId) errors.routeId = true;
-    if (!formData.startDate) errors.startDate = true;
-    if (formData.ticketPrice === undefined || formData.ticketPrice <= 0)
-      errors.ticketPrice = true;
-    setFieldErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const updateTicketChair = (
-    ticketId: number | undefined,
-    chairNo: number,
-    newSeatId: number,
-  ) => {
+  const updateTicketChair = (ticketId: number | undefined, chairNo: number, newSeatId: number) => {
     setFormData((prev) => ({
       ...prev,
       tickets: prev.tickets?.map((t) =>
@@ -61,15 +76,100 @@ export function useTripForm(entity: Trip | undefined, mode: string) {
     setMovingTicket(undefined);
   };
 
+  const handleSeatClick = (seat: SeatType) => {
+    // 1. Move Logic
+    if (movingTicket) {
+      const isOccupied = formData.tickets?.some((t) => t.chairNo === seat.id);
+      if (!isOccupied) {
+        updateTicketChair(movingTicket.id, movingTicket.chairNo, seat.id);
+      } else {
+        setMovingTicket(undefined);
+      }
+      return;
+    }
+
+    // 2. Open Ticket Logic
+    let ticket = formData.tickets?.find((t) => t.chairNo === seat.id);
+    if (!ticket) {
+      ticket = new Ticket({
+        chairNo: seat.id,
+        fromCityId: formData.route?.fromCityId,
+        fromCityName: formData.route?.fromCityName,
+        toCityId: formData.route?.toCityId,
+        toCityName: formData.route?.toCityName,
+        issueCityId: formData.route?.fromCityId,
+        issueCityName: formData.route?.fromCityName,
+        issueDate: new Date(),
+        amount: formData.ticketPrice,
+        paidAmount: formData.ticketPrice,
+      });
+    }
+    setSelectedTicket(ticket);
+    setIsTicketDialogOpen(true);
+  };
+
+  const handleTicketUpdate = (updatedTicket: Ticket) => {
+    setFormData((prev) => {
+      const tickets = [...(prev.tickets || [])];
+      const index = tickets.findIndex(
+        (t) => t.chairNo === updatedTicket.chairNo,
+      );
+
+      if (index > -1) tickets[index] = updatedTicket;
+      else tickets.push(updatedTicket);
+
+      return { ...prev, tickets };
+    });
+
+    setIsTicketDialogOpen(false);
+  };
+
+  const handleTicketCheckInUpdate = (ticketId: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      tickets: prev.tickets?.map((t) =>
+        t.id === ticketId ? { ...t, checkedIn: true } : t
+      ),
+    }));
+  };
+
+  const handleDepositOpen = (deposit: Deposit | undefined) => {
+    if (deposit == undefined) {
+      deposit = new Deposit({
+        fromCityId: formData.route?.fromCityId,
+        fromCityName: formData.route?.fromCityName,
+        toCityId: formData.route?.toCityId,
+        toCityName: formData.route?.toCityName,
+        amount: formData.ticketPrice,
+        paidAmount: formData.ticketPrice,
+      });
+    }
+    setSelectedDeposit(deposit);
+    setIsDepositDialogOpen(true);
+  };
+
   return {
     formData,
     setFormData,
     movingTicket,
     setMovingTicket,
-    fieldErrors,
-    setFieldErrors,
     validate,
-    updateTicketChair,
-    initLoading
+    initLoading,
+    isInvalid,
+    getError, 
+    clearError,
+    errorInputClass,
+    handleSeatClick,
+    handleTicketUpdate,
+    handleTicketCheckInUpdate,
+    handleDepositOpen,
+    selectedTicket,
+    setSelectedTicket,
+    selectedDeposit,
+    setSelectedDeposit,
+    isTicketDialogOpen,
+    setIsTicketDialogOpen,
+    isDepositDialogOpen,
+    setIsDepositDialogOpen
   };
 }

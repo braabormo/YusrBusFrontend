@@ -1,15 +1,10 @@
 import SaveButton from "@/app/core/components/buttons/saveButton";
 import type { CommonChangeDialogProps } from "@/app/core/components/dialogs/commonChangeDialogProps";
 import Loading from "@/app/core/components/loading/loading";
-import useEntities from "@/app/core/hooks/useEntities";
-import {
-  useFormValidation,
-  type ValidationRule,
-} from "@/app/core/hooks/useFormValidation";
 import { useTripForm } from "@/app/core/hooks/useTripForm";
 import PassengersApiService from "@/app/core/networking/services/passengersApiService";
 import TripsApiService from "@/app/core/networking/services/tripsApiService";
-import { Validators } from "@/app/core/utils/validators";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -21,11 +16,9 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import type { Passenger } from "../../passengers/data/passenger";
+import { filterPassengers, refreshPassengers } from "../../passengers/logic/passengerSlice";
 import ChangePassengerDialog from "../../passengers/presentation/changePassengerDialog";
 import Bus from "../bus/bus";
-import type { SeatType } from "../bus/busTypes";
-import { Deposit } from "../data/deposit";
-import { Ticket } from "../data/ticket";
 import type { Trip } from "../data/trip";
 import TripAmountSummary from "./TripAmountSummary";
 import ChangeDepositDialog from "./changeDepositDialog";
@@ -43,133 +36,30 @@ export default function ChangeTripDialog({
     setFormData,
     movingTicket,
     setMovingTicket,
-    updateTicketChair,
+    validate,
     initLoading,
+    isInvalid,
+    getError, 
+    clearError,
+    errorInputClass,
+    handleSeatClick,
+    handleTicketUpdate,
+    handleTicketCheckInUpdate,
+    handleDepositOpen,
+    selectedTicket,
+    setSelectedTicket,
+    selectedDeposit,
+    isTicketDialogOpen,
+    setIsTicketDialogOpen,
+    isDepositDialogOpen,
+    setIsDepositDialogOpen
   } = useTripForm(entity, mode);
 
   // Modal States
-  const [selectedTicket, setSelectedTicket] = useState<Ticket | undefined>(
-    undefined,
-  );
-  const [selectedDeposit, setSelectedDeposit] = useState<Deposit | undefined>(
-    undefined,
-  );
-  const [isTicketDialogOpen, setIsTicketDialogOpen] = useState(false);
-  const [selectedPassenger, setSelectedPassenger] = useState<
-    Passenger | undefined
-  >(undefined);
-  const [isEditPassengerDialogOpen, setIsEditPassengerDialogOpen] =
-    useState(false);
-  const [isChangeDepositDialogOpen, setIsChangeDepositDialogOpen] =
-    useState(false);
-
-  // APIs
-  const {
-    entities: passengers,
-    refreash: refreshPassengers,
-    filter: filterPassengers,
-    isLoading: fetchingPassengers,
-  } = useEntities<Passenger>(new PassengersApiService());
-
-  const validationRules: ValidationRule<Partial<Trip>>[] = [
-    {
-      field: "mainCaptainName",
-      selector: (d) => d.mainCaptainName,
-      validators: [Validators.required("يرجى إدخال اسم قائد الحافلة")],
-    },
-
-    {
-      field: "startDate",
-      selector: (d) => d.startDate,
-      validators: [Validators.required("يرجى إدخال تاريخ ووقت التحرك")],
-    },
-    {
-      field: "ticketPrice",
-      selector: (d) => d.ticketPrice,
-      validators: [Validators.required("يرجى إدخال سعر التذكرة")],
-    },
-
-    {
-      field: "routeId",
-      selector: (d) => d.routeId,
-      validators: [Validators.required("يرجى تحديد خط السفر")],
-    },
-  ];
-
-  const { getError, isInvalid, validate, clearError, errorInputClass } =
-    useFormValidation(formData, validationRules);
-
-  const handleSeatClick = (seat: SeatType) => {
-    // 1. Move Logic
-    if (movingTicket) {
-      const isOccupied = formData.tickets?.some((t) => t.chairNo === seat.id);
-      if (!isOccupied) {
-        updateTicketChair(movingTicket.id, movingTicket.chairNo, seat.id);
-      } else {
-        setMovingTicket(undefined);
-      }
-      return;
-    }
-
-    // 2. Open Ticket Logic
-    let ticket = formData.tickets?.find((t) => t.chairNo === seat.id);
-    if (!ticket) {
-      ticket = new Ticket({
-        chairNo: seat.id,
-        fromCityId: formData.route?.fromCityId,
-        fromCityName: formData.route?.fromCityName,
-        toCityId: formData.route?.toCityId,
-        toCityName: formData.route?.toCityName,
-        issueCityId: formData.route?.fromCityId,
-        issueCityName: formData.route?.fromCityName,
-        issueDate: new Date(),
-        amount: formData.ticketPrice,
-        paidAmount: formData.ticketPrice,
-      });
-    }
-    setSelectedTicket(ticket);
-    setIsTicketDialogOpen(true);
-  };
-
-  const handleTicketUpdate = (updatedTicket: Ticket) => {
-    setFormData((prev) => {
-      const tickets = [...(prev.tickets || [])];
-      const index = tickets.findIndex(
-        (t) => t.chairNo === updatedTicket.chairNo,
-      );
-
-      if (index > -1) tickets[index] = updatedTicket;
-      else tickets.push(updatedTicket);
-
-      return { ...prev, tickets };
-    });
-
-    setIsTicketDialogOpen(false);
-  };
-
-  const handleTicketCheckInUpdate = (ticketId: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      tickets: prev.tickets?.map((t) =>
-        t.id === ticketId ? { ...t, checkedIn: true } : t
-      ),
-    }));
-  };
-
-  const handleDepositOpen = (deposit: Deposit | undefined) => {
-    if (deposit == undefined) {
-      deposit = new Deposit({
-        fromCityId: formData.route?.fromCityId,
-        fromCityName: formData.route?.fromCityName,
-        toCityId: formData.route?.toCityId,
-        toCityName: formData.route?.toCityName,
-        amount: formData.ticketPrice,
-        paidAmount: formData.ticketPrice,
-      });
-    }
-    setSelectedDeposit(deposit);
-    setIsChangeDepositDialogOpen(true);
-  };
+  const [selectedPassenger, setSelectedPassenger] = useState<Passenger | undefined>(undefined);
+  const [isEditPassengerDialogOpen, setIsEditPassengerDialogOpen] = useState(false);
+  const passengerState = useAppSelector((state) => state.passenger);
+  const dispatch = useAppDispatch();
 
   if (initLoading) {
     return (
@@ -290,9 +180,11 @@ export default function ChangeTripDialog({
         {isTicketDialogOpen && (
           <ChangeTicketDialog
             entity={selectedTicket}
-            passengers={passengers?.data}
-            filterPassengers={filterPassengers}
-            fetchingPassengers={fetchingPassengers}
+            passengers={passengerState.entities.data}
+            filterPassengers={async (condition) => { 
+              await dispatch(filterPassengers(condition)); 
+            }}
+            fetchingPassengers={passengerState.isLoading}
             onPassengerDialogClicked={(p) => {
               setSelectedPassenger(p);
               setIsEditPassengerDialogOpen(true);
@@ -313,7 +205,7 @@ export default function ChangeTripDialog({
             mode={selectedPassenger ? "update" : "create"}
             service={new PassengersApiService()}
             onSuccess={(data) => {
-              refreshPassengers(data);
+              dispatch(refreshPassengers({data: data}));
               setSelectedTicket((prev) =>
                 prev
                   ? { ...prev, passengerId: data.id, passenger: data }
@@ -327,10 +219,10 @@ export default function ChangeTripDialog({
 
       {/* Nested Deposit Dialog */}
       <Dialog
-        open={isChangeDepositDialogOpen}
-        onOpenChange={setIsChangeDepositDialogOpen}
+        open={isDepositDialogOpen}
+        onOpenChange={setIsDepositDialogOpen}
       >
-        {isChangeDepositDialogOpen && (
+        {isDepositDialogOpen && (
           <ChangeDepositDialog
             entity={selectedDeposit}
             onSuccess={(dep) => {
@@ -349,7 +241,7 @@ export default function ChangeTripDialog({
                 };
               });
 
-              setIsChangeDepositDialogOpen(false);
+              setIsDepositDialogOpen(false);
             }}
           />
         )}
