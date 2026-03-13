@@ -3,43 +3,43 @@ import type { CommonChangeDialogProps } from "@/app/core/components/dialogs/comm
 import SearchableSelect from "@/app/core/components/select/searchableSelect";
 import { CountryFilterColumns } from "@/app/core/data/country";
 import {
-    useFormValidation,
-    type ValidationRule,
+  useFormValidation,
+  type ValidationRule,
 } from "@/app/core/hooks/useFormValidation";
 import PassengersApiService from "@/app/core/networking/services/passengersApiService";
-import { useAppSelector } from "@/app/core/state/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
 import { filterCountries } from "@/app/core/state/shared/countrySlice";
 import { Validators } from "@/app/core/utils/validators";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { arSA } from "date-fns/locale";
 import { ChevronDownIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { arSA as arSADayPicker } from "react-day-picker/locale";
 import type { Gender, Passenger } from "../data/passenger";
 
@@ -77,6 +77,11 @@ export default function ChangePassengerDialog({
   const { getError, isInvalid, validate, clearError, errorInputClass } =
     useFormValidation(formData, validationRules);
 
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(filterCountries(undefined));
+  }, [dispatch]);
   return (
     <DialogContent dir="rtl" className="sm:max-w-xl">
       <DialogHeader>
@@ -87,11 +92,6 @@ export default function ChangePassengerDialog({
       <Separator />
 
       <FieldGroup>
-        <Field>
-          <Label>رقم الراكب</Label>
-          <Input disabled value={formData?.id} />
-        </Field>
-
         <Field>
           <Label>اسم الراكب</Label>
           <Input
@@ -136,10 +136,10 @@ export default function ChangePassengerDialog({
 
           <Field>
             <Label>الجنسية</Label>
-            <SearchableSelect 
-              items={countryState.entities.data ?? []} 
-              itemLabelKey="name" 
-              itemValueKey="id" 
+            <SearchableSelect
+              items={countryState.entities.data ?? []}
+              itemLabelKey="name"
+              itemValueKey="id"
               placeholder="اختر المدينة"
               value={formData.nationalityId?.toString() || ""}
               onValueChange={(val) => {
@@ -156,7 +156,7 @@ export default function ChangePassengerDialog({
                 }
               }}
               columnsNames={CountryFilterColumns.columnsNames}
-              onSearch={(condition) => filterCountries(condition)} 
+              onSearch={(condition) => filterCountries(condition)}
               errorInputClass={errorInputClass("nationalityId")}
               disabled={countryState.isLoading}
             />
