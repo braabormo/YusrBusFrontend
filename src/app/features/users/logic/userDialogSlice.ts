@@ -4,9 +4,9 @@ import type User from "../data/user";
 export const userDialogSlice = createGenericDialogSlice<User>("userDialog");
 
 export const {
-  openChangeDialog: openUserEditDialog,
+  openChangeDialog: openUserChangeDialog,
   openDeleteDialog: openUserDeleteDialog,
-  setIsChangeDialogOpen: setIsUserEditDialogOpen,
+  setIsChangeDialogOpen: setIsUserChangeDialogOpen,
   setIsDeleteDialogOpen: setIsUserDeleteDialogOpen,
 } = userDialogSlice.actions;
 

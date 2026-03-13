@@ -1,6 +1,6 @@
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
 import BranchesApiService from "@/app/core/networking/services/branchesApiService";
-import { useAppDispatch, useAppSelector as useSelector } from "@/app/core/state/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
 import Branch, {
   BranchFilterColumns,
 } from "@/app/features/branches/data/branch";
@@ -19,12 +19,12 @@ import { Building, MapPin } from "lucide-react";
 import CrudPage from "../../../core/components/crudPage";
 import ChangeBranchDialog from "./changeBranchDialog";
 
-const branchService = new BranchesApiService();
+const branchesService = new BranchesApiService();
 
 export default function SampleBranchPage() {
   const dispatch = useAppDispatch();
-  const branchState = useSelector((state) => state.branch);
-  const branchDialogState = useSelector((state) => state.branchDialog);
+  const branchState = useAppSelector((state) => state.branch);
+  const branchDialogState = useAppSelector((state) => state.branchDialog);
 
   return (
     <CrudPage<Branch>
@@ -34,7 +34,7 @@ export default function SampleBranchPage() {
       permissionResource={SystemPermissionsResources.Branches}
       entityState={branchState}
       useSlice={() => branchDialogState}
-      service={branchService}
+      service={branchesService}
       cards={[
         {
           title: "إجمالي الفروع",
@@ -48,6 +48,12 @@ export default function SampleBranchPage() {
         },
       ]}
       columnsToFilter={BranchFilterColumns.columnsNames}
+      tableHeadRows={[
+        { rowName: "", rowStyles: "text-left w-12.5" },
+        { rowName: "رقم الفرع", rowStyles: "w-30" },
+        { rowName: "اسم الفرع", rowStyles: "" },
+        { rowName: "المدينة", rowStyles: "" },
+      ]}
       tableRowMapper={(branch: Branch) => [
         { rowName: `#${branch.id}`, rowStyles: "" },
         { rowName: branch.name, rowStyles: "font-semibold" },
@@ -65,12 +71,6 @@ export default function SampleBranchPage() {
         refresh: refreshBranches,
         setCurrentPage: (page) => setCurrentBranchesPage(page),
       }}
-      tableHeadRows={[
-        { rowName: "", rowStyles: "text-left w-12.5" },
-        { rowName: "رقم الفرع", rowStyles: "w-30" },
-        { rowName: "اسم الفرع", rowStyles: "" },
-        { rowName: "المدينة", rowStyles: "" },
-      ]}
       ChangeDialog={
         <ChangeBranchDialog
           entity={branchDialogState.selectedRow || undefined}
