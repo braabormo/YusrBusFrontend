@@ -14,6 +14,7 @@ export default function BusSeat({
   onDeleteTicket,
   onMoveTicket,
   onHoverData,
+  onCheckInUpdate,
 }: SeatProps) {
   const isOccupied = !!ticket;
   const isCheckedIn = ticket?.checkedIn;
@@ -27,9 +28,7 @@ export default function BusSeat({
   } = useBus({
     ticket,
     isOccupied,
-    onCheckInUpdate: (ticketId) => {
-      console.log("checked in", ticketId);
-    },
+    onCheckInUpdate: onCheckInUpdate,
   });
   return (
     <ContextMenu dir="rtl">
