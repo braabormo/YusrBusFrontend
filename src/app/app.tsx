@@ -32,7 +32,7 @@ function App() {
 function AppBody() {
   return (
     <TooltipProvider>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
         <AppRoutes />
         <Toaster richColors closeButton position="top-center" dir="rtl" />
       </ThemeProvider>

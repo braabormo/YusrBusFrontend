@@ -1,7 +1,6 @@
 import { LoginRequest } from "@/app/core/data/loginRequest";
 import {
-  useFormValidation,
-  type ValidationRule,
+  type ValidationRule
 } from "@/app/core/hooks/useFormValidation";
 import ApiConstants from "@/app/core/networking/apiConstants";
 import YusrApiHelper from "@/app/core/networking/yusrApiHelper";
@@ -11,19 +10,20 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
-  FieldGroup,
-  FieldLabel,
+  FieldGroup
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type User from "../users/data/user";
 
 import { login, updateLoggedInUser } from "@/app/core/auth/authSlice";
 import { SystemPermissions } from "@/app/core/auth/systemPermissions";
+import { PasswordField } from "@/app/core/components/fields/passwordField";
+import { TextField } from "@/app/core/components/fields/textField";
 import type { Setting } from "@/app/core/data/setting";
+import { useEntityForm } from "@/app/core/hooks/useEntityForm";
 import { useAppDispatch } from "@/app/core/state/hooks";
 import placeholderImg from "@/assets/placeholder.svg";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -33,13 +33,7 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<Partial<LoginRequest>>({});
-  const [loading, setLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const location = useLocation();
-  const dispatch = useAppDispatch();
-
-  const validationRules: ValidationRule<Partial<LoginRequest>>[] = [
+  const validationRules: ValidationRule<Partial<LoginRequest>>[] = useMemo(() => [
     {
       field: "email",
       selector: (d) => d.companyEmail,
@@ -55,9 +49,12 @@ export function LoginForm({
       selector: (d) => d.password,
       validators: [Validators.required("كلمة المرور مطلوبة")],
     },
-  ];
-  const { getError, isInvalid, validate, clearError, errorInputClass } =
-    useFormValidation(formData, validationRules);
+  ], []);
+  const { formData, setFormData, getError, isInvalid, validate, clearError } = useEntityForm<LoginRequest>({}, validationRules);
+  const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const location = useLocation();
+  const dispatch = useAppDispatch();
 
   const emailStorageItemName = "remembered_email";
   const usernameStorageItemName = "remembered_username";
@@ -122,75 +119,59 @@ export function LoginForm({
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           <form className="p-6 md:p-8">
+            
             <FieldGroup>
+              
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">أهلا بك مجددًا</h1>
                 <p className="text-muted-foreground text-balance">
                   سجل الدخول إلى حسابك
                 </p>
               </div>
-              <Field>
-                <FieldLabel htmlFor="email">البريد الإلكتروني</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  value={formData.companyEmail || ""}
-                  onChange={(e) => {
-                    setFormData({ ...formData, companyEmail: e.target.value });
-                    clearError("email");
-                  }}
-                  className={errorInputClass("email")}
-                  required
-                />
-                {isInvalid("email") && (
-                  <span className="text-xs text-red-500">
-                    {getError("email")}
-                  </span>
-                )}
-              </Field>
-              <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="username">اسم المستخدم</FieldLabel>
-                </div>
-                <Input
-                  id="username"
-                  type="text"
-                  value={formData.username || ""}
-                  onChange={(e) => {
-                    setFormData({ ...formData, username: e.target.value });
-                    clearError("username");
-                  }}
-                  className={errorInputClass("username")}
-                  required
-                />
-                {isInvalid("username") && (
-                  <span className="text-xs text-red-500">
-                    {getError("username")}
-                  </span>
-                )}
-              </Field>
-              <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">كلمة المرور</FieldLabel>
-                </div>
-                <Input
-                  id="password"
-                  type="password"
-                  value={formData.password || ""}
-                  onChange={(e) => {
-                    setFormData({ ...formData, password: e.target.value });
-                    clearError("password");
-                  }}
-                  className={errorInputClass("password")}
-                  required
-                />
-                {isInvalid("password") && (
-                  <span className="text-xs text-red-500">
-                    {getError("password")}
-                  </span>
-                )}
-              </Field>
+
+              <TextField
+                label="البريد الإلكتروني"
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                value={formData.companyEmail || ""}
+                isInvalid={isInvalid("email")}
+                error={getError("email")}
+                onChange={(e) => {
+                  setFormData({ ...formData, companyEmail: e.target.value });
+                  clearError("email");
+                }}
+                required
+              />
+              
+              <TextField
+                label="اسم المستخدم"
+                id="username"
+                type="text"
+                placeholder="أدخل اسم المستخدم"
+                value={formData.username || ""}
+                isInvalid={isInvalid("username")}
+                error={getError("username")}
+                onChange={(e) => {
+                  setFormData({ ...formData, username: e.target.value });
+                  clearError("username");
+                }}
+                required
+              />
+
+              <PasswordField
+                label="كلمة المرور"
+                id="password"
+                placeholder="••••••••"
+                value={formData.password || ""}
+                isInvalid={isInvalid("password")}
+                error={getError("password")}
+                onChange={(e) => {
+                  setFormData({ ...formData, password: e.target.value });
+                  clearError("password");
+                }}
+                required
+              />
 
               <div className="flex items-center gap-3">
                 <Checkbox 

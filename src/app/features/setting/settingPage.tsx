@@ -1,13 +1,17 @@
 import { updateSetting } from "@/app/core/auth/authSlice";
+import { FormField } from "@/app/core/components/fields/formField";
+import { TextField } from "@/app/core/components/fields/textField";
+import { SelectInput } from "@/app/core/components/input/selectInput";
 import { Setting } from "@/app/core/data/setting";
 import { StorageFileStatus } from "@/app/core/data/storageFile";
+import { useEntityForm } from "@/app/core/hooks/useEntityForm";
 import {
-  useFormValidation,
-  type ValidationRule,
+  type ValidationRule
 } from "@/app/core/hooks/useFormValidation";
 import useStorageFile from "@/app/core/hooks/useStorageFile";
 import SettingsApiService from "@/app/core/networking/services/settingsApiService";
 import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
+import { filterCurrencies } from "@/app/core/state/shared/currencySlice";
 import { Validators } from "@/app/core/utils/validators";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -18,23 +22,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Field, FieldGroup } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { differenceInDays, format } from "date-fns";
 import { Camera, Loader2, Trash2, Upload } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function SettingPage() {
-  const validationRules: ValidationRule<Setting>[] = [
+
+  const validationRules: ValidationRule<Partial<Setting>>[] = useMemo(() => [
     {
       field: "companyName",
       selector: (d) => d.companyName,
@@ -55,17 +52,14 @@ export default function SettingPage() {
       selector: (d) => d.currencyId,
       validators: [Validators.required("العملة مطلوبة")],
     },
-  ];
+  ], []);
+  const { formData, setFormData, getError, isInvalid, validate, clearError } = useEntityForm<Setting>({}, validationRules);
 
   const [loading, setLoading] = useState(false);
   const [initLoading, setInitLoading] = useState(true);
-  const [formData, setFormData] = useState<Setting>(new Setting());
   const currencyState = useAppSelector((state) => state.currency);
-  const { fileInputRef, handleFileChange, handleRemoveFile } =
-    useStorageFile<Setting>(setFormData, "logo");
-  const { isInvalid, validate, clearError, errorInputClass, getError } =
-    useFormValidation(formData, validationRules);
   const dispatch = useAppDispatch();
+  const { fileInputRef, handleFileChange, handleRemoveFile } = useStorageFile<Partial<Setting>>(setFormData, "logo");
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -82,12 +76,16 @@ export default function SettingPage() {
     fetchSettings();
   }, []);
 
+  useEffect(() => {
+    dispatch(filterCurrencies());
+  }, [dispatch]);
+
   async function Save() {
     if (!validate()) return;
 
     setLoading(true);
 
-    const result = await new SettingsApiService().Update(formData);
+    const result = await new SettingsApiService().Update(formData as Setting);
     setLoading(false);
 
     if (result.status === 200) {
@@ -189,111 +187,74 @@ export default function SettingPage() {
 
           {/* BASIC INFO */}
           <FieldGroup className="grid gap-6 md:grid-cols-2">
-            <Field>
-              <Label>اسم الشركة</Label>
-              <Input
-                value={formData.companyName || ""}
-                onChange={(e) => {
-                  setFormData({ ...formData, companyName: e.target.value });
-                  clearError("companyName");
-                }}
-                className={errorInputClass("companyName")}
-              />
-              {isInvalid("companyName") && (
-                <span className="text-xs text-destructive">
-                  {getError("companyName")}
-                </span>
-              )}
-            </Field>
+            <TextField
+              label="اسم الشركة"
+              value={formData.companyName || ""}
+              isInvalid={isInvalid("companyName")}
+              error={getError("companyName")}
+              onChange={(e) => {
+                setFormData({ ...formData, companyName: e.target.value });
+                clearError("companyName");
+              }}
+            />
 
-            <Field>
-              <Label>رقم الهاتف</Label>
-              <Input
-                value={formData.companyPhone || ""}
-                onChange={(e) => {
-                  setFormData({ ...formData, companyPhone: e.target.value });
-                  clearError("companyPhone");
-                }}
-                className={errorInputClass("companyPhone")}
-              />
-              {isInvalid("companyPhone") && (
-                <span className="text-xs text-destructive">
-                  {getError("companyPhone")}
-                </span>
-              )}
-            </Field>
+            <TextField
+              label="رقم الهاتف"
+              value={formData.companyPhone || ""}
+              isInvalid={isInvalid("companyPhone")}
+              error={getError("companyPhone")}
+              onChange={(e) => {
+                setFormData({ ...formData, companyPhone: e.target.value });
+                clearError("companyPhone");
+              }}
+            />
 
-            <Field>
-              <Label>البريد الإلكتروني</Label>
-              <Input
-                type="email"
-                style={{ direction: "ltr", textAlign: "right" }}
-                value={formData.email || ""}
-                onChange={(e) => {
-                  setFormData({ ...formData, email: e.target.value });
-                  clearError("email");
-                }}
-                className={errorInputClass("email")}
-              />
-              {isInvalid("email") && (
-                <span className="text-xs text-destructive">
-                  {getError("email")}
-                </span>
-              )}
-            </Field>
+            <TextField
+              label="البريد الإلكتروني"
+              type="email"
+              dir="ltr"
+              className="text-right"
+              value={formData.email || ""}
+              isInvalid={isInvalid("email")}
+              error={getError("email")}
+              onChange={(e) => {
+                setFormData({ ...formData, email: e.target.value });
+                clearError("email");
+              }}
+            />
 
-            <Field>
-              <Label>رمز البريد الالكتروني الخاص بخدمة الارسال</Label>
-              <Input
-                type="emailKey"
-                style={{ direction: "ltr", textAlign: "right" }}
-                value={formData.emailKey || ""}
-                onChange={(e) => {
-                  setFormData({ ...formData, emailKey: e.target.value });
-                }}
-              />
-            </Field>
+            <TextField
+              label="رمز خدمة الإرسال (Email Key)"
+              placeholder="أدخل الرمز الخاص بالخدمة"
+              dir="ltr"
+              className="text-right"
+              value={formData.emailKey || ""}
+              onChange={(e) => setFormData({ ...formData, emailKey: e.target.value })}
+            />
 
-            <Field>
-              <Label>العملة</Label>
-              <Select
-                dir="rtl"
+            <FormField 
+              label="العملة الافتراضية" 
+              isInvalid={isInvalid("currencyId")} 
+              error={getError("currencyId")}
+            >
+              <SelectInput
+                placeholder="اختر العملة"
                 value={formData.currencyId?.toString() || ""}
-                onValueChange={(val) => {
-                  const selected = currencyState.entities.data?.find(
-                    (c) => c.id.toString() === val,
-                  );
-                  if (selected) {
-                    setFormData((prev) => ({
-                      ...prev,
-                      fromCityId: selected.id,
-                      fromCityName: selected.name,
-                    }));
-                    clearError("currencyId");
-                  }
-                }}
                 disabled={currencyState.isLoading}
-              >
-                <SelectTrigger className={errorInputClass("currencyId")}>
-                  <SelectValue placeholder="اختر العملة" />
-                </SelectTrigger>
-                <SelectContent>
-                  {currencyState.entities.data?.map((currency) => (
-                    <SelectItem
-                      key={currency.id}
-                      value={currency.id.toString()}
-                    >
-                      {currency.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {isInvalid("currencyId") && (
-                <span className="text-xs text-destructive">
-                  {getError("currencyId")}
-                </span>
-              )}
-            </Field>
+                isInvalid={isInvalid("currencyId")}
+                options={
+                  currencyState.entities.data?.map((c) => ({
+                    label: c.name,
+                    value: c.id.toString(),
+                  })) || []
+                }
+                onValueChange={(val) => {
+                  setFormData({ ...formData, currencyId: Number(val) });
+                  clearError("currencyId");
+                }}
+              />
+            </FormField>
+      
           </FieldGroup>
 
           <Separator />
