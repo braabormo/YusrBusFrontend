@@ -5,13 +5,13 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import type { BaseEntity } from "../../data/baseEntity";
 
-interface Props<T extends BaseEntity> {
+export interface SaveButtonProps<T extends BaseEntity> {
   formData: T;
-  dialogMode: DialogMode;
-  service: BaseApiService<T>;
+  dialogMode?: DialogMode;
+  service?: BaseApiService<T>;
   disable?: () => boolean;
   onSuccess?: (newData: T) => void;
-  validation?: () => boolean;
+  validate?: () => boolean;
 }
 
 export default function SaveButton<T extends BaseEntity>({
@@ -20,15 +20,22 @@ export default function SaveButton<T extends BaseEntity>({
   service,
   disable,
   onSuccess,
-  validation: preSave = () => true,
-}: Props<T>) {
+  validate = () => true,
+}: SaveButtonProps<T>) {
   const [loading, setLoading] = useState(false);
 
-  async function Save() {
-    if (!preSave()) return;
+  async function Save() 
+  {
+    if (!validate()) 
+      return;
 
     setLoading(true);
 
+    if(!service){
+      onSuccess?.(formData);
+      return
+    }
+      
     const result =
       dialogMode === "create"
         ? await service.Add(formData)
@@ -44,7 +51,8 @@ export default function SaveButton<T extends BaseEntity>({
   return (
     <Button disabled={loading || disable?.()} onClick={Save}>
       {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-      حفظ التغييرات
+      حفظ
+      {service? " التغييرات" : ""}
     </Button>
   );
 }

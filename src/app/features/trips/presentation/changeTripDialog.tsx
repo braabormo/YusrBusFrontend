@@ -4,7 +4,7 @@ import Loading from "@/app/core/components/loading/loading";
 import { useTripForm } from "@/app/core/hooks/useTripForm";
 import PassengersApiService from "@/app/core/networking/services/passengersApiService";
 import TripsApiService from "@/app/core/networking/services/tripsApiService";
-import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
+import { useAppDispatch } from "@/app/core/state/hooks";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,7 +16,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 import type { Passenger } from "../../passengers/data/passenger";
-import { filterPassengers, refreshPassengers } from "../../passengers/logic/passengerSlice";
+import { refreshPassengers } from "../../passengers/logic/passengerSlice";
 import ChangePassengerDialog from "../../passengers/presentation/changePassengerDialog";
 import Bus from "../bus/bus";
 import type { Trip } from "../data/trip";
@@ -58,7 +58,6 @@ export default function ChangeTripDialog({
   // Modal States
   const [selectedPassenger, setSelectedPassenger] = useState<Passenger | undefined>(undefined);
   const [isEditPassengerDialogOpen, setIsEditPassengerDialogOpen] = useState(false);
-  const passengerState = useAppSelector((state) => state.passenger);
   const dispatch = useAppDispatch();
 
   if (initLoading) {
@@ -140,7 +139,7 @@ export default function ChangeTripDialog({
                 setFormData(updatedTrip);
                 onSuccess?.(updatedTrip as Trip, mode);
               }}
-              validation={validate}
+              validate={validate}
             />
             <DialogClose asChild>
               <Button variant="outline" className="w-full h-8 text-xs">
@@ -180,11 +179,6 @@ export default function ChangeTripDialog({
         {isTicketDialogOpen && (
           <ChangeTicketDialog
             entity={selectedTicket}
-            passengers={passengerState.entities.data}
-            filterPassengers={async (condition) => { 
-              await dispatch(filterPassengers(condition)); 
-            }}
-            fetchingPassengers={passengerState.isLoading}
             onPassengerDialogClicked={(p) => {
               setSelectedPassenger(p);
               setIsEditPassengerDialogOpen(true);

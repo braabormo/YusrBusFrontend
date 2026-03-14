@@ -1,12 +1,13 @@
 import { SystemPermissions } from "@/app/core/auth/systemPermissions";
 import { SystemPermissionsActions } from "@/app/core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
+import { isPDF } from "@/app/core/components/fields/storageFilesField";
 import { StorageFileStatus } from "@/app/core/data/storageFile";
 import DepositReportApiService from "@/app/core/networking/services/reports/depositReportApiService";
 import { useAppSelector } from "@/app/core/state/hooks";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Archive, ArrowLeft, Banknote, Box, Edit, Loader2, PackagePlus, Printer, Share2, Trash2 } from "lucide-react";
+import { Archive, ArrowLeft, Banknote, Box, Edit, FileIcon, Loader2, PackagePlus, Printer, Share2, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import type { Deposit } from "../data/deposit";
@@ -88,6 +89,7 @@ export default function TripDeposits({ deposits, onDepositDeleted, onDepositDial
               const isFullyPaid = remaining <= 0;
               const isPrinting = printingId === dep.id;
               const img = dep.image?.status !== StorageFileStatus.Delete ? dep.image?.url : undefined;
+              const isPdf = isPDF(dep.image);
               
               return (
                 <div dir="rtl" key={i} className="group relative flex items-center gap-2 p-2 hover:bg-muted/30 transition-colors">
@@ -96,12 +98,21 @@ export default function TripDeposits({ deposits, onDepositDeleted, onDepositDial
                   <div className="flex flex-1 items-center gap-2 min-w-0">
                     <div className="shrink-0">
                       {img ? (
-                        <img
-                          alt=""
-                          src={img}
-                          className="w-9 h-9 rounded-md object-cover border bg-white shadow-sm"
-                        />
-                      ) : (
+                        isPdf ? (
+                          <div className="w-9 h-9 rounded-md bg-red-50 flex flex-col items-center justify-center border border-red-200 shadow-sm transition-colors group-hover:bg-red-100">
+                            <FileIcon className="w-4 h-4 text-red-600" />
+                            <span className="text-[7px] font-bold text-red-700 mt-0.5">PDF</span>
+                          </div>
+                        ) 
+                        : (
+                          <img
+                            alt=""
+                            src={img}
+                            className="w-9 h-9 rounded-md object-cover border bg-white shadow-sm"
+                          />
+                        )
+                      ) 
+                      : (
                         <div className="w-9 h-9 rounded-md bg-muted/50 flex items-center justify-center border border-dashed">
                           <Box className="w-4 h-4 text-muted-foreground/30" />
                         </div>

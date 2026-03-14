@@ -85,8 +85,7 @@ export default function TripHeader({
           value={formData.ticketPrice}
           isInvalid={isInvalid("ticketPrice")}
           error={getError("ticketPrice")}
-          onChange={(e) => {
-            const val = e.target.value === "" ? undefined : Number(e.target.value);
+          onChange={(val) => {
             setFormData((prev) => ({ 
               ...prev, 
               ticketPrice: val 

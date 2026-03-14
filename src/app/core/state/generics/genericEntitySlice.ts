@@ -31,6 +31,7 @@ export function createGenericEntitySlice<
 ) {
   const initialState: IEntityState<T> = {
     entities: { data: [], count: 0 },
+    isLoaded: false,
     isLoading: false,
     currentPage: 1,
     rowsPerPage: 100,
@@ -78,6 +79,7 @@ export function createGenericEntitySlice<
         })
         .addCase(filter.fulfilled, (state, action) => {
           state.isLoading = false;
+          state.isLoaded = true;
           if (action.payload) state.entities = action.payload as never;
         })
         .addCase(filter.rejected, (state) => {

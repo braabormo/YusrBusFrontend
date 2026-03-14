@@ -162,7 +162,7 @@ export default function SettingPage() {
                       type="button"
                       variant="destructive"
                       size="sm"
-                      onClick={handleRemoveFile}
+                      onClick={() => handleRemoveFile(0)}
                     >
                       <Trash2 className="h-4 w-4 ml-2" />
                       حذف

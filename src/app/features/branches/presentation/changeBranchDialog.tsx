@@ -116,7 +116,7 @@ export default function ChangeBranchDialog({
           service={service}
           disable={() => cityState.isLoading}
           onSuccess={(data) => onSuccess?.(data, mode)}
-          validation={validate}
+          validate={validate}
         />
       </DialogFooter>
 

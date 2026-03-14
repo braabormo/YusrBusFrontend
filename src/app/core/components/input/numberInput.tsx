@@ -1,8 +1,9 @@
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-export interface NumberInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface NumberInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   isInvalid?: boolean;
+  onChange?: (val: number | undefined) => void;
 }
 
 export function NumberInput({ onChange, min, max, isInvalid, className, ...props }: NumberInputProps) {
@@ -16,7 +17,7 @@ export function NumberInput({ onChange, min, max, isInvalid, className, ...props
       onChange={(e) => {
         const rawValue = e.target.value;
         if (rawValue === "") {
-          onChange?.({ ...e, target: { ...e.target, value: "" } } as any);
+          onChange?.(undefined);
           return;
         }
 
@@ -24,8 +25,7 @@ export function NumberInput({ onChange, min, max, isInvalid, className, ...props
         if (min !== undefined && val < Number(min)) val = Number(min);
         if (max !== undefined && val > Number(max)) val = Number(max);
 
-        e.target.value = val.toString();
-        onChange?.({ ...e, target: { ...e.target, value: val } } as any);
+        onChange?.(val);
       }}
     />
   );

@@ -152,7 +152,7 @@ export default function ChangeUserDialog({
           dialogMode={mode}
           service={service}
           onSuccess={(data) => onSuccess?.(data, mode)}
-          validation={validate}
+          validate={validate}
         />
       </DialogFooter>
 

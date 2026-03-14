@@ -202,7 +202,7 @@ export default function ChangePassengerDialog({
           service={new PassengersApiService()}
           disable={() => countryState.isLoading}
           onSuccess={(data) => onSuccess?.(data, mode)}
-          validation={validate}
+          validate={validate}
         />
       </DialogFooter>
     </DialogContent>

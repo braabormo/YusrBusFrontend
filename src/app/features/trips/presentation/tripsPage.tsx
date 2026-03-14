@@ -25,7 +25,7 @@ export default function TripsPage() {
   const service = useMemo(() => new TripsApiService(), []);
   return (
     <CrudPage<Trip>
-      title="ادارة الحرلات"
+      title="إدارة الرحلات"
       entityName="الرحلة"
       addNewItemTitle="إضافة رحلة جديدة"
       permissionResource={SystemPermissionsResources.Trips}

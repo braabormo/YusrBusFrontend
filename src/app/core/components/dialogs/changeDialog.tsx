@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   DialogClose,
   DialogContent,
@@ -7,23 +8,27 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
 
 import type { PropsWithChildren } from "react";
-import { FieldGroup } from "@/components/ui/field";
+import type { BaseEntity } from "../../data/baseEntity";
+import SaveButton, { type SaveButtonProps } from "../buttons/saveButton";
 
-type ChangeDataDialogProps = PropsWithChildren & {
+export interface ChangeDialogProps<T extends BaseEntity> extends SaveButtonProps<T>, PropsWithChildren {
   title: string;
   description?: string;
-  onSaveHandler: () => void;
-};
+}
 
-export default function ChangeDataDialog({
-  children,
+export default function ChangeDialog<T extends BaseEntity>({
   title,
   description = "",
-  onSaveHandler,
-}: ChangeDataDialogProps) {
+  formData,
+  dialogMode,
+  service,
+  disable,
+  onSuccess,
+  validate = () => true,
+  children,
+}: ChangeDialogProps<T>) {
   return (
     <DialogContent dir="rtl" className="sm:max-w-[80%] scroll-auto">
       <DialogHeader>
@@ -33,13 +38,20 @@ export default function ChangeDataDialog({
 
       <Separator />
 
-      <FieldGroup>{children}</FieldGroup>
+      {children}
 
       <DialogFooter>
         <DialogClose asChild>
           <Button variant="outline">إلغاء</Button>
         </DialogClose>
-        <Button onClick={onSaveHandler}>حفظ</Button>
+        <SaveButton
+          formData={formData as T}
+          dialogMode={dialogMode}
+          service={service}
+          disable={disable}
+          onSuccess={onSuccess}
+          validate={validate}
+        />
       </DialogFooter>
     </DialogContent>
   );

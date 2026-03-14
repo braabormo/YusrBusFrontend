@@ -209,8 +209,8 @@ export default function ChangeRouteDialog({
                     placeholder="0.0"
                     value={station.period ?? ""}
                     isInvalid={hasGlobalError && isPeriodInvalid}
-                    onChange={(e) => {
-                      updateRow(index, "period", e.target.value);
+                    onChange={(val) => {
+                      updateRow(index, "period", val);
                     }}
                   />
                 </div>
@@ -240,7 +240,7 @@ export default function ChangeRouteDialog({
           service={service}
           disable={() => cityState.isLoading}
           onSuccess={(data) => onSuccess?.(data, mode)}
-          validation={validate}
+          validate={validate}
         />
       </DialogFooter>
     </DialogContent>

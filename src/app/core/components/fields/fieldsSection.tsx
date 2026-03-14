@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { TitleSeparator } from "../separators/titleSeparator";
 
 interface FieldsSectionProps {
-  title: string;
+  title?: string;
   children: React.ReactNode;
   columns?: number;
   className?: string;
@@ -11,7 +11,9 @@ interface FieldsSectionProps {
 export function FieldsSection({ title, children, columns = 2, className }: FieldsSectionProps) {
   return (
     <div className={cn("space-y-3", className)}>
-      <TitleSeparator title={title}/>
+      {title && (
+        <TitleSeparator title={title}/>
+      )}
       <div 
         className={cn("grid gap-4", {
           "grid-cols-1": columns === 1,
