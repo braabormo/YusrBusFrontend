@@ -4,16 +4,16 @@ import { toast } from "sonner";
 import TicketReportApiService from "@/app/core/networking/services/reports/ticketReportApiService";
 import WhatsappService from "@/app/core/chat/whatsappService";
 
-export type useBusProps = {
+export type useBusSeatProps = {
   ticket?: Ticket;
   isOccupied: boolean;
   onCheckInUpdate?: (ticketId: number) => void;
 };
-export default function useBus({
+export default function useBusSeat({
   ticket,
   isOccupied,
   onCheckInUpdate,
-}: useBusProps) {
+}: useBusSeatProps) {
   const authState = useAppSelector((state) => state.auth);
 
   const handleContextMenuAction = (e: React.MouseEvent) => {
