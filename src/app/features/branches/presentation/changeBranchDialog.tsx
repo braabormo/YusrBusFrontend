@@ -1,3 +1,4 @@
+import ChangeDialog from "@/app/core/components/dialogs/changeDialog";
 import type { CommonChangeDialogProps } from "@/app/core/components/dialogs/commonChangeDialogProps";
 import { FieldsSection } from "@/app/core/components/fields/fieldsSection";
 import { FormField } from "@/app/core/components/fields/formField";
@@ -11,19 +12,8 @@ import {
 import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
 import { filterCities } from "@/app/core/state/shared/citySlice";
 import { Validators } from "@/app/core/utils/validators";
-import { Button } from "@/components/ui/button";
-import {
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { FieldGroup } from "@/components/ui/field";
-import { Separator } from "@/components/ui/separator";
 import { useEffect, useMemo } from "react";
-import SaveButton from "../../../core/components/buttons/saveButton";
 import type Branch from "../data/branch";
 
 export default function ChangeBranchDialog({
@@ -46,14 +36,15 @@ export default function ChangeBranchDialog({
   }, [dispatch]);
 
   return (
-    <DialogContent dir="rtl" className="sm:max-w-sm">
-      
-      <DialogHeader>
-        <DialogTitle>{mode === "create" ? "إضافة" : "تعديل"} فرع</DialogTitle>
-        <DialogDescription></DialogDescription>
-      </DialogHeader>
-
-      <Separator></Separator>
+    <ChangeDialog<Branch>
+      title={`${mode === "create" ? "إضافة" : "تعديل"} فرع`}
+      formData={formData}
+      dialogMode={mode}
+      service={service}
+      disable={() => cityState.isLoading}
+      onSuccess={(data) => onSuccess?.(data, mode)}
+      validate={validate}
+    >
 
       <FieldGroup className="py-2">
         
@@ -106,20 +97,6 @@ export default function ChangeBranchDialog({
         
       </FieldGroup>
 
-      <DialogFooter>
-        <DialogClose asChild>
-          <Button variant="outline">إلغاء</Button>
-        </DialogClose>
-        <SaveButton
-          formData={formData as Branch}
-          dialogMode={mode}
-          service={service}
-          disable={() => cityState.isLoading}
-          onSuccess={(data) => onSuccess?.(data, mode)}
-          validate={validate}
-        />
-      </DialogFooter>
-
-    </DialogContent>
+    </ChangeDialog>
   );
 }

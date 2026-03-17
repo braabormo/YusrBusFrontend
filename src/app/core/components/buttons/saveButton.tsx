@@ -6,7 +6,7 @@ import { useState } from "react";
 import type { BaseEntity } from "../../data/baseEntity";
 
 export interface SaveButtonProps<T extends BaseEntity> {
-  formData: T;
+  formData: T | Partial<T>;
   dialogMode?: DialogMode;
   service?: BaseApiService<T>;
   disable?: () => boolean;
@@ -28,18 +28,18 @@ export default function SaveButton<T extends BaseEntity>({
   {
     if (!validate()) 
       return;
-
-    setLoading(true);
-
+    
     if(!service){
-      onSuccess?.(formData);
+      onSuccess?.(formData as T);
       return
     }
+    
+    setLoading(true);
       
     const result =
       dialogMode === "create"
-        ? await service.Add(formData)
-        : await service.Update(formData);
+        ? await service.Add(formData as T)
+        : await service.Update(formData as T);
 
     setLoading(false);
 
