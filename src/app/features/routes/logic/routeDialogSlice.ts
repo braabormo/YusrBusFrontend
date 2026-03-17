@@ -7,7 +7,7 @@ export const {
   openChangeDialog: openRouteChangeDialog,
   openDeleteDialog: openRouteDeleteDialog,
   setIsChangeDialogOpen: setIsRouteChangeDialogOpen,
-  setIsDeleteDialogOpen: setIsRouteDeleteDialogOpen,
+  setIsDeleteDialogOpen: setIsRouteDeleteDialogOpen
 } = routeDialogSlice.actions;
 
 export default routeDialogSlice.reducer;

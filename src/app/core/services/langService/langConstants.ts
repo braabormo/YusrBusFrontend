@@ -1,3 +1,4 @@
-export class LangConstants {
-    static langKey = "lang";
+export class LangConstants
+{
+  static langKey = "lang";
 }

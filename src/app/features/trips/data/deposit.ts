@@ -1,7 +1,8 @@
 import { BaseEntity } from "@/app/core/data/baseEntity";
 import type { StorageFile } from "@/app/core/data/storageFile";
 
-export class Deposit extends BaseEntity {
+export class Deposit extends BaseEntity
+{
   public tripId!: number;
   public fromCityId!: number;
   public toCityId!: number;
@@ -18,7 +19,8 @@ export class Deposit extends BaseEntity {
   public fromCityName!: string;
   public toCityName!: string;
 
-  constructor(init?: Partial<Deposit>) {
+  constructor(init?: Partial<Deposit>)
+  {
     super();
     Object.assign(this, init);
   }

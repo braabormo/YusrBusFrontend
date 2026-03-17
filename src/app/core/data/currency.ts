@@ -2,13 +2,17 @@ import { BaseEntity } from "./baseEntity";
 
 export class Currency extends BaseEntity
 {
-    public name! : string;
-    public code! : string;
-    public isFeminine! : boolean;
-    public plural! : string;
-    public subName! : string;
-    public subIsFeminine! : boolean;
-    public subPlural! : string;
+  public name!: string;
+  public code!: string;
+  public isFeminine!: boolean;
+  public plural!: string;
+  public subName!: string;
+  public subIsFeminine!: boolean;
+  public subPlural!: string;
 
-    constructor(init?: Partial<Currency>) { super(); Object.assign(this, init); }
+  constructor(init?: Partial<Currency>)
+  {
+    super();
+    Object.assign(this, init);
+  }
 }

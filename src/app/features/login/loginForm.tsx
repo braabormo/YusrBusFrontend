@@ -1,17 +1,11 @@
 import { LoginRequest } from "@/app/core/data/loginRequest";
-import {
-  type ValidationRule
-} from "@/app/core/hooks/useFormValidation";
+import { type ValidationRule } from "@/app/core/hooks/useFormValidation";
 import ApiConstants from "@/app/core/networking/apiConstants";
 import YusrApiHelper from "@/app/core/networking/yusrApiHelper";
 import { Validators } from "@/app/core/utils/validators";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup
-} from "@/components/ui/field";
+import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -28,29 +22,25 @@ import { useAppDispatch } from "@/app/core/state/hooks";
 import placeholderImg from "@/assets/placeholder.svg";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
+{
   const navigate = useNavigate();
-  const validationRules: ValidationRule<Partial<LoginRequest>>[] = useMemo(() => [
-    {
+  const validationRules: ValidationRule<Partial<LoginRequest>>[] = useMemo(
+    () => [{
       field: "email",
       selector: (d) => d.companyEmail,
-      validators: [Validators.required("البريد الإلكتروني مطلوب")],
-    },
-    {
+      validators: [Validators.required("البريد الإلكتروني مطلوب")]
+    }, {
       field: "username",
       selector: (d) => d.username,
-      validators: [Validators.required("اسم المستخدم مطلوب")],
-    },
-    {
-      field: "password",
-      selector: (d) => d.password,
-      validators: [Validators.required("كلمة المرور مطلوبة")],
-    },
-  ], []);
-  const { formData, setFormData, getError, isInvalid, validate, clearError } = useEntityForm<LoginRequest>({}, validationRules);
+      validators: [Validators.required("اسم المستخدم مطلوب")]
+    }, { field: "password", selector: (d) => d.password, validators: [Validators.required("كلمة المرور مطلوبة")] }],
+    []
+  );
+  const { formData, setFormData, getError, isInvalid, validate, clearError } = useEntityForm<LoginRequest>(
+    {},
+    validationRules
+  );
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const location = useLocation();
@@ -59,26 +49,31 @@ export function LoginForm({
   const emailStorageItemName = "remembered_email";
   const usernameStorageItemName = "remembered_username";
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     const savedEmail = localStorage.getItem(emailStorageItemName);
     const savedUsername = localStorage.getItem(usernameStorageItemName);
-    if (savedEmail || savedUsername) {
-      setFormData((prev) => ({
-        ...prev,
-        companyEmail: savedEmail || "",
-        username: savedUsername || "",
-      }));
+    if (savedEmail || savedUsername)
+    {
+      setFormData((prev) => ({ ...prev, companyEmail: savedEmail || "", username: savedUsername || "" }));
       setRememberMe(true);
     }
   }, []);
 
-  const Login = async () => {
-    if (!validate()) return;
+  const Login = async () =>
+  {
+    if (!validate())
+    {
+      return;
+    }
 
-    if (rememberMe) {
+    if (rememberMe)
+    {
       localStorage.setItem(emailStorageItemName, formData.companyEmail || "");
       localStorage.setItem(usernameStorageItemName, formData.username || "");
-    } else {
+    }
+    else
+    {
       localStorage.removeItem(emailStorageItemName);
       localStorage.removeItem(usernameStorageItemName);
     }
@@ -86,47 +81,46 @@ export function LoginForm({
     const request = new LoginRequest({
       companyEmail: formData.companyEmail,
       username: formData.username,
-      password: formData.password,
+      password: formData.password
     });
 
     setLoading(true);
 
-    const result = await YusrApiHelper.Post<{user: User, setting: Setting}>(`${ApiConstants.baseUrl}/Login`, request);
+    const result = await YusrApiHelper.Post<{ user: User; setting: Setting; }>(
+      `${ApiConstants.baseUrl}/Login`,
+      request
+    );
 
-    if (result.status === 200 && result.data) {
+    if (result.status === 200 && result.data)
+    {
       dispatch(login(result.data));
       dispatch(updateLoggedInUser(result.data.user));
 
-      const origin =
-        location.state?.from?.pathname ||
-        SystemPermissions.getFirstPermissionPath(
-          result.data.user.role.permissions || [],
-        );
+      const origin = location.state?.from?.pathname
+        || SystemPermissions.getFirstPermissionPath(result.data.user.role.permissions || []);
 
       setLoading(false);
 
-      setTimeout(() => {
+      setTimeout(() =>
+      {
         navigate(origin, { replace: true });
       }, 10);
-    } 
-    else {
+    }
+    else
+    {
       setLoading(false);
     }
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={ cn("flex flex-col gap-6", className) } { ...props }>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           <form className="p-6 md:p-8">
-            
             <FieldGroup>
-              
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">أهلا بك مجددًا</h1>
-                <p className="text-muted-foreground text-balance">
-                  سجل الدخول إلى حسابك
-                </p>
+                <p className="text-muted-foreground text-balance">سجل الدخول إلى حسابك</p>
               </div>
 
               <TextField
@@ -134,28 +128,30 @@ export function LoginForm({
                 id="email"
                 type="email"
                 placeholder="m@example.com"
-                value={formData.companyEmail || ""}
-                isInvalid={isInvalid("email")}
-                error={getError("email")}
-                onChange={(e) => {
+                value={ formData.companyEmail || "" }
+                isInvalid={ isInvalid("email") }
+                error={ getError("email") }
+                onChange={ (e) =>
+                {
                   setFormData({ ...formData, companyEmail: e.target.value });
                   clearError("email");
-                }}
+                } }
                 required
               />
-              
+
               <TextField
                 label="اسم المستخدم"
                 id="username"
                 type="text"
                 placeholder="أدخل اسم المستخدم"
-                value={formData.username || ""}
-                isInvalid={isInvalid("username")}
-                error={getError("username")}
-                onChange={(e) => {
+                value={ formData.username || "" }
+                isInvalid={ isInvalid("username") }
+                error={ getError("username") }
+                onChange={ (e) =>
+                {
                   setFormData({ ...formData, username: e.target.value });
                   clearError("username");
-                }}
+                } }
                 required
               />
 
@@ -163,21 +159,22 @@ export function LoginForm({
                 label="كلمة المرور"
                 id="password"
                 placeholder="••••••••"
-                value={formData.password || ""}
-                isInvalid={isInvalid("password")}
-                error={getError("password")}
-                onChange={(e) => {
+                value={ formData.password || "" }
+                isInvalid={ isInvalid("password") }
+                error={ getError("password") }
+                onChange={ (e) =>
+                {
                   setFormData({ ...formData, password: e.target.value });
                   clearError("password");
-                }}
+                } }
                 required
               />
 
               <div className="flex items-center gap-3">
-                <Checkbox 
-                  id="rememberMe" 
-                  checked={rememberMe} 
-                  onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                <Checkbox
+                  id="rememberMe"
+                  checked={ rememberMe }
+                  onCheckedChange={ (checked) => setRememberMe(checked as boolean) }
                 />
                 <label
                   htmlFor="rememberMe"
@@ -188,8 +185,8 @@ export function LoginForm({
               </div>
 
               <Field>
-                <Button type="button" disabled={loading} onClick={Login}>
-                  {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                <Button type="button" disabled={ loading } onClick={ Login }>
+                  { loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }
                   تسجيل الدخول
                 </Button>
               </Field>
@@ -200,7 +197,7 @@ export function LoginForm({
           </form>
           <div className="bg-muted relative hidden md:block">
             <img
-              src={placeholderImg}
+              src={ placeholderImg }
               alt="Image"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />

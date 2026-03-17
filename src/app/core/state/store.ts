@@ -6,6 +6,8 @@ import roleDialogReducer from "@/app/features/roles/logic/roleDialogSlice";
 import roleReducer from "@/app/features/roles/logic/roleSlice";
 import routeDialogReducer from "@/app/features/routes/logic/routeDialogSlice";
 import routeReducer from "@/app/features/routes/logic/routeSlice";
+import tripDialogReducer from "@/app/features/trips/logic/tripDialogSlice";
+import tripReducer from "@/app/features/trips/logic/tripSlice";
 import userDialogReducer from "@/app/features/users/logic/userDialogSlice";
 import userReducer from "@/app/features/users/logic/userSlice";
 import { configureStore } from "@reduxjs/toolkit";
@@ -15,8 +17,6 @@ import cityReducer from "./shared/citySlice";
 import countryReducer from "./shared/countrySlice";
 import currencyReducer from "./shared/currencySlice";
 import systemReducer from "./shared/systemSlice";
-import tripReducer from "@/app/features/trips/logic/tripSlice";
-import tripDialogReducer from "@/app/features/trips/logic/tripDialogSlice";
 
 export const store = configureStore({
   reducer: {
@@ -36,8 +36,8 @@ export const store = configureStore({
     country: countryReducer,
     currency: currencyReducer,
     auth: authReducer,
-    system: systemReducer,
-  },
+    system: systemReducer
+  }
 });
 
 setupAuthListeners(store.dispatch);

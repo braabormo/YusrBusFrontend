@@ -3,5 +3,5 @@ import BaseApiService from "../baseApiService";
 
 export default class RolesApiService extends BaseApiService<Role>
 {
-    routeName: string = "Roles";
+  routeName: string = "Roles";
 }

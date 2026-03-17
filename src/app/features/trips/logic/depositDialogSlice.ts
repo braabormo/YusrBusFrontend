@@ -7,7 +7,7 @@ export const {
   openChangeDialog: openDepositChangeDialog,
   openDeleteDialog: openDepositDeleteDialog,
   setIsChangeDialogOpen: setIsDepositChangeDialogOpen,
-  setIsDeleteDialogOpen: setIsDepositDeleteDialogOpen,
+  setIsDeleteDialogOpen: setIsDepositDeleteDialogOpen
 } = DepositDialogSlice.actions;
 
 export default DepositDialogSlice.reducer;

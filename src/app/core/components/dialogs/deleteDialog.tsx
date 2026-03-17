@@ -6,67 +6,60 @@ import { useState } from "react";
 import type { BaseEntity } from "../../data/baseEntity";
 import type BaseApiService from "../../networking/baseApiService";
 
-interface Props<T extends BaseEntity> {
-    entityName: string;
-    id: number;
-    service: BaseApiService<T>,
-    onSuccess?: () => void;
+interface Props<T extends BaseEntity>
+{
+  entityName: string;
+  id: number;
+  service: BaseApiService<T>;
+  onSuccess?: () => void;
 }
 
-export default function DeleteDialog<T extends BaseEntity>({entityName, id, service, onSuccess}: Props<T>) 
+export default function DeleteDialog<T extends BaseEntity>({ entityName, id, service, onSuccess }: Props<T>)
 {
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    async function Delete() 
+  async function Delete()
+  {
+    setLoading(true);
+
+    const res = await service.Delete(id);
+
+    if (res.status === 200)
     {
-        setLoading(true);
-
-        const res = await service.Delete(id);
-        
-        if (res.status === 200) 
-        {
-            onSuccess?.();
-        }
-
-        setLoading(false);
+      onSuccess?.();
     }
 
-    return (
-        <>
-            <DialogHeader>
-                <DialogTitle>حذف {entityName}</DialogTitle>
-                <DialogDescription></DialogDescription>
-            </DialogHeader>
+    setLoading(false);
+  }
 
-            <Separator></Separator>
+  return (
+    <>
+      <DialogHeader>
+        <DialogTitle>حذف { entityName }</DialogTitle>
+        <DialogDescription></DialogDescription>
+      </DialogHeader>
 
-            <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
-                <OctagonAlert className="h-7 w-7 text-destructive" />
-            </div>
-            
-            <span className="font-bold text-center text-xl">
-                هل أنت متأكد من حذف {entityName} رقم {id}؟          
-            </span>
+      <Separator></Separator>
 
-            <span className="text-center text-[15px]">
-            لا يمكن التراجع عن هذا الإجراء. سيؤدي ذلك إلى حذف {entityName} نهائياً
-            وإزالته من خوادمنا.
-            </span>
+      <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10">
+        <OctagonAlert className="h-7 w-7 text-destructive" />
+      </div>
 
-            <DialogFooter>
-                <DialogClose asChild>
-                <Button variant="outline">إلغاء</Button>
-                </DialogClose>
-                <Button 
-                    variant="destructive" 
-                    onClick={Delete} 
-                    disabled={loading}
-                >
-                    {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-                    تأكيد الحذف
-                </Button>
-            </DialogFooter>
+      <span className="font-bold text-center text-xl">هل أنت متأكد من حذف { entityName } رقم { id }؟</span>
 
-        </>
-    );
+      <span className="text-center text-[15px]">
+        لا يمكن التراجع عن هذا الإجراء. سيؤدي ذلك إلى حذف { entityName } نهائياً وإزالته من خوادمنا.
+      </span>
+
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button variant="outline">إلغاء</Button>
+        </DialogClose>
+        <Button variant="destructive" onClick={ Delete } disabled={ loading }>
+          { loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" /> }
+          تأكيد الحذف
+        </Button>
+      </DialogFooter>
+    </>
+  );
 }

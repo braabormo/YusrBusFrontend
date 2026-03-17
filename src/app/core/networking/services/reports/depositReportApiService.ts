@@ -2,27 +2,27 @@ import ApiConstants from "../../apiConstants";
 import YusrApiHelper from "../../yusrApiHelper";
 import { ReportHelper } from "./reportHelper";
 
-
 export default class DepositReportApiService
 {
-    static async getReport(id: number, userId: number, viewAction: "display" | "share" = "display", filename: string = '') 
+  static async getReport(id: number, userId: number, viewAction: "display" | "share" = "display", filename: string = "")
+  {
+    const url = `${ApiConstants.baseUrl}/Reports/Deposit`;
+    const requestBody = { depositId: id, userId: userId };
+
+    const blob = await YusrApiHelper.PostBlob(url, requestBody);
+
+    if (blob == undefined)
     {
-        const url = `${ApiConstants.baseUrl}/Reports/Deposit`;
-        const requestBody = {
-            depositId: id,
-            userId: userId
-        };
-
-        const blob = await YusrApiHelper.PostBlob(url, requestBody);
-
-        if(blob == undefined)
-            return;
-
-        if (viewAction === "display") {
-            ReportHelper.displayPdf(blob);
-        }
-        if (viewAction === "share") {
-            ReportHelper.handleShareTicket(blob, filename);
-        }
+      return;
     }
+
+    if (viewAction === "display")
+    {
+      ReportHelper.displayPdf(blob);
+    }
+    if (viewAction === "share")
+    {
+      ReportHelper.handleShareTicket(blob, filename);
+    }
+  }
 }

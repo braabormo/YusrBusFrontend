@@ -1,9 +1,11 @@
-
 export class LoginRequest
 {
-    public companyEmail! : string;
-    public username! : string;
-    public password! : string;
+  public companyEmail!: string;
+  public username!: string;
+  public password!: string;
 
-    constructor(init?: Partial<LoginRequest>) { Object.assign(this, init); }
+  constructor(init?: Partial<LoginRequest>)
+  {
+    Object.assign(this, init);
+  }
 }

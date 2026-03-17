@@ -1,7 +1,10 @@
-export class FilterCondition 
+export class FilterCondition
 {
-    value!: string;
-    columnName!: string;
+  value!: string;
+  columnName!: string;
 
-    constructor(init?: Partial<FilterCondition>) { Object.assign(this, init); }
+  constructor(init?: Partial<FilterCondition>)
+  {
+    Object.assign(this, init);
+  }
 }

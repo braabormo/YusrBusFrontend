@@ -1,3 +1,4 @@
-export default class RoutesService {
-    static Profile:string = '/profile';
+export default class RoutesService
+{
+  static Profile: string = "/profile";
 }

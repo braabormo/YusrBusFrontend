@@ -1,16 +1,19 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
-const rootDir = './src'; // المجلد الذي تريد البدء منه
+const rootDir = "./src"; // المجلد الذي تريد البدء منه
 
-function toCamelCase(str) {
+function toCamelCase(str)
+{
   return str.replace(/^(.)/, (match) => match.toLowerCase());
 }
 
-function renameRecursive(currentPath) {
+function renameRecursive(currentPath)
+{
   const files = fs.readdirSync(currentPath);
 
-  files.forEach((file) => {
+  files.forEach((file) =>
+  {
     const fullPath = path.join(currentPath, file);
     const stats = fs.statSync(fullPath);
 
@@ -18,13 +21,15 @@ function renameRecursive(currentPath) {
     const newName = toCamelCase(file);
     const newPath = path.join(currentPath, newName);
 
-    if (file !== newName) {
+    if (file !== newName)
+    {
       fs.renameSync(fullPath, newPath);
       console.log(`Renamed: ${file} -> ${newName}`);
     }
 
     // إذا كان مجلداً، ادخل داخله
-    if (stats.isDirectory()) {
+    if (stats.isDirectory())
+    {
       renameRecursive(newPath);
     }
   });

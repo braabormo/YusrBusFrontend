@@ -7,7 +7,7 @@ export const {
   openChangeDialog: openBranchChangeDialog,
   openDeleteDialog: openBranchDeleteDialog,
   setIsChangeDialogOpen: setIsBranchChangeDialogOpen,
-  setIsDeleteDialogOpen: setIsBranchDeleteDialogOpen,
+  setIsDeleteDialogOpen: setIsBranchDeleteDialogOpen
 } = branchDialogSlice.actions;
 
 export default branchDialogSlice.reducer;

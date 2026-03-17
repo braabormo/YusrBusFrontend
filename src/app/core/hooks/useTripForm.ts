@@ -9,33 +9,25 @@ import { Validators } from "../utils/validators";
 import { useEntityForm } from "./useEntityForm";
 import type { ValidationRule } from "./useFormValidation";
 
-export function useTripForm(entity: Trip | undefined, mode: string) 
+export function useTripForm(entity: Trip | undefined, mode: string)
 {
-  const validationRules: ValidationRule<Partial<Trip>>[] = [
-  {
+  const validationRules: ValidationRule<Partial<Trip>>[] = [{
     field: "mainCaptainName",
     selector: (d) => d.mainCaptainName,
-    validators: [Validators.required("يرجى إدخال اسم قائد الحافلة")],
-  },
-
-  {
+    validators: [Validators.required("يرجى إدخال اسم قائد الحافلة")]
+  }, {
     field: "startDate",
     selector: (d) => d.startDate,
-    validators: [Validators.required("يرجى إدخال تاريخ ووقت التحرك")],
-  },
-  {
+    validators: [Validators.required("يرجى إدخال تاريخ ووقت التحرك")]
+  }, {
     field: "ticketPrice",
     selector: (d) => d.ticketPrice,
-    validators: [Validators.required("يرجى إدخال سعر التذكرة")],
-  },
-
-  {
-    field: "routeId",
-    selector: (d) => d.routeId,
-    validators: [Validators.required("يرجى تحديد خط السفر")],
-  },
-];
-  const { formData, setFormData, errorInputClass, getError, isInvalid, clearError, validate } = useEntityForm<Trip>(entity, validationRules);
+    validators: [Validators.required("يرجى إدخال سعر التذكرة")]
+  }, { field: "routeId", selector: (d) => d.routeId, validators: [Validators.required("يرجى تحديد خط السفر")] }];
+  const { formData, setFormData, errorInputClass, getError, isInvalid, clearError, validate } = useEntityForm<Trip>(
+    entity,
+    validationRules
+  );
   const [movingTicket, setMovingTicket] = useState<Ticket | undefined>(undefined);
   const [selectedTicket, setSelectedTicket] = useState<Ticket | undefined>(undefined);
   const [isTicketDialogOpen, setIsTicketDialogOpen] = useState(false);
@@ -44,45 +36,50 @@ export function useTripForm(entity: Trip | undefined, mode: string)
   const [initLoading, setInitLoading] = useState(false);
   const authState = useAppSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (mode === "update" && entity?.id) {
+  useEffect(() =>
+  {
+    if (mode === "update" && entity?.id)
+    {
       setInitLoading(true);
-      new TripsApiService().Get(entity.id).then((res) => {
+      new TripsApiService().Get(entity.id).then((res) =>
+      {
         if (res.data)
-          setFormData({
-            ...res.data,
-            startDate: res.data.startDate
-              ? new Date(res.data.startDate)
-              : undefined,
-          });
+        {
+          setFormData({ ...res.data, startDate: res.data.startDate ? new Date(res.data.startDate) : undefined });
+        }
 
-          setInitLoading(false);
-        });
+        setInitLoading(false);
+      });
     }
-    else{
-      setFormData({branchId: authState.loggedInUser?.branchId});
+    else
+    {
+      setFormData({ branchId: authState.loggedInUser?.branchId });
     }
   }, [entity?.id, mode]);
 
-  const updateTicketChair = (ticketId: number | undefined, chairNo: number, newSeatId: number) => {
+  const updateTicketChair = (ticketId: number | undefined, chairNo: number, newSeatId: number) =>
+  {
     setFormData((prev) => ({
       ...prev,
       tickets: prev.tickets?.map((t) =>
-        (t.id === ticketId && t.id !== undefined) || t.chairNo === chairNo
-          ? { ...t, chairNo: newSeatId }
-          : t,
-      ),
+        (t.id === ticketId && t.id !== undefined) || t.chairNo === chairNo ? { ...t, chairNo: newSeatId } : t
+      )
     }));
     setMovingTicket(undefined);
   };
 
-  const handleSeatClick = (seat: SeatType) => {
+  const handleSeatClick = (seat: SeatType) =>
+  {
     // 1. Move Logic
-    if (movingTicket) {
+    if (movingTicket)
+    {
       const isOccupied = formData.tickets?.some((t) => t.chairNo === seat.id);
-      if (!isOccupied) {
+      if (!isOccupied)
+      {
         updateTicketChair(movingTicket.id, movingTicket.chairNo, seat.id);
-      } else {
+      }
+      else
+      {
         setMovingTicket(undefined);
       }
       return;
@@ -90,7 +87,8 @@ export function useTripForm(entity: Trip | undefined, mode: string)
 
     // 2. Open Ticket Logic
     let ticket = formData.tickets?.find((t) => t.chairNo === seat.id);
-    if (!ticket) {
+    if (!ticket)
+    {
       ticket = new Ticket({
         chairNo: seat.id,
         fromCityId: formData.route?.fromCityId,
@@ -101,22 +99,28 @@ export function useTripForm(entity: Trip | undefined, mode: string)
         issueCityName: formData.route?.fromCityName,
         issueDate: new Date(),
         amount: formData.ticketPrice,
-        paidAmount: formData.ticketPrice,
+        paidAmount: formData.ticketPrice
       });
     }
     setSelectedTicket(ticket);
     setIsTicketDialogOpen(true);
   };
 
-  const handleTicketUpdate = (updatedTicket: Ticket) => {
-    setFormData((prev) => {
+  const handleTicketUpdate = (updatedTicket: Ticket) =>
+  {
+    setFormData((prev) =>
+    {
       const tickets = [...(prev.tickets || [])];
-      const index = tickets.findIndex(
-        (t) => t.chairNo === updatedTicket.chairNo,
-      );
+      const index = tickets.findIndex((t) => t.chairNo === updatedTicket.chairNo);
 
-      if (index > -1) tickets[index] = updatedTicket;
-      else tickets.push(updatedTicket);
+      if (index > -1)
+      {
+        tickets[index] = updatedTicket;
+      }
+      else
+      {
+        tickets.push(updatedTicket);
+      }
 
       return { ...prev, tickets };
     });
@@ -124,24 +128,25 @@ export function useTripForm(entity: Trip | undefined, mode: string)
     setIsTicketDialogOpen(false);
   };
 
-  const handleTicketCheckInUpdate = (ticketId: number) => {
+  const handleTicketCheckInUpdate = (ticketId: number) =>
+  {
     setFormData((prev) => ({
       ...prev,
-      tickets: prev.tickets?.map((t) =>
-        t.id === ticketId ? { ...t, checkedIn: true } : t
-      ),
+      tickets: prev.tickets?.map((t) => t.id === ticketId ? { ...t, checkedIn: true } : t)
     }));
   };
 
-  const handleDepositOpen = (deposit: Deposit | undefined) => {
-    if (deposit == undefined) {
+  const handleDepositOpen = (deposit: Deposit | undefined) =>
+  {
+    if (deposit == undefined)
+    {
       deposit = new Deposit({
         fromCityId: formData.route?.fromCityId,
         fromCityName: formData.route?.fromCityName,
         toCityId: formData.route?.toCityId,
         toCityName: formData.route?.toCityName,
         amount: formData.ticketPrice,
-        paidAmount: formData.ticketPrice,
+        paidAmount: formData.ticketPrice
       });
     }
     setSelectedDeposit(deposit);
@@ -156,7 +161,7 @@ export function useTripForm(entity: Trip | undefined, mode: string)
     validate,
     initLoading,
     isInvalid,
-    getError, 
+    getError,
     clearError,
     errorInputClass,
     handleSeatClick,

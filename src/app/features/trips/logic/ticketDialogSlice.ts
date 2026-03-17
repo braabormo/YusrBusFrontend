@@ -7,7 +7,7 @@ export const {
   openChangeDialog: openTicketChangeDialog,
   openDeleteDialog: openTicketDeleteDialog,
   setIsChangeDialogOpen: setIsTicketChangeDialogOpen,
-  setIsDeleteDialogOpen: setIsTicketDeleteDialogOpen,
+  setIsDeleteDialogOpen: setIsTicketDeleteDialogOpen
 } = TicketDialogSlice.actions;
 
 export default TicketDialogSlice.reducer;

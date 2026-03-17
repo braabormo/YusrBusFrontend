@@ -7,7 +7,7 @@ export const {
   openChangeDialog: openTripChangeDialog,
   openDeleteDialog: openTripDeleteDialog,
   setIsChangeDialogOpen: setIsTripChangeDialogOpen,
-  setIsDeleteDialogOpen: setIsTripDeleteDialogOpen,
+  setIsDeleteDialogOpen: setIsTripDeleteDialogOpen
 } = TripDialogSlice.actions;
 
 export default TripDialogSlice.reducer;

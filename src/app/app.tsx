@@ -1,5 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Skeleton } from "../components/ui/skeleton";
 import { TooltipProvider } from "../components/ui/tooltip";
 import useAppInitialization from "../hooks/useAppInitialization";
@@ -21,15 +21,20 @@ import SettingPage from "./features/setting/settingPage";
 import TripsPage from "./features/trips/presentation/tripsPage";
 import UsersPage from "./features/users/presentation/usersPage";
 
-function App() {
+function App()
+{
   const { isLoading } = useAppInitialization();
 
-  if (isLoading) return <Apploading />;
+  if (isLoading)
+  {
+    return <Apploading />;
+  }
 
   return <AppBody />;
 }
 
-function AppBody() {
+function AppBody()
+{
   return (
     <TooltipProvider>
       <ThemeProvider defaultTheme="dark" storageKey="ui-theme">
@@ -40,7 +45,8 @@ function AppBody() {
   );
 }
 
-function Apploading() {
+function Apploading()
+{
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="flex w-full max-w-xs flex-col gap-2">
@@ -50,31 +56,32 @@ function Apploading() {
   );
 }
 
-function AppRoutes() {
+function AppRoutes()
+{
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={ <LandingPage /> } />
+        <Route path="/login" element={ <LoginPage /> } />
 
-        <Route path="/t/:accessKey" element={<TicketRedirect />} />
+        <Route path="/t/:accessKey" element={ <TicketRedirect /> } />
 
-        <Route element={<ProtectedRoute />}>
-          <Route element={<MainPage />}>
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/trips" element={<TripsPage />} />
-            <Route path="/passengers" element={<PassengersPage />} />
-            <Route path="/routes" element={<RoutesPage />} />
-            <Route path="/branches" element={<BranchesPage />} />
-            <Route path="/users" element={<UsersPage />} />
-            <Route path="/settings" element={<SettingPage />} />
-            <Route path="/roles" element={<RolesPage />} />
+        <Route element={ <ProtectedRoute /> }>
+          <Route element={ <MainPage /> }>
+            <Route path="/dashboard" element={ <DashboardPage /> } />
+            <Route path="/trips" element={ <TripsPage /> } />
+            <Route path="/passengers" element={ <PassengersPage /> } />
+            <Route path="/routes" element={ <RoutesPage /> } />
+            <Route path="/branches" element={ <BranchesPage /> } />
+            <Route path="/users" element={ <UsersPage /> } />
+            <Route path="/settings" element={ <SettingPage /> } />
+            <Route path="/roles" element={ <RolesPage /> } />
 
-            <Route path={RoutesService.Profile} element={<PrfilePage />} />
+            <Route path={ RoutesService.Profile } element={ <PrfilePage /> } />
           </Route>
         </Route>
 
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="*" element={ <NotFoundPage /> } />
       </Routes>
     </Router>
   );

@@ -1,18 +1,21 @@
 import { useCallback, useState } from "react";
-import { type ValidationRule, useFormValidation } from "./useFormValidation";
+import { useFormValidation, type ValidationRule } from "./useFormValidation";
 
-export function useEntityForm<T>(initialData: Partial<T> | undefined, rules: ValidationRule<Partial<T>>[]) {
+export function useEntityForm<T>(initialData: Partial<T> | undefined, rules: ValidationRule<Partial<T>>[])
+{
   const [formData, setFormData] = useState<Partial<T>>({ ...initialData });
   const [prevInitialData, setPrevInitialData] = useState(initialData);
 
-  if (initialData !== prevInitialData) {
+  if (initialData !== prevInitialData)
+  {
     setFormData({ ...initialData });
     setPrevInitialData(initialData);
   }
-  
+
   const validation = useFormValidation(formData, rules);
 
-  const handleChange = useCallback((field: keyof T, value: any) => {
+  const handleChange = useCallback((field: keyof T, value: any) =>
+  {
     setFormData((prev) => ({ ...prev, [field]: value }));
     validation.clearError(field as string);
   }, [validation]);

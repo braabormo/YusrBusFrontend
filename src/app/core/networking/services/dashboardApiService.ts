@@ -6,11 +6,11 @@ import YusrApiHelper from "../yusrApiHelper";
 
 export default class DashboardApiService extends BaseFilterableApiService<Dashboard>
 {
-    routeName: string = "dashboard";
+  routeName: string = "dashboard";
 
-    async get(): Promise<RequestResult<Dashboard>>
-    {
-        const url = `${ApiConstants.baseUrl}/${this.routeName}`;        
-        return await YusrApiHelper.Get<Dashboard>(url);
-    }
+  async get(): Promise<RequestResult<Dashboard>>
+  {
+    const url = `${ApiConstants.baseUrl}/${this.routeName}`;
+    return await YusrApiHelper.Get<Dashboard>(url);
+  }
 }

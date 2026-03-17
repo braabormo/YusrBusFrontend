@@ -1,10 +1,11 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, Calendar, Mail, MapPin } from "lucide-react";
+import { Calendar, Camera, Mail, MapPin } from "lucide-react";
 
-export default function ProfileHeader() {
+export default function ProfileHeader()
+{
   return (
     <Card>
       <CardContent>
@@ -14,10 +15,7 @@ export default function ProfileHeader() {
               <AvatarImage src="https://bundui-images.netlify.app/avatars/08.png" alt="Profile" />
               <AvatarFallback className="text-2xl">JD</AvatarFallback>
             </Avatar>
-            <Button
-              size="icon"
-              variant="outline"
-              className="absolute -right-2 -bottom-2 h-8 w-8 rounded-full">
+            <Button size="icon" variant="outline" className="absolute -right-2 -bottom-2 h-8 w-8 rounded-full">
               <Camera />
             </Button>
           </div>

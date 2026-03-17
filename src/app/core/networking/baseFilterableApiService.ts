@@ -5,11 +5,19 @@ import type { RequestResult } from "../data/requestResult";
 import ApiConstants from "./apiConstants";
 import YusrApiHelper from "./yusrApiHelper";
 
-export default abstract class BaseFilterableApiService<T extends BaseEntity>{
-    abstract routeName : string; 
-    
-    async Filter(pageNumber: number, rowsPerPage: number, condition?: FilterCondition): Promise<RequestResult<FilterResult<T>>> 
-    {        
-        return await YusrApiHelper.Post(`${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`, condition);
-    }
+export default abstract class BaseFilterableApiService<T extends BaseEntity>
+{
+  abstract routeName: string;
+
+  async Filter(
+    pageNumber: number,
+    rowsPerPage: number,
+    condition?: FilterCondition
+  ): Promise<RequestResult<FilterResult<T>>>
+  {
+    return await YusrApiHelper.Post(
+      `${ApiConstants.baseUrl}/${this.routeName}/Filter?pageNumber=${pageNumber}&rowsPerPage=${rowsPerPage}`,
+      condition
+    );
+  }
 }

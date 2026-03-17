@@ -3,5 +3,5 @@ import BaseApiService from "../baseApiService";
 
 export default class BranchesApiService extends BaseApiService<Branch>
 {
-    routeName: string = "Branches";
+  routeName: string = "Branches";
 }

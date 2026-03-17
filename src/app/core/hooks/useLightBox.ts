@@ -1,15 +1,15 @@
 import { useCallback, useState } from "react";
 
-export default function useLightBox() 
+export default function useLightBox()
 {
-    const [lightbox, setLightbox] = useState<{ srcLight: string; srcDark: string; alt: string } | null>(null);
+  const [lightbox, setLightbox] = useState<{ srcLight: string; srcDark: string; alt: string; } | null>(null);
 
-    const openLightbox = useCallback((srcLight: string, srcDark: string, alt: string) => {
-        setLightbox({ srcLight, srcDark, alt });
-    }, []);
+  const openLightbox = useCallback((srcLight: string, srcDark: string, alt: string) =>
+  {
+    setLightbox({ srcLight, srcDark, alt });
+  }, []);
 
-    const closeLightbox = useCallback(() => setLightbox(null), []);
+  const closeLightbox = useCallback(() => setLightbox(null), []);
 
-  return {lightbox, openLightbox, closeLightbox};
-
+  return { lightbox, openLightbox, closeLightbox };
 }

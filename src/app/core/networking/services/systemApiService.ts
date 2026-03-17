@@ -4,10 +4,10 @@ import YusrApiHelper from "../yusrApiHelper";
 
 export default class SystemApiService
 {
-    routeName: string = "System";
-    
-    async GetSystemPermissions(): Promise<RequestResult<string[]>> 
-    {
-        return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/Permissions`);
-    }
+  routeName: string = "System";
+
+  async GetSystemPermissions(): Promise<RequestResult<string[]>>
+  {
+    return await YusrApiHelper.Get(`${ApiConstants.baseUrl}/${this.routeName}/Permissions`);
+  }
 }

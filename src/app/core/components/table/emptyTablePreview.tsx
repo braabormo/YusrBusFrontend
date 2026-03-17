@@ -1,26 +1,25 @@
 "use client";
 
-import { LoaderPinwheelIcon, Table, RefreshCwOff } from "lucide-react";
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "../empty";
+import { LoaderPinwheelIcon, RefreshCwOff, Table } from "lucide-react";
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "../empty";
 type EmptyTableMode = "empty" | "loading" | "error";
 
-type EmptyTablePreviewProps = {
-  mode: EmptyTableMode;
-};
-export default function EmptyTablePreview({ mode }: EmptyTablePreviewProps) {
-  if (mode === "loading") return <LoadingMode />;
-  else if(mode === 'error') return <ErrorMode/>
+type EmptyTablePreviewProps = { mode: EmptyTableMode; };
+export default function EmptyTablePreview({ mode }: EmptyTablePreviewProps)
+{
+  if (mode === "loading")
+  {
+    return <LoadingMode />;
+  }
+  else if (mode === "error")
+  {
+    return <ErrorMode />;
+  }
   return <EmptyMode />;
 }
 
-function LoadingMode() {
+function LoadingMode()
+{
   return (
     <Empty>
       <EmptyHeader>
@@ -37,7 +36,8 @@ function LoadingMode() {
   );
 }
 
-function EmptyMode() {
+function EmptyMode()
+{
   return (
     <Empty>
       <EmptyHeader>
@@ -45,9 +45,7 @@ function EmptyMode() {
           <Table />
         </EmptyMedia>
         <EmptyTitle>لا توجد بيانات لعرضها</EmptyTitle>
-        <EmptyDescription>
-          هذا الجدول فارغ ولا يحتوي على بيانات للعرض
-        </EmptyDescription>
+        <EmptyDescription>هذا الجدول فارغ ولا يحتوي على بيانات للعرض</EmptyDescription>
       </EmptyHeader>
     </Empty>
   );
@@ -55,7 +53,7 @@ function EmptyMode() {
 
 function ErrorMode()
 {
-    return (
+  return (
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
@@ -63,10 +61,10 @@ function ErrorMode()
         </EmptyMedia>
         <EmptyTitle>حدث خطأ ما</EmptyTitle>
         <EmptyDescription>
-         حدث خطأ اثناء جلب البيانات الرجاء التحقق من اتصالك الانترنت او اتصل بخدمة العملاء لدينا في حال تكراره
+          حدث خطأ اثناء جلب البيانات الرجاء التحقق من اتصالك الانترنت او اتصل بخدمة العملاء لدينا في حال تكراره
         </EmptyDescription>
       </EmptyHeader>
-            <EmptyContent>
+      <EmptyContent>
         <RefreshCwOff />
       </EmptyContent>
     </Empty>

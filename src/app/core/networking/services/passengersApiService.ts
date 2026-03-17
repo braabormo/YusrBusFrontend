@@ -3,5 +3,5 @@ import BaseApiService from "../baseApiService";
 
 export default class PassengersApiService extends BaseApiService<Passenger>
 {
-    routeName: string = "Passengers";
+  routeName: string = "Passengers";
 }

@@ -2,33 +2,39 @@ import { BaseEntity } from "@/app/core/data/baseEntity";
 import type { ColumnName } from "@/app/core/types/ColumnName";
 
 export class Route extends BaseEntity
-{ 
-    public name! : string;
-    public fromCityId! : number;
-    public toCityId! : number;
+{
+  public name!: string;
+  public fromCityId!: number;
+  public toCityId!: number;
 
-    public fromCityName! : string;
-    public toCityName! : string;
-    public routeStations! : RouteStation[];
+  public fromCityName!: string;
+  public toCityName!: string;
+  public routeStations!: RouteStation[];
 
-    constructor(init?: Partial<Route>) { super(); Object.assign(this, init); }
+  constructor(init?: Partial<Route>)
+  {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export class RouteStation extends BaseEntity
 {
-    public routeId! : number;
-    public period! : number;
-    public index! : number;
-    public cityId! : number;
+  public routeId!: number;
+  public period!: number;
+  public index!: number;
+  public cityId!: number;
 
-    public cityName! : string;
+  public cityName!: string;
 
-    constructor(init?: Partial<RouteStation>) { super(); Object.assign(this, init); }
+  constructor(init?: Partial<RouteStation>)
+  {
+    super();
+    Object.assign(this, init);
+  }
 }
 
-export class RouteFilterColumns 
+export class RouteFilterColumns
 {
-    public static columnsNames: ColumnName[] = [
-        { label: "اسم الخط", value: "Name" },
-    ];
+  public static columnsNames: ColumnName[] = [{ label: "اسم الخط", value: "Name" }];
 }

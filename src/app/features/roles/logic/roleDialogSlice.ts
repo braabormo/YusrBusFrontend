@@ -7,7 +7,7 @@ export const {
   openChangeDialog: openRoleChangeDialog,
   openDeleteDialog: openRoleDeleteDialog,
   setIsChangeDialogOpen: setIsRoleChangeDialogOpen,
-  setIsDeleteDialogOpen: setIsRoleDeleteDialogOpen,
+  setIsDeleteDialogOpen: setIsRoleDeleteDialogOpen
 } = roleDialogSlice.actions;
 
 export default roleDialogSlice.reducer;

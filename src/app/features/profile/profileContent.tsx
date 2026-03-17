@@ -1,5 +1,6 @@
-import { Shield, Key, Trash2 } from "lucide-react";
+import { Key, Shield, Trash2 } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,9 +9,9 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 
-export default function ProfileContent() {
+export default function ProfileContent()
+{
   return (
     <Tabs defaultValue="personal" className="space-y-6">
       <TabsList className="grid w-full grid-cols-4">
@@ -20,7 +21,7 @@ export default function ProfileContent() {
         <TabsTrigger value="notifications">Notifications</TabsTrigger>
       </TabsList>
 
-      {/* Personal Information */}
+      { /* Personal Information */ }
       <TabsContent value="personal" className="space-y-6">
         <Card>
           <CardHeader>
@@ -60,7 +61,7 @@ export default function ProfileContent() {
                 id="bio"
                 placeholder="Tell us about yourself..."
                 defaultValue="Passionate product designer with 8+ years of experience creating user-centered digital experiences. I love solving complex problems and turning ideas into beautiful, functional products."
-                rows={4}
+                rows={ 4 }
               />
             </div>
             <div className="space-y-2">
@@ -71,7 +72,7 @@ export default function ProfileContent() {
         </Card>
       </TabsContent>
 
-      {/* Account Settings */}
+      { /* Account Settings */ }
       <TabsContent value="account" className="space-y-6">
         <Card>
           <CardHeader>
@@ -84,9 +85,7 @@ export default function ProfileContent() {
                 <Label className="text-base">Account Status</Label>
                 <p className="text-muted-foreground text-sm">Your account is currently active</p>
               </div>
-              <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">
-                Active
-              </Badge>
+              <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">Active</Badge>
             </div>
             <Separator />
             <div className="flex items-center justify-between">
@@ -100,9 +99,7 @@ export default function ProfileContent() {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <Label className="text-base">Account Visibility</Label>
-                <p className="text-muted-foreground text-sm">
-                  Make your profile visible to other users
-                </p>
+                <p className="text-muted-foreground text-sm">Make your profile visible to other users</p>
               </div>
               <Switch defaultChecked />
             </div>
@@ -126,9 +123,7 @@ export default function ProfileContent() {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <Label className="text-base">Delete Account</Label>
-                <p className="text-muted-foreground text-sm">
-                  Permanently delete your account and all data
-                </p>
+                <p className="text-muted-foreground text-sm">Permanently delete your account and all data</p>
               </div>
               <Button variant="destructive">
                 <Trash2 className="mr-2 h-4 w-4" />
@@ -139,7 +134,7 @@ export default function ProfileContent() {
         </Card>
       </TabsContent>
 
-      {/* Security Settings */}
+      { /* Security Settings */ }
       <TabsContent value="security" className="space-y-6">
         <Card>
           <CardHeader>
@@ -162,26 +157,18 @@ export default function ProfileContent() {
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-base">Two-Factor Authentication</Label>
-                  <p className="text-muted-foreground text-sm">
-                    Add an extra layer of security to your account
-                  </p>
+                  <p className="text-muted-foreground text-sm">Add an extra layer of security to your account</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">
-                    Enabled
-                  </Badge>
-                  <Button variant="outline" size="sm">
-                    Configure
-                  </Button>
+                  <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700">Enabled</Badge>
+                  <Button variant="outline" size="sm">Configure</Button>
                 </div>
               </div>
               <Separator />
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-base">Login Notifications</Label>
-                  <p className="text-muted-foreground text-sm">
-                    Get notified when someone logs into your account
-                  </p>
+                  <p className="text-muted-foreground text-sm">Get notified when someone logs into your account</p>
                 </div>
                 <Switch defaultChecked />
               </div>
@@ -189,9 +176,7 @@ export default function ProfileContent() {
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-base">Active Sessions</Label>
-                  <p className="text-muted-foreground text-sm">
-                    Manage devices that are logged into your account
-                  </p>
+                  <p className="text-muted-foreground text-sm">Manage devices that are logged into your account</p>
                 </div>
                 <Button variant="outline">
                   <Shield className="mr-2 h-4 w-4" />
@@ -203,7 +188,7 @@ export default function ProfileContent() {
         </Card>
       </TabsContent>
 
-      {/* Notification Settings */}
+      { /* Notification Settings */ }
       <TabsContent value="notifications" className="space-y-6">
         <Card>
           <CardHeader>
@@ -223,9 +208,7 @@ export default function ProfileContent() {
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-base">Push Notifications</Label>
-                  <p className="text-muted-foreground text-sm">
-                    Receive push notifications in your browser
-                  </p>
+                  <p className="text-muted-foreground text-sm">Receive push notifications in your browser</p>
                 </div>
                 <Switch />
               </div>
@@ -233,9 +216,7 @@ export default function ProfileContent() {
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-base">Marketing Emails</Label>
-                  <p className="text-muted-foreground text-sm">
-                    Receive emails about new features and updates
-                  </p>
+                  <p className="text-muted-foreground text-sm">Receive emails about new features and updates</p>
                 </div>
                 <Switch defaultChecked />
               </div>
@@ -243,9 +224,7 @@ export default function ProfileContent() {
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-base">Weekly Summary</Label>
-                  <p className="text-muted-foreground text-sm">
-                    Get a weekly summary of your activity
-                  </p>
+                  <p className="text-muted-foreground text-sm">Get a weekly summary of your activity</p>
                 </div>
                 <Switch defaultChecked />
               </div>
@@ -253,9 +232,7 @@ export default function ProfileContent() {
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <Label className="text-base">Security Alerts</Label>
-                  <p className="text-muted-foreground text-sm">
-                    Important security notifications (always enabled)
-                  </p>
+                  <p className="text-muted-foreground text-sm">Important security notifications (always enabled)</p>
                 </div>
                 <Switch checked disabled />
               </div>
