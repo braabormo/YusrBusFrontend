@@ -37,7 +37,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
     }, { field: "password", selector: (d) => d.password, validators: [Validators.required("كلمة المرور مطلوبة")] }],
     []
   );
-  const { formData, setFormData, getError, isInvalid, validate, clearError } = useEntityForm<LoginRequest>(
+  const { formData, handleChange, getError, isInvalid, validate, clearError } = useEntityForm<LoginRequest>(
     {},
     validationRules
   );
@@ -55,7 +55,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
     const savedUsername = localStorage.getItem(usernameStorageItemName);
     if (savedEmail || savedUsername)
     {
-      setFormData((prev) => ({ ...prev, companyEmail: savedEmail || "", username: savedUsername || "" }));
+      handleChange((prev) => ({ ...prev, companyEmail: savedEmail || "", username: savedUsername || "" }));
       setRememberMe(true);
     }
   }, []);
@@ -133,7 +133,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                 error={ getError("email") }
                 onChange={ (e) =>
                 {
-                  setFormData({ ...formData, companyEmail: e.target.value });
+                  handleChange({ companyEmail: e.target.value });
                   clearError("email");
                 } }
                 required
@@ -149,7 +149,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                 error={ getError("username") }
                 onChange={ (e) =>
                 {
-                  setFormData({ ...formData, username: e.target.value });
+                  handleChange({ username: e.target.value });
                   clearError("username");
                 } }
                 required
@@ -164,7 +164,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
                 error={ getError("password") }
                 onChange={ (e) =>
                 {
-                  setFormData({ ...formData, password: e.target.value });
+                  handleChange({ password: e.target.value });
                   clearError("password");
                 } }
                 required

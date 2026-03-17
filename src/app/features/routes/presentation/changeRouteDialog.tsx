@@ -1,5 +1,5 @@
-import SaveButton from "@/app/core/components/buttons/saveButton";
 import DynamicListContainer from "@/app/core/components/containers/dynamicListContainer";
+import ChangeDialog from "@/app/core/components/dialogs/changeDialog";
 import type { CommonChangeDialogProps } from "@/app/core/components/dialogs/commonChangeDialogProps";
 import { FormField } from "@/app/core/components/fields/formField";
 import { TextField } from "@/app/core/components/fields/textField";
@@ -14,7 +14,7 @@ import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
 import { filterCities } from "@/app/core/state/shared/citySlice";
 import { Validators } from "@/app/core/utils/validators";
 import { Button } from "@/components/ui/button";
-import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FieldGroup } from "@/components/ui/field";
 import { Separator } from "@/components/ui/separator";
 import { Trash2 } from "lucide-react";
@@ -50,12 +50,12 @@ export default function ChangeRouteDialog({ entity, mode, service, onSuccess }: 
     []
   );
 
-  const { formData, setFormData, handleChange, getError, isInvalid, validate, clearError } = useEntityForm<Route>(
+  const { formData, handleChange, getError, isInvalid, validate, clearError } = useEntityForm<Route>(
     entity,
     validationRules
   );
   const [initLoading, setInitLoading] = useState(false);
-  const { addRow, removeRow, updateRow } = useDynamicList("routeStations", setFormData, clearError);
+  const { addRow, removeRow, updateRow } = useDynamicList("routeStations", handleChange, clearError);
 
   const handleAdd = () => addRow({ index: (formData.routeStations?.length || 0) + 1, period: 0, cityName: "" });
 
@@ -68,7 +68,7 @@ export default function ChangeRouteDialog({ entity, mode, service, onSuccess }: 
       const getRoute = async () =>
       {
         const res = await service.Get(entity.id);
-        setFormData({ ...res.data });
+        handleChange({ ...res.data });
         setInitLoading(false);
       };
 
@@ -76,7 +76,7 @@ export default function ChangeRouteDialog({ entity, mode, service, onSuccess }: 
     }
     else
     {
-      setFormData((prev) => ({ ...prev, routeStations: [] }));
+      handleChange((prev) => ({ ...prev, routeStations: [] }));
     }
   }, [entity?.id, mode]);
 
@@ -99,20 +99,21 @@ export default function ChangeRouteDialog({ entity, mode, service, onSuccess }: 
   }
 
   return (
-    <DialogContent dir="rtl" className="sm:max-w-xl">
-      <DialogHeader>
-        <DialogTitle>{ mode === "create" ? "إضافة" : "تعديل" } خط</DialogTitle>
-        <DialogDescription></DialogDescription>
-      </DialogHeader>
-
-      <Separator />
-
+    <ChangeDialog<Route>
+      title={ `${mode === "create" ? "إضافة" : "تعديل"} خط` }
+      formData={ formData }
+      dialogMode={ mode }
+      service={ service }
+      disable={ () => cityState.isLoading }
+      onSuccess={ (data) => onSuccess?.(data, mode) }
+      validate={ validate }
+    >
       <FieldGroup>
         <TextField
           label="اسم الخط"
           required
           value={ formData.name || "" }
-          onChange={ (e) => handleChange("name", e.target.value) }
+          onChange={ (e) => handleChange({ name: e.target.value }) }
           isInvalid={ isInvalid("name") }
           error={ getError("name") }
         />
@@ -130,7 +131,7 @@ export default function ChangeRouteDialog({ entity, mode, service, onSuccess }: 
                 const city = cityState.entities.data?.find((c) => c.id.toString() === val);
                 if (city)
                 {
-                  setFormData((prev) => ({ ...prev, fromCityId: city.id, fromCityName: city.name }));
+                  handleChange((prev) => ({ ...prev, fromCityId: city.id, fromCityName: city.name }));
                   clearError("fromCityId");
                 }
               } }
@@ -152,7 +153,7 @@ export default function ChangeRouteDialog({ entity, mode, service, onSuccess }: 
                 const city = cityState.entities.data?.find((c) => c.id.toString() === val);
                 if (city)
                 {
-                  setFormData((prev) => ({ ...prev, toCityId: city.id, toCityName: city.name }));
+                  handleChange((prev) => ({ ...prev, toCityId: city.id, toCityName: city.name }));
                   clearError("toCityId");
                 }
               } }
@@ -237,20 +238,6 @@ export default function ChangeRouteDialog({ entity, mode, service, onSuccess }: 
           } }
         </DynamicListContainer>
       </FieldGroup>
-
-      <DialogFooter>
-        <DialogClose asChild>
-          <Button variant="outline">إلغاء</Button>
-        </DialogClose>
-        <SaveButton
-          formData={ formData as Route }
-          dialogMode={ mode }
-          service={ service }
-          disable={ () => cityState.isLoading }
-          onSuccess={ (data) => onSuccess?.(data, mode) }
-          validate={ validate }
-        />
-      </DialogFooter>
-    </DialogContent>
+    </ChangeDialog>
   );
 }

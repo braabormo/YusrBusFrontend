@@ -14,11 +14,20 @@ export function useEntityForm<T>(initialData: Partial<T> | undefined, rules: Val
 
   const validation = useFormValidation(formData, rules);
 
-  const handleChange = useCallback((field: keyof T, value: any) =>
+  const handleChange = useCallback((update: Partial<T> | ((prev: Partial<T>) => Partial<T>)) =>
   {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    validation.clearError(field as string);
+    setFormData((prev) =>
+    {
+      const updates = typeof update === "function" ? update(prev) : update;
+
+      Object.keys(updates).forEach((key) =>
+      {
+        validation.clearError(key as string);
+      });
+
+      return { ...prev, ...updates };
+    });
   }, [validation]);
 
-  return { formData, setFormData, handleChange, ...validation };
+  return { formData, handleChange, ...validation };
 }

@@ -56,10 +56,12 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
     ],
     []
   );
-  const { formData, setFormData, handleChange, getError, isInvalid, validate, errorInputClass, clearError } =
-    useEntityForm<Deposit>(entity, validationRules);
+  const { formData, handleChange, getError, isInvalid, validate, errorInputClass, clearError } = useEntityForm<Deposit>(
+    entity,
+    validationRules
+  );
   const { fileInputRef, handleFileChange, handleRemoveFile, handleDownload, showFilePreview, getFileSrc } =
-    useStorageFile(setFormData, "image");
+    useStorageFile(handleChange, "image");
 
   useEffect(() =>
   {
@@ -87,7 +89,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
                   onValueChange={ (val) =>
                   {
                     const selectedCity = cityState.entities.data?.find((c) => c.id.toString() === val);
-                    setFormData((prev) => ({
+                    handleChange((prev) => ({
                       ...prev,
                       fromCityId: selectedCity?.id,
                       fromCityName: selectedCity?.name
@@ -111,7 +113,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
                   onValueChange={ (val) =>
                   {
                     const selectedCity = cityState.entities.data?.find((c) => c.id.toString() === val);
-                    setFormData((prev) => ({ ...prev, toCityId: selectedCity?.id, toCityName: selectedCity?.name }));
+                    handleChange((prev) => ({ ...prev, toCityId: selectedCity?.id, toCityName: selectedCity?.name }));
                     clearError("toCityId");
                   } }
                   columnsNames={ CityFilterColumns.columnsNames }
@@ -128,7 +130,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
                 error={ getError("sender") }
                 onChange={ (e) =>
                 {
-                  handleChange("sender", e.target.value);
+                  handleChange({ sender: e.target.value });
                   clearError("sender");
                 } }
               />
@@ -140,7 +142,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
                 error={ getError("senderPhone") }
                 onChange={ (e) =>
                 {
-                  handleChange("senderPhone", e.target.value);
+                  handleChange({ senderPhone: e.target.value });
                   clearError("senderPhone");
                 } }
               />
@@ -152,7 +154,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
                 error={ getError("recipient") }
                 onChange={ (e) =>
                 {
-                  handleChange("recipient", e.target.value);
+                  handleChange({ recipient: e.target.value });
                   clearError("recipient");
                 } }
               />
@@ -164,7 +166,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
                 error={ getError("recipientPhone") }
                 onChange={ (e) =>
                 {
-                  handleChange("recipientPhone", e.target.value);
+                  handleChange({ recipientPhone: e.target.value });
                   clearError("recipientPhone");
                 } }
               />
@@ -176,7 +178,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
                 error={ getError("amount") }
                 onChange={ (val) =>
                 {
-                  handleChange("amount", val);
+                  handleChange({ amount: val });
                   clearError("amount");
                 } }
               />
@@ -184,7 +186,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
               <NumberField
                 label="المبلغ المدفوع"
                 value={ formData.paidAmount }
-                onChange={ (val) => handleChange("paidAmount", val) }
+                onChange={ (val) => handleChange({ paidAmount: val }) }
               />
             </FieldsSection>
           </div>
@@ -213,7 +215,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
           error={ getError("description") }
           onChange={ (e) =>
           {
-            handleChange("description", e.target.value);
+            handleChange({ description: e.target.value });
             clearError("description");
           } }
         />
@@ -222,7 +224,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
           label="الملاحظات"
           placeholder="أي ملاحظات إضافية ..."
           value={ formData.notes || "" }
-          onChange={ (e) => handleChange("notes", e.target.value) }
+          onChange={ (e) => handleChange({ notes: e.target.value }) }
         />
       </FieldGroup>
     </ChangeDialog>

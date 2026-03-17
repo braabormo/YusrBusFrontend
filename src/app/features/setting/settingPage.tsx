@@ -40,7 +40,7 @@ export default function SettingPage()
     ],
     []
   );
-  const { formData, setFormData, getError, isInvalid, validate, clearError } = useEntityForm<Setting>(
+  const { formData, handleChange, getError, isInvalid, validate, clearError } = useEntityForm<Setting>(
     {},
     validationRules
   );
@@ -49,7 +49,7 @@ export default function SettingPage()
   const [initLoading, setInitLoading] = useState(true);
   const currencyState = useAppSelector((state) => state.currency);
   const dispatch = useAppDispatch();
-  const { fileInputRef, handleFileChange, handleRemoveFile } = useStorageFile<Partial<Setting>>(setFormData, "logo");
+  const { fileInputRef, handleFileChange, handleRemoveFile } = useStorageFile<Partial<Setting>>(handleChange, "logo");
 
   useEffect(() =>
   {
@@ -60,7 +60,7 @@ export default function SettingPage()
 
       if (response.data)
       {
-        setFormData(response.data);
+        handleChange(response.data);
         setInitLoading(false);
         dispatch(updateSetting(response.data));
       }
@@ -88,7 +88,7 @@ export default function SettingPage()
 
     if (result.status === 200)
     {
-      setFormData(result.data as Setting);
+      handleChange(result.data as Setting);
       dispatch(updateSetting(result.data as Setting));
     }
   }
@@ -178,7 +178,7 @@ export default function SettingPage()
               error={ getError("companyName") }
               onChange={ (e) =>
               {
-                setFormData({ ...formData, companyName: e.target.value });
+                handleChange({ companyName: e.target.value });
                 clearError("companyName");
               } }
             />
@@ -190,7 +190,7 @@ export default function SettingPage()
               error={ getError("companyPhone") }
               onChange={ (e) =>
               {
-                setFormData({ ...formData, companyPhone: e.target.value });
+                handleChange({ companyPhone: e.target.value });
                 clearError("companyPhone");
               } }
             />
@@ -205,7 +205,7 @@ export default function SettingPage()
               error={ getError("email") }
               onChange={ (e) =>
               {
-                setFormData({ ...formData, email: e.target.value });
+                handleChange({ email: e.target.value });
                 clearError("email");
               } }
             />
@@ -216,7 +216,7 @@ export default function SettingPage()
               dir="ltr"
               className="text-right"
               value={ formData.emailKey || "" }
-              onChange={ (e) => setFormData({ ...formData, emailKey: e.target.value }) }
+              onChange={ (e) => handleChange({ emailKey: e.target.value }) }
             />
 
             <FormField label="العملة الافتراضية" isInvalid={ isInvalid("currencyId") } error={ getError("currencyId") }>
@@ -228,7 +228,7 @@ export default function SettingPage()
                 options={ currencyState.entities.data?.map((c) => ({ label: c.name, value: c.id.toString() })) || [] }
                 onValueChange={ (val) =>
                 {
-                  setFormData({ ...formData, currencyId: Number(val) });
+                  handleChange({ currencyId: Number(val) });
                   clearError("currencyId");
                 } }
               />

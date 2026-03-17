@@ -24,7 +24,7 @@ export function useTripForm(entity: Trip | undefined, mode: string)
     selector: (d) => d.ticketPrice,
     validators: [Validators.required("يرجى إدخال سعر التذكرة")]
   }, { field: "routeId", selector: (d) => d.routeId, validators: [Validators.required("يرجى تحديد خط السفر")] }];
-  const { formData, setFormData, errorInputClass, getError, isInvalid, clearError, validate } = useEntityForm<Trip>(
+  const { formData, handleChange, errorInputClass, getError, isInvalid, clearError, validate } = useEntityForm<Trip>(
     entity,
     validationRules
   );
@@ -45,7 +45,7 @@ export function useTripForm(entity: Trip | undefined, mode: string)
       {
         if (res.data)
         {
-          setFormData({ ...res.data, startDate: res.data.startDate ? new Date(res.data.startDate) : undefined });
+          handleChange({ ...res.data, startDate: res.data.startDate ? new Date(res.data.startDate) : undefined });
         }
 
         setInitLoading(false);
@@ -53,13 +53,13 @@ export function useTripForm(entity: Trip | undefined, mode: string)
     }
     else
     {
-      setFormData({ branchId: authState.loggedInUser?.branchId });
+      handleChange({ branchId: authState.loggedInUser?.branchId });
     }
   }, [entity?.id, mode]);
 
   const updateTicketChair = (ticketId: number | undefined, chairNo: number, newSeatId: number) =>
   {
-    setFormData((prev) => ({
+    handleChange((prev) => ({
       ...prev,
       tickets: prev.tickets?.map((t) =>
         (t.id === ticketId && t.id !== undefined) || t.chairNo === chairNo ? { ...t, chairNo: newSeatId } : t
@@ -108,7 +108,7 @@ export function useTripForm(entity: Trip | undefined, mode: string)
 
   const handleTicketUpdate = (updatedTicket: Ticket) =>
   {
-    setFormData((prev) =>
+    handleChange((prev) =>
     {
       const tickets = [...(prev.tickets || [])];
       const index = tickets.findIndex((t) => t.chairNo === updatedTicket.chairNo);
@@ -130,7 +130,7 @@ export function useTripForm(entity: Trip | undefined, mode: string)
 
   const handleTicketCheckInUpdate = (ticketId: number) =>
   {
-    setFormData((prev) => ({
+    handleChange((prev) => ({
       ...prev,
       tickets: prev.tickets?.map((t) => t.id === ticketId ? { ...t, checkedIn: true } : t)
     }));
@@ -155,7 +155,7 @@ export function useTripForm(entity: Trip | undefined, mode: string)
 
   return {
     formData,
-    setFormData,
+    handleChange,
     movingTicket,
     setMovingTicket,
     validate,

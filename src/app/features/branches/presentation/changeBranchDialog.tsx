@@ -47,7 +47,7 @@ export default function ChangeBranchDialog({ entity, mode, service, onSuccess }:
         <TextField
           label="اسم الفرع"
           value={ formData.name || "" }
-          onChange={ (e) => handleChange("name", e.target.value) }
+          onChange={ (e) => handleChange({ name: e.target.value }) }
           isInvalid={ isInvalid("name") }
           error={ getError("name") }
           required={ true }
@@ -60,7 +60,7 @@ export default function ChangeBranchDialog({ entity, mode, service, onSuccess }:
             itemValueKey="id"
             placeholder="اختر المدينة"
             value={ formData.cityId?.toString() || "" }
-            onValueChange={ (val) => handleChange("cityId", Number(val)) }
+            onValueChange={ (val) => handleChange({ cityId: Number(val) }) }
             columnsNames={ CityFilterColumns.columnsNames }
             onSearch={ (condition) => dispatch(filterCities(condition)) }
             errorInputClass={ isInvalid("cityId") ? "border-red-500 ring-red-500" : "" }
@@ -72,22 +72,22 @@ export default function ChangeBranchDialog({ entity, mode, service, onSuccess }:
           <TextField
             label="الشارع"
             value={ formData.street || "" }
-            onChange={ (e) => handleChange("street", e.target.value) }
+            onChange={ (e) => handleChange({ street: e.target.value }) }
           />
           <TextField
             label="الحي"
             value={ formData.district || "" }
-            onChange={ (e) => handleChange("district", e.target.value) }
+            onChange={ (e) => handleChange({ district: e.target.value }) }
           />
           <TextField
             label="رقم المبنى"
             value={ formData.buildingNumber || "" }
-            onChange={ (e) => handleChange("buildingNumber", e.target.value) }
+            onChange={ (e) => handleChange({ buildingNumber: e.target.value }) }
           />
           <TextField
             label="الرمز البريدي"
             value={ formData.postalCode || "" }
-            onChange={ (e) => handleChange("postalCode", e.target.value) }
+            onChange={ (e) => handleChange({ postalCode: e.target.value }) }
           />
         </FieldsSection>
       </FieldGroup>

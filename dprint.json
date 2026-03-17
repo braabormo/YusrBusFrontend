@@ -18,7 +18,7 @@
     "preferSingleLine": true,
     "jsxSelfClosingElement.spaceBeforeSlash": true,
     "jsxExpressionContainer.spaceSurroundingExpression": true,
-    "preferHanging": false,
+    "preferHanging": false
   },
   "json": {},
   "markdown": {},

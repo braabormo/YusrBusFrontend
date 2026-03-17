@@ -57,8 +57,10 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
     }],
     []
   );
-  const { formData, setFormData, handleChange, getError, isInvalid, validate, errorInputClass, clearError } =
-    useEntityForm<Ticket>(entity, validationRules);
+  const { formData, handleChange, getError, isInvalid, validate, errorInputClass, clearError } = useEntityForm<Ticket>(
+    entity,
+    validationRules
+  );
 
   useEffect(() =>
   {
@@ -107,7 +109,7 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
                   const selectedPassenger = passengerState.entities.data?.find((c) => c.id.toString() === val);
                   if (selectedPassenger)
                   {
-                    setFormData((prev) => ({
+                    handleChange((prev) => ({
                       ...prev,
                       passengerId: selectedPassenger.id,
                       passenger: selectedPassenger
@@ -155,7 +157,7 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
               onValueChange={ (val) =>
               {
                 const selectedCity = cityState.entities.data?.find((c) => c.id.toString() === val);
-                setFormData({ ...formData, fromCityId: selectedCity?.id, fromCityName: selectedCity?.name });
+                handleChange({ ...formData, fromCityId: selectedCity?.id, fromCityName: selectedCity?.name });
                 clearError("fromCityId");
               } }
               columnsNames={ CityFilterColumns.columnsNames }
@@ -175,7 +177,7 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
               onValueChange={ (val) =>
               {
                 const selectedCity = cityState.entities.data?.find((c) => c.id.toString() === val);
-                setFormData({ ...formData, toCityId: selectedCity?.id, toCityName: selectedCity?.name });
+                handleChange({ ...formData, toCityId: selectedCity?.id, toCityName: selectedCity?.name });
                 clearError("toCityId");
               } }
               columnsNames={ CityFilterColumns.columnsNames }
@@ -194,14 +196,14 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
             error={ getError("amount") }
             onChange={ (val) =>
             {
-              handleChange("amount", val);
+              handleChange({ amount: val });
               clearError("amount");
             } }
           />
           <NumberField
             label="المبلغ المدفوع"
             value={ formData.paidAmount }
-            onChange={ (val) => handleChange("paidAmount", val) }
+            onChange={ (val) => handleChange({ paidAmount: val }) }
           />
         </div>
 
@@ -211,7 +213,7 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
             value={ formData.issueDate }
             onChange={ (date) =>
             {
-              handleChange("issueDate", date);
+              handleChange({ issueDate: date });
               clearError("issueDate");
             } }
             isInvalid={ isInvalid("issueDate") }
@@ -228,7 +230,7 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
               value={ formData.issueCityId?.toString() || "" }
               onValueChange={ (val) =>
               {
-                handleChange("issueCityId", Number(val));
+                handleChange({ issueCityId: Number(val) });
                 clearError("issueCityId");
               } }
               columnsNames={ CityFilterColumns.columnsNames }
@@ -243,7 +245,7 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
           label="الملاحظات"
           placeholder="أي ملاحظات إضافية ..."
           value={ formData.notes || "" }
-          onChange={ (e) => handleChange("notes", e.target.value) }
+          onChange={ (e) => handleChange({ notes: e.target.value }) }
         />
       </FieldGroup>
 

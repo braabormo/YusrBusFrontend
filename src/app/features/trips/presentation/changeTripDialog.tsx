@@ -24,7 +24,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
 {
   const {
     formData,
-    setFormData,
+    handleChange,
     movingTicket,
     setMovingTicket,
     validate,
@@ -87,7 +87,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
               </h3>
               <TripHeader
                 formData={ formData }
-                setFormData={ setFormData }
+                setFormData={ handleChange }
                 errorInputClass={ errorInputClass }
                 clearError={ clearError }
                 isInvalid={ isInvalid }
@@ -103,7 +103,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
               <TripDeposits
                 deposits={ formData.deposits ?? [] }
                 onDepositDeleted={ (i) =>
-                  setFormData((prev) => ({ ...prev, deposits: prev.deposits?.filter((_, idx) => idx !== i) })) }
+                  handleChange((prev) => ({ ...prev, deposits: prev.deposits?.filter((_, idx) => idx !== i) })) }
                 onDepositDialogOpened={ (deposit) => handleDepositOpen(deposit) }
               />
             </section>
@@ -118,7 +118,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
               {
                 const updatedTrip = { ...trip, startDate: trip.startDate ? new Date(trip.startDate) : undefined };
 
-                setFormData(updatedTrip);
+                handleChange(updatedTrip);
                 onSuccess?.(updatedTrip as Trip, mode);
               } }
               validate={ validate }
@@ -141,7 +141,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
               onCheckInUpdate={ handleTicketCheckInUpdate }
               onMoveTicket={ (t) => setMovingTicket(t || undefined) }
               movingTicketId={ movingTicket?.id || movingTicket?.chairNo }
-              onDeleteTicket={ (id) => setFormData((p) => ({ ...p, tickets: p.tickets?.filter((t) => t.id !== id) })) }
+              onDeleteTicket={ (id) => handleChange((p) => ({ ...p, tickets: p.tickets?.filter((t) => t.id !== id) })) }
               lastRowFull
             />
           </div>
@@ -187,7 +187,7 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
             entity={ selectedDeposit }
             onSuccess={ (dep) =>
             {
-              setFormData((prev) =>
+              handleChange((prev) =>
               {
                 const existingDeposits = prev.deposits ?? [];
                 const isExisting = dep.id && existingDeposits.some((d) => d.id === dep.id);
