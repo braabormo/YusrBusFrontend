@@ -77,13 +77,6 @@ export default function ChangeTicketDialog({
       dispatch(filterPassengers(undefined));
   }, []);
 
-  // useEffect(() => {
-  //   if (entity) {
-  //     // eslint-disable-next-line react-hooks/set-state-in-effect
-  //     setFormData(entity);
-  //   }
-  // }, [entity]);
-
   const passengerItems = passengerState.entities.data?.map((p) => ({
     ...p,
     displayLabel: `${p.name} - ${p.passportNo}`, 
@@ -156,7 +149,10 @@ export default function ChangeTicketDialog({
               <Button
                 variant="secondary"
                 className="flex-1 gap-2"
-                onClick={() => onPassengerDialogClicked?.(formData.passenger!)}
+                onClick={() => {
+                  console.log(formData.passenger);
+                  onPassengerDialogClicked?.(formData.passenger!);
+                }}
               >
                 <Edit className="h-4 w-4" />
                 تعديل
