@@ -42,7 +42,7 @@ type ChartAreaInteractiveProps = {
   tripsInTime: TripInTimeData[];
 }
 
-export function ChartAreaInteractive({ tripsInTime }: ChartAreaInteractiveProps) {
+export function DashboardChartAreaInteractive({ tripsInTime }: ChartAreaInteractiveProps) {
   const isMobile = useIsMobile()
   const [timeRange, setTimeRange] = React.useState("90d")
 
