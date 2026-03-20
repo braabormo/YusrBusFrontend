@@ -40,8 +40,9 @@ export default function SettingPage()
     ],
     []
   );
+  const INITIAL_STATE = useMemo(() => ({}), []);
   const { formData, handleChange, getError, isInvalid, validate, clearError } = useEntityForm<Setting>(
-    {},
+    INITIAL_STATE,
     validationRules
   );
 

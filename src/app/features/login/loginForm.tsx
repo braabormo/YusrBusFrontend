@@ -37,8 +37,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
     }, { field: "password", selector: (d) => d.password, validators: [Validators.required("كلمة المرور مطلوبة")] }],
     []
   );
+  const INITIAL_STATE = useMemo(() => ({}), []);
   const { formData, handleChange, getError, isInvalid, validate, clearError } = useEntityForm<LoginRequest>(
-    {},
+    INITIAL_STATE,
     validationRules
   );
   const [loading, setLoading] = useState(false);
