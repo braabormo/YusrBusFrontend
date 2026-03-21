@@ -1,11 +1,12 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { SystemPermissions } from "../auth/systemPermissions";
+import type { PermissionSelector } from "@yusr_systems/core";
+import { SystemPermissions } from "@yusr_systems/core";
 import { SystemPermissionsActions } from "../auth/systemPermissionsActions";
 import type { RootState } from "../state/store";
 
 const selectRawPermissions = (state: RootState) => state.auth.loggedInUser?.role?.permissions || [];
 
-export const selectPermissionsByResource = createSelector([
+export const selectPermissionsByResource : PermissionSelector<RootState> = createSelector([
   selectRawPermissions,
   (_state: RootState, resource: string) => resource
 ], (permissions, resource) =>

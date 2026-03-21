@@ -1,7 +1,4 @@
-import YusrBusBackground from "@/app/core/components/background/yusrBusBackground";
-import Lightbox from "@/app/core/components/images/lightbox";
-import useLightBox from "@/app/core/hooks/useLightBox";
-import { Separator } from "@/components/ui/separator";
+import {YusrBusBackground, Lightbox, useLightBox, Separator} from "@yusr_systems/ui";
 import { Bus, Clock, Layers, LayoutDashboard, LayoutDashboardIcon, Lock, Map, Settings, ShieldCheck, Users } from "lucide-react";
 import LandingFeatures from "./landingFeatures";
 import LandingFooter from "./landingFooter";

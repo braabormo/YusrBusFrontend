@@ -1,21 +1,10 @@
-import ChangeDialog from "@/app/core/components/dialogs/changeDialog";
-import type { CommonChangeDialogProps } from "@/app/core/components/dialogs/commonChangeDialogProps";
-import { DateField } from "@/app/core/components/fields/dateField";
-import { FieldsSection } from "@/app/core/components/fields/fieldsSection";
-import { FormField } from "@/app/core/components/fields/formField";
-import { PhoneField } from "@/app/core/components/fields/phoneField";
-import { SelectField } from "@/app/core/components/fields/selectField";
-import { TextField } from "@/app/core/components/fields/textField";
-import SearchableSelect from "@/app/core/components/select/searchableSelect";
 import { CountryFilterColumns } from "@/app/core/data/country";
-import { useEntityForm } from "@/app/core/hooks/useEntityForm";
-import { type ValidationRule } from "@/app/core/hooks/useFormValidation";
-import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
+import { type ValidationRule, Validators } from "@yusr_systems/core";
 import { filterCountries } from "@/app/core/state/shared/countrySlice";
-import { Validators } from "@/app/core/utils/validators";
-import { FieldGroup } from "@/components/ui/field";
+import { ChangeDialog, FieldGroup, type CommonChangeDialogProps, DateField, FieldsSection, FormField, PhoneField, SearchableSelect, SelectField, TextField, useEntityForm } from "@yusr_systems/ui";
 import { useEffect, useMemo } from "react";
 import type { Gender, Passenger } from "../data/passenger";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 
 export default function ChangePassengerDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Passenger>)
 {

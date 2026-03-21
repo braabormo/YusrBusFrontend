@@ -1,5 +1,5 @@
-import PassengersApiService from "@/app/core/networking/services/passengersApiService";
-import { createGenericEntitySlice } from "@/app/core/state/generics/genericEntitySlice";
+import PassengersApiService from "@/app/core/networking/passengersApiService";
+import { createGenericEntitySlice } from "@yusr_systems/ui";
 
 const { reducer, actions } = createGenericEntitySlice("passenger", new PassengersApiService());
 

@@ -1,4 +1,4 @@
-import { createGenericDialogSlice } from "@/app/core/state/generics/genericDialogSlice";
+import { createGenericDialogSlice } from "@yusr_systems/ui";
 import type User from "../data/user";
 
 export const userDialogSlice = createGenericDialogSlice<User>("userDialog");

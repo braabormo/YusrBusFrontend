@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
 import { CheckCircle2 } from "lucide-react";
 import type { Ticket } from "../data/ticket";
 import type { SeatType } from "./busTypes";
+import { cn } from "@yusr_systems/ui";
 
 type BusButtonProps = {
   seat: SeatType;

@@ -1,5 +1,5 @@
-import RoutesApiService from "@/app/core/networking/services/routesApiService";
-import { createGenericEntitySlice } from "@/app/core/state/generics/genericEntitySlice";
+import RoutesApiService from "@/app/core/networking/routesApiService";
+import { createGenericEntitySlice } from "@yusr_systems/ui";
 
 const { reducer, actions } = createGenericEntitySlice("route", new RoutesApiService());
 

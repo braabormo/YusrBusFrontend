@@ -1,7 +1,8 @@
+import { selectPermissionsByResource } from "@/app/core/auth/authSelectors";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import CrudPage from "@/app/core/components/crudPage";
-import UsersApiService from "@/app/core/networking/services/usersApiService";
-import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
+import UsersApiService from "@/app/core/networking/usersApiService";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
+import { CrudPage } from "@yusr_systems/ui";
 import { User2Icon } from "lucide-react";
 import { useMemo } from "react";
 import User, { UserFilterColumns } from "../data/user";
@@ -14,6 +15,7 @@ export default function UsersPage()
   const dispatch = useAppDispatch();
   const userState = useAppSelector((state) => state.user);
   const userDialogState = useAppSelector((state) => state.userDialog);
+  const permissions = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Users));
   const service = useMemo(() => new UsersApiService(), []);
 
   return (
@@ -21,7 +23,7 @@ export default function UsersPage()
       title="إدارة المستخدمين"
       entityName="المستخدم"
       addNewItemTitle="إضافة مستخدم جديد"
-      permissionResource={ SystemPermissionsResources.Users }
+      permissions={ permissions }
       entityState={ userState }
       useSlice={ () => userDialogState }
       service={ service }

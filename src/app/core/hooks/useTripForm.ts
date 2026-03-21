@@ -1,13 +1,12 @@
-import TripsApiService from "@/app/core/networking/services/tripsApiService";
+import TripsApiService from "@/app/core/networking/tripsApiService";
 import type { SeatType } from "@/app/features/trips/bus/busTypes";
 import { Deposit } from "@/app/features/trips/data/deposit";
 import { Ticket } from "@/app/features/trips/data/ticket";
 import type { Trip } from "@/app/features/trips/data/trip";
+import { type ValidationRule, Validators } from "@yusr_systems/core";
+import { useEntityForm } from "@yusr_systems/ui";
 import { useEffect, useState } from "react";
-import { useAppSelector } from "../state/hooks";
-import { Validators } from "../utils/validators";
-import { useEntityForm } from "./useEntityForm";
-import type { ValidationRule } from "./useFormValidation";
+import { useAppSelector } from "../state/store";
 
 export function useTripForm(entity: Trip | undefined, mode: string)
 {

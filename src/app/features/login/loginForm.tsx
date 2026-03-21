@@ -1,26 +1,13 @@
 import { LoginRequest } from "@/app/core/data/loginRequest";
-import { type ValidationRule } from "@/app/core/hooks/useFormValidation";
-import ApiConstants from "@/app/core/networking/apiConstants";
-import YusrApiHelper from "@/app/core/networking/yusrApiHelper";
-import { Validators } from "@/app/core/utils/validators";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
-import { cn } from "@/lib/utils";
+import type { Setting } from "@/app/core/data/setting";
+import { login, updateLoggedInUser, useAppDispatch } from "@/app/core/state/store";
+import placeholderImg from "@/assets/placeholder.svg";
+import { ApiConstants, SystemPermissions, type ValidationRule, Validators, YusrApiHelper } from "@yusr_systems/core";
+import { Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, PasswordField, TextField, useEntityForm } from "@yusr_systems/ui";
 import { Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type User from "../users/data/user";
-
-import { login, updateLoggedInUser } from "@/app/core/auth/authSlice";
-import { SystemPermissions } from "@/app/core/auth/systemPermissions";
-import { PasswordField } from "@/app/core/components/fields/passwordField";
-import { TextField } from "@/app/core/components/fields/textField";
-import type { Setting } from "@/app/core/data/setting";
-import { useEntityForm } from "@/app/core/hooks/useEntityForm";
-import { useAppDispatch } from "@/app/core/state/hooks";
-import placeholderImg from "@/assets/placeholder.svg";
-import { Checkbox } from "@/components/ui/checkbox";
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
 {

@@ -1,7 +1,9 @@
 import type { Dashboard } from "@/app/core/data/dashboard";
 import ApplicationLang from "@/app/core/services/langService/applicationLang";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@yusr_systems/ui";
+
 type DashboardSectionCardsProps = { data: Dashboard; };
+
 export function DashboardSectionCards({ data }: DashboardSectionCardsProps)
 {
   const lang = ApplicationLang.getAppLangText().dashborad;

@@ -1,16 +1,14 @@
-import { SystemPermissions } from "@/app/core/auth/systemPermissions";
 import { SystemPermissionsActions } from "@/app/core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import { isPDF } from "@/app/core/components/fields/storageFilesField";
 import { StorageFileStatus } from "@/app/core/data/storageFile";
-import DepositReportApiService from "@/app/core/networking/services/reports/depositReportApiService";
-import { useAppSelector } from "@/app/core/state/hooks";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import DepositReportApiService from "@/app/core/networking/reports/depositReportApiService";
+import { Button, isPDF, ScrollArea } from "@yusr_systems/ui";
 import { Archive, ArrowLeft, Banknote, Box, Edit, FileIcon, Loader2, PackagePlus, Printer, Share2, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import type { Deposit } from "../data/deposit";
+import { useAppSelector } from "@/app/core/state/store";
+import { SystemPermissions } from "@yusr_systems/core";
 
 type TripDepositsParams = {
   deposits: Deposit[];

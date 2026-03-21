@@ -1,7 +1,6 @@
-import { BaseEntity } from "@/app/core/data/baseEntity";
-import type { ColumnName } from "@/app/core/types/ColumnName";
+import type Branch  from "@/app/features/branches/data/branch";
 import type { Role } from "@/app/features/roles/data/role";
-import type Branch from "../../branches/data/branch";
+import { BaseEntity, type ColumnName } from "@yusr_systems/core";
 
 export default class User extends BaseEntity
 {

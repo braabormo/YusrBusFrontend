@@ -1,19 +1,8 @@
-import ChangeDialog from "@/app/core/components/dialogs/changeDialog";
-import { FieldsSection } from "@/app/core/components/fields/fieldsSection";
-import { FormField } from "@/app/core/components/fields/formField";
-import { NumberField } from "@/app/core/components/fields/numberField";
-import { PhoneField } from "@/app/core/components/fields/phoneField";
-import StorageFileField from "@/app/core/components/fields/storageFilesField";
-import { TextField } from "@/app/core/components/fields/textField";
-import SearchableSelect from "@/app/core/components/select/searchableSelect";
 import { CityFilterColumns } from "@/app/core/data/city";
-import { useEntityForm } from "@/app/core/hooks/useEntityForm";
-import type { ValidationRule } from "@/app/core/hooks/useFormValidation";
-import useStorageFile from "@/app/core/hooks/useStorageFile";
-import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
 import { filterCities } from "@/app/core/state/shared/citySlice";
-import { Validators } from "@/app/core/utils/validators";
-import { FieldGroup } from "@/components/ui/field";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
+import { type ValidationRule, Validators } from "@yusr_systems/core";
+import { ChangeDialog, FieldGroup, FieldsSection, FormField, NumberField, PhoneField, SearchableSelect, StorageFileField, TextField, useEntityForm, useStorageFile } from "@yusr_systems/ui";
 import { useEffect, useMemo } from "react";
 import type { Deposit } from "../data/deposit";
 

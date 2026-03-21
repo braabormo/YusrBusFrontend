@@ -1,5 +1,4 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "@yusr_systems/ui";
 import { AlertTriangle, Home, RotateCcw } from "lucide-react";
 
 interface ErrorFallbackProps

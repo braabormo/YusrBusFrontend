@@ -1,9 +1,9 @@
-import { createGenericEntitySlice } from "@/app/core/state/generics/genericEntitySlice";
+import { createGenericEntitySlice } from "@yusr_systems/ui";
 import type { Country } from "../../data/country";
-import CountriesApiService from "../../networking/services/countriesApiService";
+import CountriesApiService from "../../networking/countriesApiService";
 
-const citySlice = createGenericEntitySlice<Country>("country", new CountriesApiService());
+const countrySlice = createGenericEntitySlice<Country>("country", new CountriesApiService());
 
 export const { setCurrentPage: setCurrentCountriesPage, refresh: refreshCountries, filter: filterCountries } =
-  citySlice.actions;
-export default citySlice.reducer;
+  countrySlice.actions;
+export default countrySlice.reducer;

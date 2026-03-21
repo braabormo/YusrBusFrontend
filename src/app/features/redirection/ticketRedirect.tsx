@@ -1,8 +1,5 @@
-import TicketReportApiService from "@/app/core/networking/services/reports/ticketReportApiService";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import TicketReportApiService from "@/app/core/networking/reports/ticketReportApiService";
+import { Alert, AlertDescription, Button, Card, CardContent, CardHeader, CardTitle, Input } from "@yusr_systems/ui";
 import { AlertCircle, Loader2, LockKeyhole, Ticket } from "lucide-react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";

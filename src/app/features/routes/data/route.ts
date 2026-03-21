@@ -1,5 +1,4 @@
-import { BaseEntity } from "@/app/core/data/baseEntity";
-import type { ColumnName } from "@/app/core/types/ColumnName";
+import { BaseEntity, type ColumnName } from "@yusr_systems/core";
 
 export class Route extends BaseEntity
 {

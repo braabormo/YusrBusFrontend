@@ -8,15 +8,21 @@ import routeDialogReducer from "@/app/features/routes/logic/routeDialogSlice";
 import routeReducer from "@/app/features/routes/logic/routeSlice";
 import tripDialogReducer from "@/app/features/trips/logic/tripDialogSlice";
 import tripReducer from "@/app/features/trips/logic/tripSlice";
+import type User from "@/app/features/users/data/user";
 import userDialogReducer from "@/app/features/users/logic/userDialogSlice";
 import userReducer from "@/app/features/users/logic/userSlice";
 import { configureStore } from "@reduxjs/toolkit";
-import { setupAuthListeners } from "../auth/authListener";
-import authReducer from "../auth/authSlice";
+import { createAuthSlice } from "@yusr_systems/core";
+import { setupAuthListeners } from "@yusr_systems/ui";
+import { type TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import type { Setting } from "../data/setting";
 import cityReducer from "./shared/citySlice";
 import countryReducer from "./shared/countrySlice";
 import currencyReducer from "./shared/currencySlice";
 import systemReducer from "./shared/systemSlice";
+
+const authSlice = createAuthSlice<User, Setting>();
+export const { login, logout, updateLoggedInUser, updateSetting, syncFromStorage } = authSlice.actions;
 
 export const store = configureStore({
   reducer: {
@@ -35,14 +41,18 @@ export const store = configureStore({
     city: cityReducer,
     country: countryReducer,
     currency: currencyReducer,
-    auth: authReducer,
+    auth: authSlice.reducer,
     system: systemReducer
   }
 });
 
-setupAuthListeners(store.dispatch);
+setupAuthListeners(store.dispatch, {
+  logout: authSlice.actions.logout,
+  syncFromStorage: authSlice.actions.syncFromStorage
+});
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;
+
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

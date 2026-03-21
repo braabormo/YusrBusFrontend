@@ -1,16 +1,8 @@
-import ChangeDialog from "@/app/core/components/dialogs/changeDialog";
-import type { CommonChangeDialogProps } from "@/app/core/components/dialogs/commonChangeDialogProps";
-import { FieldsSection } from "@/app/core/components/fields/fieldsSection";
-import { FormField } from "@/app/core/components/fields/formField";
-import { TextField } from "@/app/core/components/fields/textField";
-import SearchableSelect from "@/app/core/components/select/searchableSelect";
 import { CityFilterColumns } from "@/app/core/data/city";
-import { useEntityForm } from "@/app/core/hooks/useEntityForm";
-import { type ValidationRule } from "@/app/core/hooks/useFormValidation";
-import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
 import { filterCities } from "@/app/core/state/shared/citySlice";
-import { Validators } from "@/app/core/utils/validators";
-import { FieldGroup } from "@/components/ui/field";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
+import { type ValidationRule, Validators } from "@yusr_systems/core";
+import { ChangeDialog, type CommonChangeDialogProps, FieldGroup, FieldsSection, FormField, SearchableSelect, TextField, useEntityForm } from "@yusr_systems/ui";
 import { useEffect, useMemo } from "react";
 import type Branch from "../data/branch";
 

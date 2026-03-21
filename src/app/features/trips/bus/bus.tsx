@@ -1,5 +1,5 @@
 import { useBusLogic } from "@/app/core/hooks/useBusLogic";
-import { Button } from "@/components/ui/button";
+import { Button } from "@yusr_systems/ui";
 import { Baby, Plus, ShipWheel, XCircle } from "lucide-react";
 import type { Ticket } from "../data/ticket";
 import BusLoadingSkeleton from "./busLoadingSkeleton";

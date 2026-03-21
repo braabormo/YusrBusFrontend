@@ -1,5 +1,5 @@
 import { SideBar } from "@/app/core/components/sideBar/sideBar";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@yusr_systems/ui";
 import { Outlet } from "react-router-dom";
 
 const MainPage = () =>

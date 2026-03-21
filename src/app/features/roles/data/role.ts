@@ -1,13 +1,13 @@
-import type { ColumnName } from "../../../core/types/ColumnName";
+import { BaseEntity, type ColumnName } from "@yusr_systems/core";
 
-export class Role
+export class Role extends BaseEntity
 {
-  public id!: number;
   public name!: string;
   public permissions!: string[];
 
   constructor(init?: Partial<Role>)
   {
+    super();
     Object.assign(this, init);
   }
 }

@@ -1,4 +1,4 @@
-import { BaseEntity } from "@/app/core/data/baseEntity";
+import { BaseEntity } from "@yusr_systems/core";
 import type { Passenger } from "../../passengers/data/passenger";
 import type User from "../../users/data/user";
 

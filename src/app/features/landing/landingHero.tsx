@@ -1,5 +1,4 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge, Button } from "@yusr_systems/ui";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 

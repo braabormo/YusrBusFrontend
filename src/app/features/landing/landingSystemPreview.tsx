@@ -1,6 +1,6 @@
-import ZoomableImage from "@/app/core/components/images/zoomableImage";
 import dashboardDark from "@/assets/system/yusrBus_Dashboard_Dark.webp";
 import dashboardLight from "@/assets/system/yusrBus_Dashboard_Light.webp";
+import { ZoomableImage } from "@yusr_systems/ui";
 import type { LucideProps } from "lucide-react";
 
 export default function LandingSystemPreview(

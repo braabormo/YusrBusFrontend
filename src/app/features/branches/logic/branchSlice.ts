@@ -1,5 +1,5 @@
-import BranchesApiService from "@/app/core/networking/services/branchesApiService";
-import { createGenericEntitySlice } from "@/app/core/state/generics/genericEntitySlice";
+import BranchesApiService from "@/app/core/networking/branchesApiService";
+import { createGenericEntitySlice } from "@yusr_systems/ui";
 
 const { reducer, actions } = createGenericEntitySlice("branch", new BranchesApiService());
 

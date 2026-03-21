@@ -1,7 +1,8 @@
+import { selectPermissionsByResource } from "@/app/core/auth/authSelectors";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import CrudPage from "@/app/core/components/crudPage";
-import RoutesApiService from "@/app/core/networking/services/routesApiService";
-import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
+import RoutesApiService from "@/app/core/networking/routesApiService";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
+import { CrudPage } from "@yusr_systems/ui";
 import { Building } from "lucide-react";
 import { useMemo } from "react";
 import { type Route, RouteFilterColumns } from "../data/route";
@@ -14,6 +15,7 @@ export default function RoutesPage()
   const dispatch = useAppDispatch();
   const routeState = useAppSelector((state) => state.route);
   const routeDialogState = useAppSelector((state) => state.routeDialog);
+  const permissions = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Routes));
   const service = useMemo(() => new RoutesApiService(), []);
 
   return (
@@ -21,7 +23,7 @@ export default function RoutesPage()
       title="إدارة الخطوط"
       entityName="الخط"
       addNewItemTitle="إضافة خط جديد"
-      permissionResource={ SystemPermissionsResources.Routes }
+      permissions={ permissions }
       entityState={ routeState }
       useSlice={ () => routeDialogState }
       service={ service }

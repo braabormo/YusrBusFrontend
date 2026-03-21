@@ -1,19 +1,14 @@
-import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import ChangeDialog from "@/app/core/components/dialogs/changeDialog";
-import type { CommonChangeDialogProps } from "@/app/core/components/dialogs/commonChangeDialogProps";
-import { TextField } from "@/app/core/components/fields/textField";
-import { useEntityForm } from "@/app/core/hooks/useEntityForm";
-import { type ValidationRule } from "@/app/core/hooks/useFormValidation";
-import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
-import { fetchSystemPermissions } from "@/app/core/state/shared/systemSlice";
-import { Validators } from "@/app/core/utils/validators";
-import { FieldGroup } from "@/components/ui/field";
-import { Skeleton } from "@/components/ui/skeleton";
+import { type ValidationRule, Validators } from "@yusr_systems/core";
+import type { CommonChangeDialogProps } from "@yusr_systems/ui";
+import { ChangeDialog, FieldGroup, Skeleton, TextField, useEntityForm } from "@yusr_systems/ui";
 import { useEffect, useMemo } from "react";
 import type { Role } from "../data/role";
 import { categorizePermissions, PermissionCard } from "./permissionCard";
 import { ActionIcons, ArabicLabels, PERMISSION_SECTIONS } from "./permissionConfig";
 import { PermissionSkeleton } from "./permissionSkeleton";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
+import { fetchSystemPermissions } from "@/app/core/state/shared/systemSlice";
+import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
 
 export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Role>)
 {

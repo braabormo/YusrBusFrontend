@@ -1,11 +1,8 @@
-import { Toaster } from "@/components/ui/sonner";
+import { ProtectedRoute, Skeleton, ThemeProvider, Toaster, TooltipProvider } from "@yusr_systems/ui";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Skeleton } from "../components/ui/skeleton";
-import { TooltipProvider } from "../components/ui/tooltip";
-import useAppInitialization from "../hooks/useAppInitialization";
-import ProtectedRoute from "./core/auth/protectedRoute";
-import { ThemeProvider } from "./core/components/theme/themeProvider";
+import useAppInitialization from "./core/hooks/useAppInitialization";
 import RoutesService from "./core/services/constants/routesService";
+import { useAppSelector } from "./core/state/store";
 import BranchesPage from "./features/branches/presentation/branchesPage";
 import DashboardPage from "./features/dashboard/dashboardPage";
 import LandingPage from "./features/landing/landingPage";
@@ -58,6 +55,8 @@ function Apploading()
 
 function AppRoutes()
 {
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  
   return (
     <Router>
       <Routes>
@@ -66,7 +65,7 @@ function AppRoutes()
 
         <Route path="/t/:accessKey" element={ <TicketRedirect /> } />
 
-        <Route element={ <ProtectedRoute /> }>
+        <Route element={ <ProtectedRoute isAuthenticated={ isAuthenticated } /> }>
           <Route element={ <MainPage /> }>
             <Route path="/dashboard" element={ <DashboardPage /> } />
             <Route path="/trips" element={ <TripsPage /> } />

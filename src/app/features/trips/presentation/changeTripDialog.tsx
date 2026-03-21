@@ -1,13 +1,8 @@
-import SaveButton from "@/app/core/components/buttons/saveButton";
-import type { CommonChangeDialogProps } from "@/app/core/components/dialogs/commonChangeDialogProps";
-import Loading from "@/app/core/components/loading/loading";
 import { useTripForm } from "@/app/core/hooks/useTripForm";
-import PassengersApiService from "@/app/core/networking/services/passengersApiService";
-import TripsApiService from "@/app/core/networking/services/tripsApiService";
-import { useAppDispatch } from "@/app/core/state/hooks";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
+import PassengersApiService from "@/app/core/networking/passengersApiService";
+import TripsApiService from "@/app/core/networking/tripsApiService";
+import type { CommonChangeDialogProps } from "@yusr_systems/ui";
+import { Button, Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, Loading, SaveButton, Separator } from "@yusr_systems/ui";
 import { useState } from "react";
 import type { Passenger } from "../../passengers/data/passenger";
 import { refreshPassengers } from "../../passengers/logic/passengerSlice";
@@ -19,6 +14,7 @@ import ChangeTicketDialog from "./changeTicketDialog";
 import TripAmountSummary from "./TripAmountSummary";
 import TripDeposits from "./tripDeposits";
 import TripHeader from "./tripHeader";
+import { useAppDispatch } from "@/app/core/state/store";
 
 export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChangeDialogProps<Trip>)
 {

@@ -1,8 +1,8 @@
-import { SystemPermissions } from "@/app/core/auth/systemPermissions";
 import { SystemPermissionsActions } from "@/app/core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
 import useDashbaord from "@/app/core/hooks/useDashboard";
-import { useAppSelector } from "@/app/core/state/hooks";
+import { useAppSelector } from "@/app/core/state/store";
+import { SystemPermissions } from "@yusr_systems/core";
 import TripsPage from "../trips/presentation/tripsPage";
 import { DashboardChartAreaInteractive } from "./dashboardChartAreaInteractive";
 import { DashboardSectionCards } from "./dashboardSectionCards";

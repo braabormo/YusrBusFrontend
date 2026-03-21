@@ -1,6 +1,5 @@
-import { BaseEntity } from "@/app/core/data/baseEntity";
 import { Country } from "@/app/core/data/country";
-import type { ColumnName } from "@/app/core/types/ColumnName";
+import { BaseEntity, type ColumnName } from "@yusr_systems/core";
 
 export class Passenger extends BaseEntity
 {

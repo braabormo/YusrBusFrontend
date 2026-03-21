@@ -1,6 +1,6 @@
-import { createGenericEntitySlice } from "@/app/core/state/generics/genericEntitySlice";
+import { createGenericEntitySlice } from "@yusr_systems/ui";
 import type { City } from "../../data/city";
-import CitiesApiService from "../../networking/services/citiesApiService";
+import CitiesApiService from "../../networking/citiesApiService";
 
 const citySlice = createGenericEntitySlice<City>("city", new CitiesApiService());
 

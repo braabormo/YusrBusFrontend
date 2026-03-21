@@ -1,15 +1,15 @@
-import type { ColumnName } from "../types/ColumnName";
+import { BaseEntity, type ColumnName } from "@yusr_systems/core";
 import type { Country } from "./country";
 
-export class City
+export class City extends BaseEntity
 {
-  public id!: number;
   public name!: string;
   public countryId!: number;
   public country!: Country;
 
   constructor(init?: Partial<City>)
   {
+    super();
     Object.assign(this, init);
   }
 }

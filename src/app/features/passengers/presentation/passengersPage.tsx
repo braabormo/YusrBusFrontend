@@ -1,7 +1,8 @@
+import { selectPermissionsByResource } from "@/app/core/auth/authSelectors";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import CrudPage from "@/app/core/components/crudPage";
-import PassengersApiService from "@/app/core/networking/services/passengersApiService";
-import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
+import PassengersApiService from "@/app/core/networking/passengersApiService";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
+import { CrudPage } from "@yusr_systems/ui";
 import { Building } from "lucide-react";
 import { useMemo } from "react";
 import { Passenger, PassengerFilterColumns } from "../data/passenger";
@@ -14,6 +15,9 @@ export default function PassengersPage()
   const dispatch = useAppDispatch();
   const passengerState = useAppSelector((state) => state.passenger);
   const passengerDialogState = useAppSelector((state) => state.passengerDialog);
+  const permissions = useAppSelector((state) =>
+    selectPermissionsByResource(state, SystemPermissionsResources.Passengers)
+  );
   const service = useMemo(() => new PassengersApiService(), []);
 
   return (
@@ -21,7 +25,7 @@ export default function PassengersPage()
       title="إدارة الركاب"
       entityName="الراكب"
       addNewItemTitle="إضافة راكب جديد"
-      permissionResource={ SystemPermissionsResources.Passengers }
+      permissions={ permissions }
       entityState={ passengerState }
       useSlice={ () => passengerDialogState }
       service={ service }

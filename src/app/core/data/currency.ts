@@ -1,4 +1,4 @@
-import { BaseEntity } from "./baseEntity";
+import { BaseEntity } from "@yusr_systems/core";
 
 export class Currency extends BaseEntity
 {

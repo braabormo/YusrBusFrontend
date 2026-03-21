@@ -1,12 +1,7 @@
-import { DateTimeField } from "@/app/core/components/fields/dateTimeField";
-import { FormField } from "@/app/core/components/fields/formField";
-import { NumberField } from "@/app/core/components/fields/numberField";
-import { TextField } from "@/app/core/components/fields/textField";
-import SearchableSelect from "@/app/core/components/select/searchableSelect";
-import useEntities from "@/app/core/hooks/useEntities";
-import RoutesApiService from "@/app/core/networking/services/routesApiService";
-import { FieldGroup } from "@/components/ui/field";
-import { type Route, RouteFilterColumns } from "../../routes/data/route";
+import { useAppSelector } from "@/app/core/state/store";
+import { DateTimeField, FieldGroup, FormField, NumberField, SearchableSelect, TextField } from "@yusr_systems/ui";
+import { RouteFilterColumns } from "../../routes/data/route";
+import { filterRoutes } from "../../routes/logic/routeSlice";
 import type { Trip } from "../data/trip";
 import TripStationsList from "./tripStationsList";
 
@@ -24,9 +19,7 @@ export default function TripHeader(
   { formData, setFormData, errorInputClass, clearError, isInvalid, getError }: TripSidePanelProps
 )
 {
-  const { entities: routes, filter: filterRoutes, isLoading: fetchingRoutes } = useEntities<Route>(
-    new RoutesApiService()
-  );
+  const routeState = useAppSelector((state) => state.route);
 
   return (
     <FieldGroup>
@@ -86,14 +79,14 @@ export default function TripHeader(
 
       <FormField label="الخط" isInvalid={ isInvalid("routeId") } error={ getError("routeId") }>
         <SearchableSelect
-          items={ routes?.data ?? [] }
+          items={ routeState.entities?.data ?? [] }
           itemLabelKey="name"
           itemValueKey="id"
           placeholder="اختر الخط"
           value={ formData.routeId?.toString() || "" }
           onValueChange={ (val) =>
           {
-            const selected = routes?.data?.find((c) => c.id.toString() === val);
+            const selected = routeState.entities?.data?.find((c) => c.id.toString() === val);
             if (selected)
             {
               setFormData((prev) => ({ ...prev, routeId: selected.id, route: selected }));
@@ -103,7 +96,7 @@ export default function TripHeader(
           columnsNames={ RouteFilterColumns.columnsNames }
           onSearch={ (condition) => filterRoutes(condition) }
           errorInputClass={ errorInputClass("routeId") }
-          disabled={ fetchingRoutes }
+          disabled={ routeState.isLoading }
         />
       </FormField>
 

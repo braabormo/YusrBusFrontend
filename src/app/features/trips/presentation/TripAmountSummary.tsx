@@ -1,13 +1,10 @@
-"use client";
-
-import { SystemPermissions } from "@/app/core/auth/systemPermissions";
 import { SystemPermissionsActions } from "@/app/core/auth/systemPermissionsActions";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import TripDepositsReportApiService from "@/app/core/networking/services/reports/tripDepositsReportApiService";
-import TripTicketsReportApiService from "@/app/core/networking/services/reports/tripTicketsReportApiService";
-import { useAppSelector } from "@/app/core/state/hooks";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import TripDepositsReportApiService from "@/app/core/networking/reports/tripDepositsReportApiService";
+import TripTicketsReportApiService from "@/app/core/networking/reports/tripTicketsReportApiService";
+import { useAppSelector } from "@/app/core/state/store";
+import { SystemPermissions } from "@yusr_systems/core";
+import { Badge, cn } from "@yusr_systems/ui";
 import { Archive, Calculator, Coins, Ticket as TicketIcon, Wallet } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { Trip } from "../data/trip";

@@ -1,7 +1,8 @@
+import { selectPermissionsByResource } from "@/app/core/auth/authSelectors";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import CrudPage from "@/app/core/components/crudPage";
-import TripsApiService from "@/app/core/networking/services/tripsApiService";
-import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
+import TripsApiService from "@/app/core/networking/tripsApiService";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
+import { CrudPage } from "@yusr_systems/ui";
 import { Building } from "lucide-react";
 import { useMemo } from "react";
 import { Trip, TripFilterColumns } from "../data/trip";
@@ -14,13 +15,14 @@ export default function TripsPage()
   const dispatch = useAppDispatch();
   const tripState = useAppSelector((state) => state.trip);
   const tripDialogState = useAppSelector((state) => state.tripDialog);
+  const permissions = useAppSelector((state) => selectPermissionsByResource(state, SystemPermissionsResources.Trips));
   const service = useMemo(() => new TripsApiService(), []);
   return (
     <CrudPage<Trip>
       title="إدارة الرحلات"
       entityName="الرحلة"
       addNewItemTitle="إضافة رحلة جديدة"
-      permissionResource={ SystemPermissionsResources.Trips }
+      permissions={ permissions }
       entityState={ tripState }
       useSlice={ () => tripDialogState }
       service={ service }

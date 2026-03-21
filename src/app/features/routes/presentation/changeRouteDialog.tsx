@@ -1,25 +1,12 @@
-import DynamicListContainer from "@/app/core/components/containers/dynamicListContainer";
-import ChangeDialog from "@/app/core/components/dialogs/changeDialog";
-import type { CommonChangeDialogProps } from "@/app/core/components/dialogs/commonChangeDialogProps";
-import { FormField } from "@/app/core/components/fields/formField";
-import { TextField } from "@/app/core/components/fields/textField";
-import { NumberInput } from "@/app/core/components/input/numberInput";
-import Loading from "@/app/core/components/loading/loading";
-import SearchableSelect from "@/app/core/components/select/searchableSelect";
 import { CityFilterColumns } from "@/app/core/data/city";
-import { useDynamicList } from "@/app/core/hooks/useDynamicList";
-import { useEntityForm } from "@/app/core/hooks/useEntityForm";
-import { type ValidationRule } from "@/app/core/hooks/useFormValidation";
-import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
 import { filterCities } from "@/app/core/state/shared/citySlice";
-import { Validators } from "@/app/core/utils/validators";
-import { Button } from "@/components/ui/button";
-import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { FieldGroup } from "@/components/ui/field";
-import { Separator } from "@/components/ui/separator";
+import { Validators, type ValidationRule } from "@yusr_systems/core";
+import type { CommonChangeDialogProps } from "@yusr_systems/ui";
+import { Button, ChangeDialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DynamicListContainer, FieldGroup, FormField, Loading, NumberInput, SearchableSelect, Separator, TextField, useDynamicList, useEntityForm } from "@yusr_systems/ui";
 import { Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Route, RouteStation } from "../data/route";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 
 export default function ChangeRouteDialog({ entity, mode, service, onSuccess }: CommonChangeDialogProps<Route>)
 {

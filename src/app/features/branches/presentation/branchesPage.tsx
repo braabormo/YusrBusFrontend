@@ -1,12 +1,13 @@
+import { selectPermissionsByResource } from "@/app/core/auth/authSelectors";
 import { SystemPermissionsResources } from "@/app/core/auth/systemPermissionsResources";
-import BranchesApiService from "@/app/core/networking/services/branchesApiService";
-import { useAppDispatch, useAppSelector } from "@/app/core/state/hooks";
+import BranchesApiService from "@/app/core/networking/branchesApiService";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 import Branch, { BranchFilterColumns } from "@/app/features/branches/data/branch";
 import { openBranchChangeDialog, openBranchDeleteDialog, setIsBranchChangeDialogOpen, setIsBranchDeleteDialogOpen } from "@/app/features/branches/logic/branchDialogSlice";
 import { filterBranches, refreshBranches, setCurrentBranchesPage } from "@/app/features/branches/logic/branchSlice";
+import { CrudPage } from "@yusr_systems/ui";
 import { Building, MapPin } from "lucide-react";
 import { useMemo } from "react";
-import CrudPage from "../../../core/components/crudPage";
 import ChangeBranchDialog from "./changeBranchDialog";
 
 export default function BranchesPage()
@@ -14,6 +15,9 @@ export default function BranchesPage()
   const dispatch = useAppDispatch();
   const branchState = useAppSelector((state) => state.branch);
   const branchDialogState = useAppSelector((state) => state.branchDialog);
+  const permissions = useAppSelector((state) =>
+    selectPermissionsByResource(state, SystemPermissionsResources.Branches)
+  );
   const service = useMemo(() => new BranchesApiService(), []);
 
   return (
@@ -21,7 +25,7 @@ export default function BranchesPage()
       title="إدارة الفروع"
       entityName="الفرع"
       addNewItemTitle="إضافة فرع جديد"
-      permissionResource={ SystemPermissionsResources.Branches }
+      permissions={ permissions }
       entityState={ branchState }
       useSlice={ () => branchDialogState }
       service={ service }
