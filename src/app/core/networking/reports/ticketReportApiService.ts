@@ -27,7 +27,7 @@ export default class TicketReportApiService
     }
     if (viewAction === "share")
     {
-      ReportHelper.handleShareTicket(blob, filename);
+      ReportHelper.handleShareFile(blob, filename);
     }
 
     return true;

@@ -28,7 +28,7 @@ export default class TripTicketsReportApiService
     }
     if (viewAction === "share")
     {
-      ReportHelper.handleShareTicket(blob, filename);
+      ReportHelper.handleShareFile(blob, filename);
     }
   }
 }

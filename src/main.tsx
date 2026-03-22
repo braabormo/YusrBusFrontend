@@ -6,6 +6,9 @@ import ErrorBoundary from "./app/features/error/errorBoundary.tsx";
 import "./index.css";
 import { Provider } from "react-redux";
 import { store } from "./app/core/state/store.ts";
+import { ApiConstants } from "@yusr_systems/core";
+
+ApiConstants.initialize("https://yusrbus.runasp.net/api");
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

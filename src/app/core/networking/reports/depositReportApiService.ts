@@ -21,7 +21,7 @@ export default class DepositReportApiService
     }
     if (viewAction === "share")
     {
-      ReportHelper.handleShareTicket(blob, filename);
+      ReportHelper.handleShareFile(blob, filename);
     }
   }
 }

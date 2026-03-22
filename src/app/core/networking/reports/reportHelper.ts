@@ -7,7 +7,7 @@ export class ReportHelper
     setTimeout(() => window.URL.revokeObjectURL(url), 100);
   }
 
-  public static async handleShareTicket(blob: Blob, filename: string)
+  public static async handleShareFile(blob: Blob, filename: string)
   {
     try
     {
@@ -29,7 +29,7 @@ export class ReportHelper
     }
     catch (error)
     {
-      console.error("Error sharing ticket:", error);
+      console.error("Error sharing file:", error);
     }
   }
 }
