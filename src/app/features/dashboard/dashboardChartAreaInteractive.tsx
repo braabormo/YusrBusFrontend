@@ -21,16 +21,16 @@ export function DashboardChartAreaInteractive({ tripsInTime }: ChartAreaInteract
   }, [isMobile]);
 
   // 1. SAFE DATE FORMATTER HELPER
-  const formatDate = (value: string | number | Date) =>
-  {
-    if (!value)
-    {
+  const formatDate = (value: any) => {
+    // Check if value is null, undefined, or a boolean (standard ReactNode edge cases)
+    if (value === null || value === undefined || typeof value === "boolean") {
       return "";
     }
+
     const date = new Date(value);
+    
     // Check if the date is valid
-    if (isNaN(date.getTime()))
-    {
+    if (isNaN(date.getTime())) {
       return String(value);
     }
 
