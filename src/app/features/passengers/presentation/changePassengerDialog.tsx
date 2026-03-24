@@ -103,7 +103,7 @@ export default function ChangePassengerDialog({ entity, mode, service, onSuccess
                 }
               } }
               columnsNames={ CountryFilterColumns.columnsNames }
-              onSearch={ (condition) => filterCountries(condition) }
+              onSearch={ (condition) => dispatch(filterCountries(condition)) }
               errorInputClass={ isInvalid("nationalityId") ? "border-red-500 ring-red-500" : "" }
               disabled={ countryState.isLoading }
             />

@@ -110,7 +110,7 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
                   }
                 } }
                 columnsNames={ PassengerFilterColumns.columnsNames }
-                onSearch={ (condition) => filterPassengers(condition) }
+                onSearch={ (condition) => dispatch(filterPassengers(condition)) }
                 errorInputClass={ errorInputClass("passengerId") }
                 disabled={ passengerState.isLoading }
               />

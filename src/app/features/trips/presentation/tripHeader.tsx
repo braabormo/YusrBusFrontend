@@ -1,4 +1,4 @@
-import { useAppSelector } from "@/app/core/state/store";
+import { useAppDispatch, useAppSelector } from "@/app/core/state/store";
 import { DateTimeField, FieldGroup, FormField, NumberField, SearchableSelect, TextField } from "@yusr_systems/ui";
 import { RouteFilterColumns } from "../../routes/data/route";
 import { filterRoutes } from "../../routes/logic/routeSlice";
@@ -20,6 +20,7 @@ export default function TripHeader(
 )
 {
   const routeState = useAppSelector((state) => state.route);
+  const dispatch = useAppDispatch();
 
   return (
     <FieldGroup>
@@ -94,7 +95,7 @@ export default function TripHeader(
             }
           } }
           columnsNames={ RouteFilterColumns.columnsNames }
-          onSearch={ (condition) => filterRoutes(condition) }
+          onSearch={ (condition) => dispatch(filterRoutes(condition)) }
           errorInputClass={ errorInputClass("routeId") }
           disabled={ routeState.isLoading }
         />

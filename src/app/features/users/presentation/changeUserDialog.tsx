@@ -30,10 +30,13 @@ export default function ChangeUserDialog({ entity, mode, service, onSuccess }: C
     ],
     []
   );
-  const { formData, handleChange, getError, isInvalid, validate, errorInputClass } = useEntityForm<User>({
-    ...entity,
-    password: ""
-  }, validationRules);
+
+  const initialValues = useMemo(() => ({ ...entity, password: "" }), [entity]);
+
+  const { formData, handleChange, getError, isInvalid, validate, errorInputClass } = useEntityForm<User>(
+    initialValues,
+    validationRules
+  );
 
   useEffect(() =>
   {
@@ -44,6 +47,7 @@ export default function ChangeUserDialog({ entity, mode, service, onSuccess }: C
   return (
     <ChangeDialog<User>
       title={ `${mode === "create" ? "إضافة" : "تعديل"} مستخدم` }
+      className="sm:max-w-xl"
       formData={ formData }
       dialogMode={ mode }
       service={ service }
@@ -103,7 +107,7 @@ export default function ChangeUserDialog({ entity, mode, service, onSuccess }: C
             placeholder="اختر الفرع"
             value={ formData.branchId?.toString() || "" }
             columnsNames={ RoleFilterColumns.columnsNames }
-            onSearch={ (condition) => filterBranches(condition) }
+            onSearch={ (condition) => dispatch(filterBranches(condition)) }
             errorInputClass={ errorInputClass("branchId") }
             disabled={ branchState.isLoading }
             onValueChange={ (val) =>
