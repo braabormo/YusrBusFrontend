@@ -1,12 +1,14 @@
 import { useTripForm } from "@/app/core/hooks/useTripForm";
 import PassengersApiService from "@/app/core/networking/passengersApiService";
 import TripsApiService from "@/app/core/networking/tripsApiService";
+import { useAppDispatch } from "@/app/core/state/store";
 import type { CommonChangeDialogProps } from "@yusr_systems/ui";
 import { Button, Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, Loading, SaveButton, Separator } from "@yusr_systems/ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Passenger } from "../../passengers/data/passenger";
 import { refreshPassengers } from "../../passengers/logic/passengerSlice";
 import ChangePassengerDialog from "../../passengers/presentation/changePassengerDialog";
+import { filterRoutes } from "../../routes/logic/routeSlice";
 import Bus from "../bus/bus";
 import type { Trip } from "../data/trip";
 import ChangeDepositDialog from "./changeDepositDialog";
@@ -14,7 +16,6 @@ import ChangeTicketDialog from "./changeTicketDialog";
 import TripAmountSummary from "./TripAmountSummary";
 import TripDeposits from "./tripDeposits";
 import TripHeader from "./tripHeader";
-import { useAppDispatch } from "@/app/core/state/store";
 
 export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChangeDialogProps<Trip>)
 {
@@ -46,6 +47,11 @@ export default function ChangeTripDialog({ entity, mode, onSuccess }: CommonChan
   const [selectedPassenger, setSelectedPassenger] = useState<Passenger | undefined>(undefined);
   const [isEditPassengerDialogOpen, setIsEditPassengerDialogOpen] = useState(false);
   const dispatch = useAppDispatch();
+
+  useEffect(() =>
+  {
+    dispatch(filterRoutes());
+  }, [dispatch]);
 
   if (initLoading)
   {

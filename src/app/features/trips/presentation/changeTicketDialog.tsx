@@ -72,6 +72,7 @@ export default function ChangeTicketDialog({ entity, onPassengerDialogClicked, o
   return (
     <ChangeDialog
       title="بيانات التذكرة"
+      className="sm:max-w-4xl"
       formData={ formData as Ticket }
       validate={ validate }
       onSuccess={ (data) => onSuccess?.(data as Ticket) }

@@ -60,6 +60,7 @@ export default function ChangeDepositDialog({ entity, onSuccess }: ChangeDeposit
   return (
     <ChangeDialog
       title="بيانات الأمانة"
+      className="sm:max-w-4xl"
       formData={ formData as Deposit }
       validate={ validate }
       onSuccess={ (data) => onSuccess?.(data as Deposit) }
