@@ -9,6 +9,7 @@ import { store } from "./app/core/state/store.ts";
 import { ApiConstants } from "@yusr_systems/core";
 
 ApiConstants.initialize("https://yusrbus.runasp.net/api");
+// ApiConstants.initialize("https://localhost:7226/api");
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
