@@ -2,7 +2,7 @@ import { LoginRequest } from "@/app/core/data/loginRequest";
 import type { Setting } from "@/app/core/data/setting";
 import { login, updateLoggedInUser, useAppDispatch } from "@/app/core/state/store";
 import placeholderImg from "@/assets/placeholder.svg";
-import { ApiConstants, SystemPermissions, type ValidationRule, Validators, YusrApiHelper } from "@yusr_systems/core";
+import { ApiConstants, type ValidationRule, Validators, YusrApiHelper } from "@yusr_systems/core";
 import { Button, Card, CardContent, Checkbox, cn, Field, FieldDescription, FieldGroup, PasswordField, TextField, useEntityForm } from "@yusr_systems/ui";
 import { Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -84,8 +84,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">)
       dispatch(login(result.data));
       dispatch(updateLoggedInUser(result.data.user));
 
-      const origin = location.state?.from?.pathname
-        || SystemPermissions.getFirstPermissionPath(result.data.user.role.permissions || []);
+      const origin = location.state?.from?.pathname || "/dashboard";
 
       setLoading(false);
 
