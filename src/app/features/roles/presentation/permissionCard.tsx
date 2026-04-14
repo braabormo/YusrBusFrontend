@@ -23,7 +23,7 @@ export const categorizePermissions = (systemPermissions: string[], order: string
 {
   const groups = systemPermissions.reduce((acc, perm) =>
   {
-    const [resource, action] = perm.split(":");
+    const [resource, action] = perm.split(".");
     if (!acc[resource])
     {
       acc[resource] = { get: null, actions: [] };
@@ -53,7 +53,7 @@ export function PermissionCard(
   {
     const isActive = currentPermissions.includes(getPerm);
     return isActive
-      ? currentPermissions.filter((p) => !p.startsWith(`${resource}:`))
+      ? currentPermissions.filter((p) => !p.startsWith(`${resource}.`))
       : [...currentPermissions, getPerm];
   };
 

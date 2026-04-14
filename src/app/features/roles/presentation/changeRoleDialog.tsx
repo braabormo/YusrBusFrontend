@@ -93,8 +93,8 @@ export default function ChangeRoleDialog({ entity, mode, service, onSuccess }: C
                           onToggle={ (updated) => handleChange({ permissions: updated }) }
                           actions={ item.actions.map((perm) => ({
                             id: perm,
-                            label: ArabicLabels[perm.split(":")[1]] || perm.split(":")[1],
-                            icon: ActionIcons[perm.split(":")[1]]
+                            label: ArabicLabels[perm.split(".")[1]] || perm.split(".")[1],
+                            icon: ActionIcons[perm.split(".")[1]]
                           })) }
                         />
                       )) }
